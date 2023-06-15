@@ -1,0 +1,730 @@
+======================
+IMA and EVM Concepts
+======================
+
+
+The Linux runtime Integrity Measurement Architecture (IMA) calculates
+hash values of executables and other sensitive system files. The hash
+value is used in multiple ways:
+
+* stored in a measurement log
+* used for verifying signatures
+* stored in the system audit log
+
+The hash algorithm is defined by :ref:`config-ima-default-hash`, which
+can be overridden by the :ref:`boot-command-line-arguments`
+:ref:`ima-hash` specifier.
+
+
+**IMA** :ref:`measurement` maintains an aggregate integrity value over the
+measurement log if the platform has a TPM chip. The TPM can attest to
+the state of these system files. It typically uses PCR 10.  The TPM
+attestation quote is a signature over the PCR, indirectly providing
+integrity over the measurement log.
+
+The measurement system requires both a TPM and a independent verifier.
+
+Measurement is similar to the pre-OS trusted boot concept.
+
+IMA keeps a table of the hash values. if the hash is seen again, the
+contents are not processed again. :ref:`config-ima-disable-htable`
+offers other options.
+
+**IMA** :ref:`appraisal` can check the file's digital signature or
+hash and take action if the signature verification fails.
+
+Appraisal is similar to the pre-OS secure boot concept.
+
+The appraisal system is local, and requires neither a TPM nor a
+separate verifier.
+
+**IMA** :ref:`audit` includes the file hash in the system's audit
+log. This can be useful for analytics and forensics.
+
+|
+
+.. _measurement:
+
+Measurement
+------------------
+
+IMA measurement has several steps:
+
+#. Match attributes against a policy measurement rule.
+
+#. If the rule applies, calculate a hash over the contents.
+
+#. If the hash indicates a new measurement, append the measurement to
+   the :ref:`ima-event-log` and extend the hash to a TPM PCR.
+
+An attestation can then verify the integrity of the measurement log.
+A TPM attestation quote is a signature over the PCR, in effect a
+signature over the event log.
+
+See :ref:`measure-policy-rule-design` for implications.
+
+|
+
+.. _appraisal:
+
+Appraisal
+-------------
+
+IMA Appraisal occurs only for file data. IMA generates a hash over the
+file, and validates it against meta-data to determine whether the file
+has been tampered with. File contents (not meta-data) appraisal comes
+in two forms:
+
+* :ref:`hash`
+* :ref:`signature`
+
+The :ref:`signature` attribute is required if the :ref:`policy-syntax`
+rule condition :ref:`appraise-type` is present.  Its absence permits
+the :ref:`hash` attribute in ``security.ima``.
+
+See :ref:`extended-verification-module` for file meta-data appraisal.
+
+See :ref:`appraise-policy-rule-design` for implications.
+
+Appraisal requires files to be labeled with a security extended
+attribute, stored in ``security.ima``. It can be viewed with
+
+::
+
+   getfattr -m - -e hex -d <file>
+
+where ``-m -`` requests all attributes and ``-d`` dumps the values.
+
+.. warning::
+
+   https://github.com/mgerstner/ima-inspect does further parsing of the
+   extended attributes.
+   
+   **FIXME Needs testing and a sample command line input and output.**
+
+Signatures have a variation, called an ``appended signature``, where
+the signature is appended to the file contents rather then stored in
+the extended attribute.
+
+Appraisal failures will return ``Permission denied``.  Further information
+can be viewed in the audit log with
+
+::
+
+   dmesg | tail
+
+
+.. _hash:
+
+Hash
+~~~~~~~~~~
+
+.. warning::
+
+   **FIXME Must test all the open read write rules**
+
+This stores a file data hash in the extended attribute
+``security.ima``.  The format is:
+
+* 0x04 - ``IMA_XATTR_DIGEST_NG``
+* hash algorithm see :ref:`hash-algorithm`
+* hash binary
+
+See the :ref:`ima-appraise` boot command line argument and the
+:ref:`appraise-type` policy rule condition.
+
+When a policy rule is triggered:
+
+* When in ``fix`` mode, hashes are updated on a read.
+
+* When in ``enforce`` mode, the hash is checked on a read and updated
+  on a write, for both new and existing files.
+
+  In detail, the hash is not updated on each write, which would affect
+  performance.  It is updated on the last close for write.
+
+Use case:
+
+A typical provisioning starts by booting with the
+:ref:`boot-command-line-arguments` :ref:`ima-appraise` in ``fix``
+mode. Set a custom policy to read/write. Reading all appraised files
+creates or updates the file hash extended attribute.
+
+On subsequent boots, configure ``enforce`` mode and a read policy.
+This causes the system to validate the hash against the stored value
+before using a file. If the hash does not validate, then access will
+be denied.
+
+If the use case permits system configuration files to be altered, use
+a read/write policy. The hash will be updated on a write, even in
+``enforce`` mode, permitting a subsequent read.
+
+.. _signature:
+
+Signature
+~~~~~~~~~~~~
+
+Signature enables immutable files. 
+
+Appraisal starts with digitally signing files.  Ideally, this will be
+a distro signature.  The signature is stored in the extended attribute
+``security.ima``. The private key is used to sign the files, while the
+public key on the :ref:`dot-ima` keyring is used to verify the
+signature. This provides additional protection against tampering, as
+the private key should not be available on the system.
+
+
+The format of the signature is described in the event log :ref:`sig`
+field, and includes the public key identifier, hash algorithm and
+signature length.
+
+The :ref:`evmctl` utility can be used to sign files.
+
+Use appraisal in :ref:`ima-appraise` ``enforce`` mode. ``fix`` mode
+cannot be used because the private key should be held elsewhere.
+
+A read policy rule will prevent a file from being read or executed if
+the signature does not verify.
+
+::
+
+   appraise func=FILE_CHECK mask=^MAY_READ
+
+Altering a signed file will invalidate the signature. To prevent
+alteration, use a policy rule such as this. The appraise on write
+prevents the signed file from being open for write. Without a write
+policy rule, the file can be written but the signature becomes
+invalid.
+
+::
+
+   appraise func=FILE_CHECK
+
+|
+
+.. _audit:
+
+Audit
+------------------
+
+Audit includes file hashes in the audit log, which can be used to
+augment existing system security analytics/forensics. IMA-audit
+extends the IMA policy ABI with the :ref:`policy-syntax-action`
+keyword ``audit``.
+
+There are no built-in audit policy rules.
+
+Example policy to audit executable files and files open by
+user 1001:
+
+::
+
+   audit func=BPRM_CHECK mask=MAY_EXEC
+   audit func=FILE_CHECK mask=MAY_READ fowner=1001
+
+The audit log is in ``\var\log\audit``.  The entry will have ``type=INTEGRITY_RULE``
+and the entry includes:
+
+* file name
+* hash algorithm and hash
+* ppid, pid,auid, uid, gid, euid, suid, fsuid, egid, sgid, fsgid
+* the command that triggered the rule
+
+|
+
+.. _extended-verification-module:
+
+Extended Verification Module (EVM)
+----------------------------------------
+
+EVM (Extended Verification Module) detects tampering of file
+meta-data. :ref:`evm-hmac` is limited to offline protection.
+:ref:`evm-signature` can also protect against runtime tampering.
+
+:ref:`evm-signature` aims at protecting files that are not expected to
+change while the system is running. Examples are kernel modules, as
+well as ELF and other binaries.
+
+EVM appraises file meta-data and recurses from
+the meta-data to the file data.  Since the meta-data includes
+``.security.ima``, the :ref:`evm-hmac` or :ref:`evm-signature` covers
+both the data and  meta-data. First ``security.evm`` is
+verified, followed by ``security.ima``.
+
+The EVM extended attribute ``security.evm`` has two forms:
+
+* :ref:`evm-hmac` generated locally across a set of file meta-data
+* :ref:`evm-signature` generated locally (for testing only) or remotely.
+
+The file meta-data does not include the file name. It therefore does
+not protect against rename attacks (e.g., renaming mv to rm).
+
+Specifically, appraisal covers this list of meta-data.  The list is
+the same for :ref:`evm-hmac` or :ref:`evm-signature`, but a ``portable
+signature`` excludes the last two items, which are installation
+specific.
+
+  * ``.security.ima``
+  * ``.security.selinux``
+  * ``.security.SMACK64``
+  * ``.security.SMACK64EXEC``
+  * ``.security.SMACK64TRANSMUTE``
+  * ``.security.SMACK64MMAP``
+  * ``.security.apparmor``
+  * ``.security.capability`` The capabilities associated with a superuser process.
+  * uid, gid
+  * mode (protections)
+  * inode number (i_ino)
+  * generation (i_generation)
+
+``.security.selinux`` is enabled when SELinux is enabled.
+
+``.security.SMACK64`` is included when SMACK is enabled. The other
+SMACK attributes are added when :ref:`config-evm-extra-smack-xattrs`
+is set.
+
+``.security.apparmor`` is enabled when AppArmor is enabled.
+
+Additional security extended attributes can be included at run time by
+adding them to ``/sys/kernel/security/integrity/evm/evm_xattrs`` if
+:ref:`config-evm-add-xattrs` is set.
+
+.. warning::
+
+   Needs a good example of an additional attribute.
+
+The same IMA :ref:`appraisal` rules trigger EVM appraisal if EVM is
+enabled.  See :ref:`evm-build-flags`.
+
+Enabling EVM
+~~~~~~~~~~~~~~~
+
+The EVM extended attribute in ``security.evm`` can be
+viewed with
+
+::
+
+   getfattr -m - -e hex -d <file>
+
+.. warning::
+
+   Test this:
+
+   https://github.com/mgerstner/ima-inspect does further human
+   readable printing of the extended attribute.
+
+The pseudo-file ``/sys/kernel/security/integrity/evm`` holds the EVM
+status. The default is zero / off. The file is a bitmap with the
+meaning:
+
+===	  ================================================================================
+Bit	  Effect
+===	  ================================================================================
+0	  Enable signature verification, HMAC verification and creation
+1	  Enable signature verification
+2	  Permit modification of EVM-protected metadata at runtime.
+
+          Not supported if HMAC verification and creation is enabled.
+31	  Disable further runtime modification of EVM state
+          (``/sys/kernel/security/integrity/evm``)
+===	  ================================================================================
+
+Before enabling :ref:`evm-hmac`, the EVM HMAC key must be in
+``/etc/keys/evm-key``. The value can be set using a script enabled in
+the dracut module ``modules.d/(nn)integrity/module-setup.sh``.  Before
+enabling :ref:`evm-signature`, the EVM public key certificate must be
+added to the :ref:`dot-evm` keyring.
+
+There are no compile time or boot command line specifiers and no
+equivalent to the IMA :ref:`boot-time-custom-policy`.  There is an
+equivalent to the IMA :ref:`run-time-custom-policy`, writing a value
+to ``/sys/kernel/security/integrity/evm``.  For example:
+
+::
+
+   echo 1 > /sys/kernel/security/integrity/evm
+
+will enable signature verification, HMAC verification and
+creation.
+
+::
+
+   echo 0x80000002 > /sys/kernel/security/integrity/evm
+
+will enable signature verification and disable all further run-time
+modification of ``/sys/kernel/security/integrity/evm``.
+
+Echoing a value is additive; the new value is added to the existing
+initialization flags. A bit cannot be cleared. For example, after
+
+::
+
+   echo 2 > /sys/kernel/security/integrity/evm
+   echo 1 > /sys/kernel/security/integrity/evm
+
+the resulting value will be 3.
+
+The lock, bit 31, is useful when bit 1 (Signature only) is set to
+block setting bit 0 (HMAC and signature).  This limits EVM to
+verifying file signatures, without loading an HMAC key.
+
+
+.. _evm-hmac:
+
+EVM HMAC
+~~~~~~~~~~~
+
+This is an HMAC-sha1 across a set of security extended attributes,
+storing the HMAC as the extended attribute ``security.evm``.  The
+HMAC format is:
+
+* 0x02 - ``EVM_XATTR_HMAC``
+* 20-byte HMAC-sha1 binaryC (fixed at SHA-1)
+
+These steps generate an HMAC key. See
+https://www.kernel.org/doc/html/latest/security/keys/trusted-encrypted.html
+for instructions.
+
+1. Generate a symmetric key, called the ``master key``, which is a ``trusted key`` type.
+2. Wrap (encrypt) the ``master key`` with the TPM storage primary key.
+3. Store the wrapped ``master key`` in the filesystem.
+4. Generate an HMAC key.
+5. Encrypt the HMAC key with the ``master key`` to create the ``encrypted key`` 
+6. Store the ``encrypted key`` in the filesystem.
+
+If :ref:`config-user-decrypted-data` is not set, the HMAC key is
+generated from a random number.
+
+If :ref:`config-user-decrypted-data` is set, the HMAC key can be
+generated from a random number or a user provided value.
+
+At boot:
+
+1. Unseal (decrypt) the ``master key`` using the TPM.  The unseal
+   typically does not currently use TPM authorization (password or PCR
+   values).
+2. Decrypt the HMAC key from the ``encrypted key`` using the ``master key``.
+
+The HMAC key may be the same on multiple systems, which permits an
+image to be signed once.  This HMAC key would be a user provided
+value. However, this requires this HMAC key to be present on multiple
+systems for verification.
+
+* When in ``fix`` mode, the HMAC is updated on a read.
+
+* When in ``enforce`` mode, the HMAC is checked on a read and updated
+  on a write.
+
+.. _evm-signature:
+
+EVM Signature
+~~~~~~~~~~~~~~~~~
+
+The verification key is loaded on the :ref:`dot-evm` keyring.
+
+The signature format is:
+
+* 0x03 (EVM_IMA_XATTR_DIGSIG)
+* signature byte stream
+
+A signature that includes the file inode and generation numbers is not
+portable because they will differ on each platform. A ``portable
+signature`` excludes them, permitting the file to be installed on
+multiple platforms. The main use is to include the file data and
+meta-data signature in a distro package.
+
+|
+
+.. _keyrings:
+
+Keyrings
+------------------------
+
+These kernel keyrings affect IMA.
+
+Adding keys to a keyring can be measured.  See :ref:`config-ima-measure-asymmetric-keys`,
+:ref:`func` = ``KEY_CHECK``,  and  the :ref:`keyrings-condition` condition.
+
+To view the values, use :ref:`keyctl-show`.
+
+
+.. _`dot-builtin-trusted-keys`:
+
+.builtin_trusted_keys
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These keys (certificates) are compiled into the kernel and loaded at
+boot time.
+
+``.builtin_trusted_keys`` verify loading of:
+
+* :ref:`dot-secondary-trusted-keys` certificates
+* :ref:`dot-ima` certificates
+* kernel modules
+* kexec'd kernel images
+
+
+.. _dot-secondary-trusted-keys:
+
+.secondary_trusted_keys
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These keys (certificates) are signed by a key on the
+:ref:`dot-builtin-trusted-keys` or :ref:`dot-machine` keyring.
+
+They are loaded using :ref:`keyctl`.
+
+``.secondary_trusted_keys`` verify loading of:
+
+* other :ref:`dot-secondary-trusted-keys` certificates
+* :ref:`dot-ima` certificates
+* kernel modules
+* kexec'd kernel images
+
+.. _`dot-machine`:
+
+.machine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``.machine`` keyring holds Machine Owner Keys (``MOK``), The
+``MOK`` keys are registered using :ref:`mokutil`.  At boot time, a
+one-time UEFI menu prompts to accept the registered keys.
+
+The ``.machine`` keyring has the ability to store only CA enforced
+keys, and put the rest on the :ref:`dot-platform` keyring, separating
+the code signing keys from the keys that are used to sign
+certificates. This unlocks the use of the ``.machine``
+keyring as a trust anchor for IMA.
+
+If secure boot in the UEFI firmware is disabled, the keys are not loaded.
+
+Otherwise,if the the UEFI variables MokListRT/ MokListXRT are clear,
+registered key are loaded on the :ref:`dot-platform` keyring.
+
+Otherwise, if :ref:`config-integrity-ca-machine-keyring-max` is set, only
+registered CA signing key certificates (X.509 CA bit and keyCertSign
+true, and digitalSignature false) are loaded on the ``.machine``
+keyring. The remainder are loaded on the :ref:`dot-platform` keyring.
+
+Otherwise, if :ref:`config-integrity-ca-machine-keyring` is set, only the
+registered signing key certificates (X.509 CA bit and keyCertSign
+true) are loaded on the ``.machine`` keyring. The remainder are loaded
+on the :ref:`dot-platform` keyring.
+
+Otherwise, if :ref:`config-integrity-machine-keyring` is set, all the
+registered ``MOK`` keys are loaded on the ``.machine`` keyring.
+
+Otherwise, the keys are loaded on the :ref:`dot-platform` keyring.
+
+The ``.machine`` keyring can only be enabled if
+:ref:`config-secondary-trusted-keyring` and
+:ref:`config-integrity-machine-keyring` are set.
+
+``.machine`` keys verify loading of
+
+* :ref:`dot-secondary-trusted-keys` certificates
+* :ref:`dot-ima` certificates
+* kernel modules
+* kexec'd kernel images
+
+.. warning::
+
+   Suggest getting picture from Elaine's talk
+
+.. _`dot-ima`:
+
+.ima
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These keys (certificates) are signed by a key on the
+:ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
+keyring. Only certificates signed by a key on the
+:ref:`dot-builtin-trusted-keys` or
+:ref:`dot-secondary-trusted-keys` keyrings may be loaded onto the IMA
+keyring.
+
+``.ima`` keys are loaded from ``/etc/keys/ima`` at boot time using a
+dracut script calling :ref:`keyctl`. They cannot be compiled in.
+
+Keys on the ``.ima`` keyring are used for
+
+* IMA :ref:`appraisal`
+
+The key used for verification is based on the :ref:`public-key-identifier`.
+
+.. _`dot-evm`:
+
+.evm
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These keys (certificates) are signed by a key on the
+:ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
+keyring. Only certificates signed by a key on the
+:ref:`dot-builtin-trusted-keys` or
+:ref:`dot-secondary-trusted-keys` keyrings may be loaded onto the ``.evm``
+keyring.
+
+``.evm`` keys are loaded from ``/etc/keys/x509_evm.der`` at boot time
+using a dracut script calling :ref:`evmctl`. They cannot be compiled
+in. Additional keys can be loaded at run time using :ref:`evmctl`.
+
+Keys on the ``.evm`` keyring are used for
+
+* :ref:`evm-signature` verification.
+
+The key used for verification is based on the :ref:`public-key-identifier`.
+
+.. _`dot-platform`:
+
+.platform
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``.platform`` keyring holds Machine Owner Keys (``MOK``),
+
+If provide a separate, distinct keyring for platform trusted keys,
+which the kernel automatically populates during initialization from
+values provided by the platform.
+
+``MOK`` keys are registered using :ref:`mokutil`.  At boot time, a
+one-time firmware (e.g. UEFI) menu prompts to accept the registered
+keys.
+
+If secure boot in the firmware is disabled, if the the firmware
+variables are clear, or if :ref:`config-integrity-platform-keyring` is
+clear, keys are not loaded.
+
+
+Otherwise, keys are loaded on the ``.platform`` keyring.
+
+* UEFI - DB keys
+* PowerPC - platform and deny listed keys for POWER
+* S390 - IPL keys
+
+``.platform`` keys verify loading of
+
+* kexec'd kernel images
+
+.. _dot-blacklist:
+
+.blacklist
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``.blacklist`` keyring holds keys and hashes that are not approved
+/ have been revoked.
+
+This keyring is initially populated from a revocation list. A key on
+``.blacklist`` cannot be added to another keyring and cannot be used
+to verify another key or file :ref:`evm-signature`.
+
+The revocation keys comes from:
+
+* UEFI - DBX
+* Power - platform and deny listed keys for POWER
+* S390 -  IPL keys
+
+``.blacklist`` also contain a file data :ref:`hash` that is not
+approved.
+
+See :ref:`config-system-blacklist-keyring` and :ref:`appraise-flag`.
+
+|
+
+kexec Implications
+-------------------
+
+kexec Background
+~~~~~~~~~~~~~~~~~~~~~~~
+
+kexec is a soft boot. The command boots a new kernel image with new
+command line arguments. It does not cycle back to the hardware
+initialization typically performed by platform firmware.
+
+The policy rules are set by the new kernel :ref:`build-flags` and
+:ref:`boot-command-line-arguments`.
+
+.. _kexec-ima-impact:
+
+kexec IMA Impact
+~~~~~~~~~~~~~~~~~~~~~~
+
+Since the hardware is not initialized, the TPM PCRs, and specifically
+the IMA PCR, are not reset back to zeros.  An attestation will include
+the PCR extends from the previous kernel boot as well as the new kernel
+boot. In order for the verifier to validate the IMA PCR against the
+IMA event log, it must be presented with both the previous and current
+event logs. The previous event log must be carried across the kexec
+boot.
+
+:ref:`config-ima-kexec` enables the event log to be retained across a
+kexec. If the event log is not retained, PCR 10 cannot provide event
+log integrity.
+
+   Note: Even if the event log is retained, the image load copies
+   the event log, but the new image is not executed atomically
+   with the load. If measurements between the load and execute are lost,
+   so PCR 10 cannot be validated.
+
+Carrying the previous event log through a kexec reboot will increase
+the size of the in-memory log.  See :ref:`measure-policy-rule-design`.
+
+
+
+
+kexec IMA Configuration
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+* :ref:`buf`
+
+To support kexec verification, the IMA :ref:`template-data-fields`
+should include ``buf``, which records the kexec command line
+arguments.
+
+* :ref:`config-ima-kexec`
+
+This kernel configuration flag enables carrying the IMA event log
+across a soft boot (kexec).  Since the TPM IMA PCR does not get reset
+upon kexec, the verifier requires both the pre- and post-kexec event
+logs.
+
+* :ref:`func-kexec-kernel-check`
+
+This policy rule measures or appraises the kexec kernel image. See
+:ref:`func-kexec-kernel-check` for the rule syntax.
+
+* :ref:`func-kexec-initramfs-check`
+
+This policy rule measures or appraises the kexec initramfs image.  See
+:ref:`func-kexec-initramfs-check` for the rule syntax.
+
+* :ref:`func-kexec-cmdline`
+
+This policy rule measures the kexec boot command line. See
+:ref:`func-kexec-cmdline` for the rule syntax.
+
+|
+
+.. _appended-signatures:
+
+Appended Signatures
+------------------------
+
+Appended signatures are an alternative to signatures in extended
+attributes or the pecoff header.
+
+Appended signatures support these use cases:
+
+* kernel modules - see :ref:`func-module-check`
+* kernel images - see :ref:`func-kexec-kernel-check`
+* initramfs - see :ref:`func-kexec-initramfs-check`
+
+Appended signatures are not supported for the :ref:`func-file-check`
+rule.
+
+To verify whether an appended signature file is present, ``tail`` the
+file content is binary, but the string ``Module signature appended~``
+is appended.
+
+For a compressed kernel module, see the :ref:`xz` function.
+
+
