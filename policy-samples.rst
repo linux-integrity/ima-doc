@@ -3,7 +3,7 @@ Policy Samples
 ======================
 
 This section includes contributed samples of a
-:ref:`boot-time-custom-policy` or :ref:`run-time-custom-policy`.
+:ref:`boot-time-custom-policy` or :ref:`runtime-custom-policy`.
 
 Each contribution should be a stand alone .rst file and include:
 

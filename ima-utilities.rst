@@ -1,4 +1,4 @@
-IMA Utilities
+Utilities
 -------------
 
 .. warning::
@@ -50,16 +50,18 @@ root because it writes ``security.evm``.
 
    evmctl sign --imahash --portable --key <privkey.pem>  <pathname>
 
-The ``hash`` output is added to ``security.ima``.  The ``evm/ima
-signature`` output is added to ``security.evm``. The format of the
-signature is the same as that of the event log :ref:`sig` field, a
-header and a signature.
+The ``hash`` output is written to ``security.ima``.  The ``evm/ima
+signature`` output is written to ``security.evm``. The format of the
+IMA and EVM signatures is the same as that of the event log :ref:`sig`
+field, a header and a signature.
 
 The result can be viewed with
 
 ::
 
     getfattr -m - -e hex -d  <pathname>
+
+.. _evmctl-policy-signature:
 
 evmctl policy signature
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -76,13 +78,13 @@ To generate the public key:
 
    openssl rsa -pubout -in rsa_private.pem -out rsa_public.pem
 
-To sign a policy:
+To sign the IMA :ref:`custom-policy`:
 
 ::
 
    evmctl ima_sign --hashalgo sha256 --key privkey_ima.pem policy
 
-To sign the all the kernel modules with an IMA signature:
+To sign all kernel modules with an IMA signature:
 
 ::
 
@@ -94,10 +96,10 @@ To sign the all the kernel modules with an IMA signature:
    ima-evm-utils. Refer to commit 751a3957729d ("Deprecate IMA
    signature version 1").**
 
-To sign such immutable files (like kernel modules and application
-code), the ``evmctl`` command provided by the app-crypt/ima-evm-utils
-package **FIXME needs link** needs be used. But first, setup the
-kernel keyring:
+To sign immutable files (like kernel modules and application code),
+the ``evmctl`` command provided by the app-crypt/ima-evm-utils package
+**FIXME needs link** needs be used. But first, set up the kernel
+keyring:
 
 ::
 

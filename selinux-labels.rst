@@ -3,8 +3,9 @@
 SELinux Labels
 --------------
 
-Linux Security Modules (LSM) maintain file metadata, which can be
-leveraged to limit the number of files measured.
+Some Linux Security Modules (LSM) maintain file metadata, which can be
+leveraged using IMA :ref:`policy-syntax-conditions` such as
+:ref:`obj-type` to limit the number of files measured.
 
 IMA policy can filter on SELinux labels.
 

@@ -154,7 +154,7 @@ CONFIG_IMA_WRITE_POLICY
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This boolean enables multiple appends to the custom IMA policy. See
-:ref:`run-time-custom-policy`.
+:ref:`runtime-custom-policy`.
 
 .. _config-ima-read-policy:
 
@@ -176,7 +176,7 @@ CONFIG_IMA_DEFAULT_HASH
 This string specifies the file data hash algorithm for measurement,
 appraisal, and audit. It is overridden by the
 :ref:`boot-command-line-arguments` :ref:`ima-hash` specifier. Both can
-be overridden by the file signature algorithm.
+be overridden by the hash used for the file signature algorithm.
 
 Supported values are:
 
@@ -195,7 +195,7 @@ This boolean enables ``fs-verity`` read-only file-based authenticity protection.
 
 .. _compiled-in-policies:
 
-Compiled In Policies
+Compiled-In Policies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Build flags can specify appraisal policy rules that are present at run
@@ -223,22 +223,26 @@ This boolean enables compiled-in architecture specific policy
 rules. If enabled, it loads its IMA appraise rules before other
 compiled-in or built-in command line appraise rules, so they cannot be
 overridden.  They persist.  I.e., they cannot be replaced by a
-:ref:`boot-time-custom-policy` or :ref:`run-time-custom-policy`, which
-might otherwise negate these rules.
+:ref:`boot-time-custom-policy` or :ref:`runtime-custom-policy`, which
+might otherwise remove these rules.
 
 Secure boot must appraise the entire boot software
 stack through the kernel. This includes the kernel kexec image and
 kernel modules. The kernel configuration includes a method using
-``CONFIG_KEXEC_SIG`` and ``CONFIG_MODULE_SIG``.  If these are not
-enabled, IMA provides a fallback means.
+``CONFIG_KEXEC_SIG`` and ``CONFIG_MODULE_SIG``.  If either is not
+enabled, IMA verifies (appraises) the signatures.
 
 That is, if ``CONFIG_KEXEC_SIG`` is true, the kernel will require and
-verify the signature over the kernel image.  If ``CONFIG_MODULE_SIG``
-is true, the kernel will verify a kernel module appended signature.
-If either is false, IMA should verify (appraise) the signatures.
- 
-In addition to the fallback appraise rules, this boolean always adds
-measure rules.
+verify the signature over the kernel image.  If false,
+``CONFIG_IMA_ARCH_POLICY`` will add an IMA appraise 
+:ref:`func-kexec-kernel-check` rule.
+
+If ``CONFIG_MODULE_SIG`` is true, the kernel will verify a kernel
+module appended signature. If false, ``CONFIG_IMA_ARCH_POLICY`` will
+add an IMA appraise :ref:`func-module-check` rule.
+
+In addition to the fallback appraise rules, ``CONFIG_IMA_ARCH_POLICY``
+always adds measure rules for :ref:`arm-and-x86` UEFI based platforms.
 
 These policy rules are based partially on the firmware secure boot
 status (e.g. :ref:`arm-and-x86` UEFI, :ref:`powerpc` firmware secure
@@ -255,22 +259,22 @@ ARM and x86
 
 If UEFI secure boot is enabled:
 
-If ``CONFIG_KEXEC_SIG`` is false, adds this rule to appraise the
-kernel:
+If ``CONFIG_KEXEC_SIG`` is false, ``CONFIG_IMA_ARCH_POLICY`` adds this
+rule to appraise the kernel:
 
 ::
 
    appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig
 
-If ``CONFIG_MODULE_SIG`` is false, adds this rule to appraise kernel
-modules:
+If ``CONFIG_MODULE_SIG`` is false, ``CONFIG_IMA_ARCH_POLICY`` adds
+this rule to appraise kernel modules:
 
 ::
 
    appraise func=MODULE_CHECK appraise_type=imasig
 
-Regardless of those configuration flags, add these rules to measure
-the kernel and kernel modules:
+Regardless of those configuration flags, ``CONFIG_IMA_ARCH_POLICY``
+adds these rules to measure the kernel and kernel modules:
 
 ::
 
@@ -282,26 +286,30 @@ the kernel and kernel modules:
 PowerPC
 '''''''''''''''
 
-If firmware secure boot is enabled, add this rule:
+If firmware secure boot is enabled, ``CONFIG_IMA_ARCH_POLICY`` adds
+this rule:
 
 ::
 
     appraise func=KEXEC_KERNEL_CHECK appraise_flag=check_blacklist appraise_type=imasig|modsig
 
-and if ``CONFIG_MODULE_SIG`` is false, adds this rule
+and if ``CONFIG_MODULE_SIG`` is false, ``CONFIG_IMA_ARCH_POLICY`` adds
+this rule
 
 ::
 
     appraise func=MODULE_CHECK appraise_flag=check_blacklist appraise_type=imasig|modsig
 
-If trusted boot is enabled, add these rules:
+If only trusted boot is enabled, ``CONFIG_IMA_ARCH_POLICY`` adds these
+rules:
 
 ::
 
     measure func=KEXEC_KERNEL_CHECK
     measure func=MODULE_CHECK
 
-If both firmware secure boot and trusted boot are enabled, add these rules:
+If both firmware secure boot and trusted boot are enabled,
+``CONFIG_IMA_ARCH_POLICY`` adds these rules:
 
 ::
 
@@ -309,7 +317,8 @@ If both firmware secure boot and trusted boot are enabled, add these rules:
     measure func=MODULE_CHECK template=ima-modsig
     appraise func=KEXEC_KERNEL_CHECK appraise_flag=check_blacklist appraise_type=imasig|modsig
 
-and if ``CONFIG_MODULE_SIG`` is false, adds this rule
+and if ``CONFIG_MODULE_SIG`` is false, ``CONFIG_IMA_ARCH_POLICY`` adds
+this rule
 
 ::
 
@@ -320,8 +329,10 @@ and if ``CONFIG_MODULE_SIG`` is false, adds this rule
 CONFIG_MODULE_SIG
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This boolean enables checking kernel modules for vaild appeanded
-signatures.
+This boolean enables an alternative method (not IMA) for validating
+ appended signatures.
+
+See :ref:`config-ima-arch-policy`.
 
 .. _config-ima-appraise-build-policy:
 
@@ -329,11 +340,11 @@ CONFIG_IMA_APPRAISE_BUILD_POLICY
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This boolean enables compiled-in IMA policy rules. They are effective
-at run time without needing an :ref:`ima-policy` on the boot
+at runtime without needing an :ref:`ima-policy` on the boot
 command line.  It loads its IMA appraise rules before other
 compiled-in or built-in command line appraise rules.  Unlike
 :ref:`config-ima-arch-policy`, these rules can be replaced by a
-:ref:`boot-time-custom-policy` or :ref:`run-time-custom-policy`.
+:ref:`boot-time-custom-policy` or :ref:`runtime-custom-policy`.
 
 If enabled
 :ref:`config-ima-appraise-require-firmware-sigs`,
@@ -403,7 +414,7 @@ This boolean enables a policy rule to appraise IMA policy
 signatures. :ref:`config-ima-appraise-build-policy` enables this
 flag.
 
-It requires the IMA policy to be signed and and verified
+It requires the IMA policy to be signed and verified
 by a key on the trusted IMA keyring.See :ref:`func`, 
 :ref:`appraise-type`, and :ref:`custom-policy`.
 
@@ -477,7 +488,7 @@ CONFIG_IMA_DISABLE_HTABLE
 This boolean affects measurement behavior. In detail, there are three
 factors:
 
-#. IMA status booleans, which indicate that the file has been open
+#. IMA status booleans, which indicate that the file has been opened
    for change since the last IMA measurement
 #. The IMA hash table, which tracks files already measured
 #. This kernel configuration flag CONFIG_IMA_DISABLE_HTABLE
@@ -501,7 +512,7 @@ different contexts, there are several boolean status bits:
    Add a definition of each status bit.  Add cross references.
    How can the status bits be read?
 
-In kernels that did not implement CONFIG_IMA_DISABLE_HTABLE, or if
+In kernels that do not implement CONFIG_IMA_DISABLE_HTABLE, or if
 CONFIG_IMA_DISABLE_HTABLE is false, if the status is true and the file hash is
 not in the hash table, the file is measured. If the status is false (not
 changed) or the hash is in the hash table (already measured), the file
@@ -549,7 +560,7 @@ Examples:
 
   ::
 
-	measure func=KEY_CHECK keyring=".builtin_trusted_keys|.ima" pcr=11
+	measure func=KEY_CHECK keyrings=".builtin_trusted_keys|.ima" pcr=11
 
 .. _config-ima-lsm-rules:
 
@@ -564,7 +575,7 @@ See :ref:`obj-user-equals`, :ref:`obj-role-equals`,
 rule syntax.
 
 If this boolean is disabled, a policy containing these policy rules
-will be rejected.  See :ref:`run-time-custom-policy`.
+will be rejected.  See :ref:`runtime-custom-policy`.
 
 .. _config-ima-queue-early-boot-keys:
 
@@ -576,8 +587,8 @@ to :ref:`keyrings`.  I.e., they do not have a :ref:`func-key-check`
 rule.
 
 When this boolean is set, keys added to keyrings at boot are queued.
-When a :ref:`custom-policy` is specified, the queue is replayed, and
-the keys can be measured based on the custom policy rules.
+When a :ref:`custom-policy` with a :ref:`func-key-check` rule is
+specified, the queue is replayed so that each key can be measured.
 
 .. _appraise:
 
@@ -603,7 +614,7 @@ The configuration flags affecting appraisal are below.  See :ref:`policy-rule-or
 CONFIG_IMA_APPRAISE
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This boolean enables local file measurement integrity appraisal.
+This boolean enables verifying local file integrity.
 
 The default is ``enforce`` mode.  See
 :ref:`config-ima-appraise-bootparam` and :ref:`ima-appraise` for
@@ -732,7 +743,8 @@ The configuration flags affecting EVM are below:
 CONFIG_EVM
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This boolean enables EVM appraisal of extended attributes.
+This boolean enables EVM appraisal of extended attributes and file
+meta-data.
 
 See :ref:`extended-verification-module`.
 
@@ -772,7 +784,7 @@ CONFIG_TRUSTED_KEYS
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This tristate enables the generation and load of a :ref:`evm-hmac` ``master key``.
-Thjis is a ``trusted key`` type.
+This is a ``trusted key`` type.
 
 It can be set to either '``y`` (built in to the kernel)
 or ``m`` if compiled as a kernel module.  ``y`` is
@@ -844,17 +856,17 @@ This boolean enables the :ref:`dot-platform` keyring.
 CONFIG_INTEGRITY_MACHINE_KEYRING
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When this boolean is set, registered ``MOK`` key certificates are
-loaded by default on the :ref:`dot-machine` keyring.
+When this boolean is set, registered machine owner key certificates
+are loaded by default on the :ref:`dot-machine` keyring.
 
-When it is clear, registered ``MOK`` key certificates are
-loaded on the :ref:`dot-platform` keyring.
+When it is clear, registered machine owner key certificates are loaded
+on the :ref:`dot-platform` keyring.
+
+   Note that this boolean is only supported for ``MOK`` keys on UEFI.
 
 :ref:`config-integrity-ca-machine-keyring` and
 :ref:`config-integrity-ca-machine-keyring-max` can override the
 default.
-
-See :ref:`dot-machine` and :ref:`dot-platform` keyrings
 
 
 .. _config-integrity-ca-machine-keyring:

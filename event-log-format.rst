@@ -10,79 +10,85 @@ IMA Event Log
 IMA Log Verification
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-An IMA verifier implementation should note several differences from
-verifying a pre-OS log. They occur because IMA measurements can occur
-during the attestation.
+IMA Attestation Background
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+An IMA attester and verifier design should note several differences
+from verifying a pre-OS log. They occur because IMA measurements can
+occur during the attestation, when the measurement log and quote are
+acquired.
 
 -  An IMA event log append is not atomic with the TPM extend.
 
-Since a TPM quote can intervene, the event log can have extra events.
-There will never be a missing quoted event because the append comes
-before the extend.
+   Since a TPM quote can be requested at any time, it is possible that
+   the IMA event log can have extra events. However, there will never
+   be a missing event in the log since the log-append comes before the
+   PCR extend.
 
-Further, an append-extend pair is atomic with other append-extend pairs,
-so the appends will never be out of order with the extends.
+   Further, an append-extend pair is atomic with other append-extend
+   pairs, so the appends will never be out of order with the extends.
 
 -  A TPM quote is not atomic with a TPM PCR read.
 
-A PCR read before or after a quote may not reflect the quoted PCR.
+   A PCR read before or after a quote may not reflect the quoted PCR.
+
+   This is different from TPM 1.2, where the quote command returned
+   both the signature and the set of PCR values being quoted.  In TPM
+   2.0, a quote and a PCR read are separate, not an atomic command.
 
 -  IMA event logs are far larger than pre-OS logs.
 
-While a pre-OS log may hold 50 events, an IMA log can hold 10K – 100K
-events.
+   While a pre-OS log may hold 50 events, an IMA log can hold 10K –
+   100K events.
 
-For the above reasons, a verifier should consider the following
-recommendations.
+IMA Attestation Recommendations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#. The verifier should account for extra events.
+An implementation of an attester and verifier should consider the
+following recommendations.
+
+-  The verifier should account for extra events.
 
    Replay the event log until the quote matches and then discard extra
    events. Extra events are not a failure.
 
-#. It is futile to read the IMA PCR (PCR 10) and send it to the
-   verifier.
+-  There is no advantage in reading the IMA PCR (PCR 10) and sending it
+   to the verifier.
 
-   Since it is not atomic with the quote or the event log, a mismatch is
-   not a failure.
+   Since the read is not atomic with the quote or the event log, a
+   mismatch is not a failure.
 
    Looping through quote / PCR read cycles until the quote matches the PCR
    read will lead to poor performance and perhaps timeouts, especially
    early when IMA is measuring many files.
 
-#. Design for incremental attestations.
+-  Design for incremental attestations.
 
    Until a reboot, the IMA event log receives only appends. Once the
    earlier measurements are verified, there is no need to verify them
    again. The verified PCR 10 value serves as state.
 
    For a long lived platform, eventually most files will be measured and
-   few or no new events need be processes.
+   few or no new events need be processed.
 
 Multiple PCRs
-~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The IMA subsystem is adding a hook ima_measure_critical_data() to
-measure integrity critical data beyond file hashes and signatures.
-Examples are:
+IMA may extend to more than one PCR using the policy condition
+:ref:`pcr-value`. Even in this case, the payload is added to the
+**same** IMA event log.
 
--  an SELinux policy
+Because there is only one IMA event log, and because each append /
+extend operation is atomic with other pairs, the verification
+algorithm does not change: replay the event log until the calculated
+PCR digest matches that of the quote.
 
--  kernel information such as the kernel version
+   Note: It is important that future IMA kernel designs do **not** use
+   different event logs.  If that occurred, the verifier would replay
+   multiple event logs, each of which could have extra events.
+   Calculating the quoted PCR digest would become computationally
+   difficult.
 
-This hook does the event append / extend, optionally to a PCR other than
-PCR 10. The payload is added to the **same** IMA event log.
-
-Why is this important?
-
-If the additional data used a separate event log, the verifier would
-replay multiple event logs, each of which could have extra events.
-Calculating the quoted PCR digest would be difficult.
-
-Because there is only one event log, and because each append / extend
-operation is atomic with other pairs, the verification algorithm does
-not change: replay the event log until the calculated PCR digest matches
-that of the quote.
 
 .. _ima-event-log-location:
 
@@ -90,7 +96,7 @@ IMA Event Log Location
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Linux kernel creates and writes the IMA Event Log (also known as
-the measurement list or integrity log) pseudofiles.
+the measurement list or integrity log) pseudo-files.
 
 There are two formats:
 
@@ -110,7 +116,7 @@ is linked to
 for backward compatibility.
 
 Normally, systemd mounts securityfs in the kernel. It is possible that
-this pseudofile will not exist because securityfs is not
+this pseudo-file will not exist because securityfs is not
 mounted. Remedy this by adding this line to ``/etc/fstab``:
 
 ::
@@ -153,10 +159,10 @@ IMA Event Log Format
 This details the binary IMA event log format, field by field.
 
 Multi-byte integer values (PCR index, length, etc.) are in the byte
-order of the host where the event log was created. The sender can
-convert to network byte order before transmission, as long as the values
-are not hashed. For values that are hashed, the receiver must know the
-byte order.
+order of the host where the event log was created, **except where
+otherwise noted**. The sender can convert to network byte order before
+transmission, as long as the values are not hashed. For values that
+are hashed, the receiver must know the byte order.
 
 Sizes and lengths are always in bytes.
 
@@ -164,8 +170,8 @@ Fields are always concatenated with no padding.
 
 The log has no specified maximum number of records. A faulty policy
 that measures rapidly changing files like /var/log can have 100,000's
-of records.  A reasonable policy will have about 5000 entries at boot
-and can grow to 100,000 over time based on usage.
+of records.  A reasonable policy will trigger about 5000 entries at
+boot and the log can grow to 100,000 over time based on usage.
 
 .. _ima-event-log-ascii-format:
 
@@ -207,7 +213,7 @@ also be all zeros.
    hashed.
 
 An all zeros hash indicates a measurement log violation.  IMA is
-invalidating an entry.  Trust in entries after that are up to end
+invalidating an entry.  Trust in entries after that are up to the end
 user. Cases include:
 
 * if the policy rule includes :ref:`digest-type` ``=verity`` and the
@@ -265,7 +271,8 @@ This is a printable string representing the template name.
 
 The string is NOT nul terminated. It is guaranteed to be printable.
 
-For legal names, see :ref:`template-data-fields`.
+For legal names, see :ref:`built-in-templates` and
+:ref:`template-data-fields`.
 
 Template Data Length
 ^^^^^^^^^^^^^^^^^^^^
@@ -556,8 +563,8 @@ terminator after the second ``:``.
 n
 ^^^^^
 
-``n`` is a file name within the ``ima`` template. ``n`` cannot be used
-in custom template.
+``n`` is a file name within the :ref:`ima` template. ``n`` cannot be used
+in a custom template.
 
 Unlike :ref:`n-ng`:
 
@@ -624,7 +631,7 @@ over the meta-data.
 
    - If ``security.evm`` is a portable signature, it is used.
 
-   - Else the is no signature.
+   - Else there is no signature.
 
 The ``security.evm`` portable signature is over the file meta-data.
 
@@ -634,9 +641,11 @@ An example for add a ``security.evm`` portable signature is at
 IMA supports several signature algorithms, including:
 
 * RSA-2048
-* ECSA
+* ECDSA
 * ECRDSA (GOST)
 * SM2
+
+.. _signature-length:
 
 Signature Length
 ''''''''''''''''
@@ -672,11 +681,12 @@ The legal values are:
 
 * ``0x03`` EVM_IMA_XATTR_DIGSIG
 
-  For this vakue, the :ref:`signature-version` is always 0x02.
+  For this value, the :ref:`signature-version` is always 0x02.
 
 * ``0x05`` EVM_XATTR_PORTABLE_DIGSIG
 
-  This indicates that the signature is the portable signature of EVM file meta-data. 
+  This indicates that the signature is the portable signature of EVM
+  file meta-data.
 
 * ``0x06`` IMA_VERITY_DIGSIG
 
@@ -742,7 +752,8 @@ bytes of the key's X.509 certificate Subject Key Identifier.
 Signature Size
 _____________________
 
-This is a 2-byte integer representing the size of the Signature field.
+This is a 2-byte integer representing the size of the Signature field
+in **big endian** format.
 
     Note that there is redundancy, in that this field must be
     consistent with the signing public key pointed to by the
@@ -755,7 +766,9 @@ Signature
 
 This field represents the signature over the File Data Hash using the
 key specified by the Public Key Identifier and the hash algorithm
-represented by the (two) Hash Algorithm fields.
+represented by the (two) Hash Algorithm fields, the signature
+:ref:`signature-hash-algorithm` and the file data
+:ref:`hash-algorithm`.
 
 
 .. _evmsig:
@@ -780,15 +793,6 @@ buf
 The buffer contains a variable length buffer whose contents is
 determined by the :ref:`n-ng` field. The :ref:`n-ng` field
 is not a file name.
-
-When triggered by the measure :ref:`func-key-check` policy rule, it
-measures data as it is loaded on different
-:ref:`keyrings`. The :ref:`n-ng` field is the nul terminated name:
-
-* :ref:`dot-ima-1`
-* :ref:`dot-builtin-trusted-keys-1`
-* :ref:`dot-blacklist-1`
-* others to be documented
 
 When triggered by the measure :ref:`func-critical-data` policy rule,
 it measures data such as the SELinux state. The :ref:`n-ng` field
@@ -815,6 +819,15 @@ the :ref:`n-ng` field is
 .. warning::
 
    document the ``boot_aggregate`` measurement somewhere.  What triggers it?
+
+When triggered by the measure :ref:`func-key-check` policy rule, it
+measures data as it is loaded on different :ref:`keyrings`. The
+:ref:`n-ng` field is the nul terminated name of the keyring:
+
+* :ref:`dot-ima-1`
+* :ref:`dot-builtin-trusted-keys-1`
+* :ref:`dot-blacklist-1`
+* others to be documented
 
 .. _dot-ima-1:
 
@@ -854,7 +867,7 @@ kexec-cmdline
 If the file name is ``kexec-cmdline``, ``buf`` is a non-nul terminated
 string of boot command line arguments.
 
-This measurement is triggered by func=KEXEC_CMDLINE and a kexec()
+This measurement is triggered by :ref:`func-kexec-cmdline` and a kexec()
 call.
 
 .. _modsig:
@@ -866,7 +879,7 @@ modsig
 document as in RFC 5652.
 
 For appended signatures, ``modsig`` typically requires :ref:`d-modsig`,
-the :ref:`file-data-hash` calculated omiting the appended signture.
+the :ref:`file-data-hash` calculated omitting the appended signature.
 
 When there is no appended signature, this field will have a length of
 zero.
@@ -919,7 +932,7 @@ other).
 xattrnames
 ^^^^^^^^^^^^
 
-``xattrnames`` is a 4-byte length and a nul termnated text list of
+``xattrnames`` is a 4-byte length and a nul terminated text list of
 xattr names (separated by ``|``).  The length can be zero if no xattrs
 are present.
 

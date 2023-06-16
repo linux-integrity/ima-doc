@@ -14,12 +14,12 @@ known items should be measured.  Examples are binaries, shared
 libraries, and system configuration files. Frequently changing items
 should not be measured.  Examples are log files or databases.
 
-1. **Performance**.  The TPM is slow. This not an issue for an item
-that rarely changes, since IMA tracks measurements and does not
-re-measure an item that has not changed.  However, items that change
-often will cause frequent measurements, degrading performance.
+1. **Performance**.  The TPM is slow. This not an issue if items
+rarely change, since IMA tracks measurements and does not re-measure
+an item that has not changed.  However, items that change often will
+cause frequent measurements, degrading performance.
 
-2. **Event log size**: Each log record can be 100 bytes. A system
+2. **Event log size**: Each log record can be 300 bytes. A system
 might have 5000 records at boot and grow as large as 100,000 records
 over time. This is reasonable unless the platform is memory
 constrained.
@@ -31,8 +31,8 @@ linearly with the number of kexec's.
 See :ref:`kexec-ima-impact`.
 
 However, if a measured item changes often, there is no longer any
-typical log size.  Each change can cause a new measurement and 1M's of
-measurements are possible.
+typical log size.  Each change can cause a new measurement and
+millions of measurements are possible.
 
 3. **Verifier performance**: The verifier uses a TPM ``quote`` as an
 integrity signature over the IMA event log. It needs all events to
@@ -173,9 +173,11 @@ the kernel.
 Built-in Policy Rules
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Built-in policy rules are compiled into the kernel. Their contents cannot
-be changed, but they can be replaced at boot time or run time.  They
-are specified using the :ref:`boot-command-line-arguments`.
+Built-in policy rules are compiled into the kernel. Their contents
+cannot be changed, but some can be replaced at boot time or runtime.
+They are specified using the :ref:`boot-command-line-arguments`.  The
+policy rules added when secure boot is enabled in the firmware are not
+replaced.
 
 The boot command selects the built-in policy. The command can be
 specified on the boot command line (single boot) or in the grub
@@ -191,17 +193,24 @@ Enabling secure boot in the firmware adds these policy statements:
    measure func=KEXEC_KERNEL_CHECK
    measure func=MODULE_CHECK
 
-The policy rules added by secure boot in the firmware are not
-replaced.
 
-The secure boot state can be tested with
+
+For EFI-based systems, the secure boot state can be tested with
 
 ::
 
    mokutil --sb state
 
-Specifying none of the below on the command line yields a policy
-with no policy rules.
+For a PowerVM guest, the secure boot state can be tested by looking at
+the device tree property ``/proc/device-tree/ibm,secure-boot``. If its
+value is greater than 1, secure boot is enabled, else it is disabled.
+
+.. warning::
+
+   For OpenPOWER, ...
+
+Specifying none of the below ``ima_policy`` options on the boot
+command line yields a policy with no policy rules.
 
 .. _ima-measurement-policies:
 
@@ -242,15 +251,15 @@ ima_tcb
 ima_policy=tcb
 '''''''''''''''
 
-  ``tcb`` applies an IMA policy that meets the needs of the Trusted Computing Base
-  (TCB).
+  ``tcb`` applies an IMA policy that meets the needs of the Trusted
+  Computing Base (TCB).
 
   The rules measure all programs directly executed or mmap'd for
   execution (such as shared libraries).  They measure files opened by
-  root ((euid, uid) == 0) with the read bit set.  It measure all
+  root ((euid, uid) == 0) with the read bit set.  It measures all
   kernel modules loaded and all firmware loaded.
 
-  The policy excludes some "pseduo" filesystem from measurement.
+  The policy excludes some "pseudo" filesystem from measurement.
 
 ::
 
@@ -280,7 +289,8 @@ ima_policy=tcb
 ima_policy=critical_data
 ''''''''''''''''''''''''''''''
 
-  ``critical_data`` applies a policy that contains this rule.
+  ``critical_data`` applies a policy that contains this
+  :ref:`func-critical-data` rule.
 
   ::
 
@@ -299,7 +309,8 @@ ima_policy=secure_boot
 ''''''''''''''''''''''''''''''
 
   ``secure_boot`` appraises loaded kernel modules, firmware, the kexec
-  kernel image and the IMA policy itself, based on a file signature.
+  kernel image and the IMA policy itself, based on a file signature
+  stored as an extended attribute.
 
 ::
 
@@ -322,7 +333,7 @@ ima_policy=appraise_tcb
 ''''''''''''''''''''''''''''''
 
   ``appraise_tcb`` appraises all files owned by root. The policy
-  excludes some "pseduo" filesystem from appraisal.
+  excludes some "pseudo" filesystem from appraisal.
 
 
   ::
@@ -355,29 +366,30 @@ is replaced by the rule
 
     appraise fowner=0 appraise_type=imasig
 
-which requires all files to be signed.  Hash is insufficiant.
+which requires all files to be signed.  Hashes are insufficiant.
 
 .. _ima-policy-fail-securely:
 
 ima_policy=fail_securely
 ''''''''''''''''''''''''''''''
 
-``file_securely`` affects the appriasal of untrusted mounted
+``file_securely`` affects the appraisal of untrusted mounted
 filesystems. An example is a FUSE filesystem.
 
-FUSE (Filesystem in Userapce) filesystems are inherently untrusted.  A
-file's data content presented on file open is not necessarily the same
-file data content subsequently accessed.  For this reason, files on
-unprivileged mounted FUSE filesystems are never trusted; files on
-privileged FUSE mounted filesystems are "trusted" unless the boot
-command line policy is specified.
+   FUSE (Filesystem in Userspace) filesystems are inherently untrusted.  A
+   file's data content presented on file open is not necessarily the same
+   file data content subsequently accessed.  For this reason, files on
+   unprivileged mounted FUSE filesystems are never trusted; files on
+   privileged FUSE mounted filesystems are "trusted" unless the boot
+   command line policy is specified.
 
 When present, appraisal of untrusted mounted filesystems always
-fails.  An example is a Fuse filesystem mounted by root.
+fails.  An example is a FUSE filesystem even when mounted by root.
 
 When absent, they do not fail.
 
-An untrusted filesystem not mounted by root always fails appraisal.
+A filesystem not mounted by root is considered untrusted and always
+fails appraisal.
 
 IMA Template Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -387,7 +399,7 @@ ima_template
 
 This boot command line argument sets a logging format for the
 :ref:`ima-event-log`.  See :ref:`config-ima-default-template` for the
-compiled in default. See :ref:`built-in-templates` for legal values.
+compiled-in default. See :ref:`built-in-templates` for legal values.
 See the values in :ref:`template-data-fields` for the
 effects.
 
@@ -411,7 +423,7 @@ for the custom template legal values.
 Custom Policy
 ~~~~~~~~~~~~~
 
-A custom policy may specified at boot time or at run time, or both.
+A custom policy may specified at boot time or at runtime, or both.
 
 The policy file has one :ref:`policy-syntax-action` per line.  Empty
 lines are forbidden.  Lines beginning with ``#`` are comments.  Use
@@ -430,7 +442,8 @@ If running appraisal and
 
 is part of the built-in policy, the custom policy file is itself
 appraised. For example, the :ref:`boot-time-custom-policy`, typically
-``/etc/ima/ima-policy`` has to itself be signed.
+``/etc/ima/ima-policy`` has to be signed.  :ref:`evmctl-policy-signature`
+shows a signing utility.
 
 
 .. _boot-time-custom-policy:
@@ -452,50 +465,60 @@ including an empty file (zero length) is illegal and will prevent
 Linux from booting.**
 
 **Test the custom policy first.** Put the policy in a temporary file,
-then cp the file to ``/sys/kernel/security/ima/policy``. On failure,
+then load the file to ``/sys/kernel/security/ima/policy``. On failure,
 use ``dmesg`` to check for errors.
 
-.. warning::
+   Note that this test does not always work for policy rules written
+   in terms of SELinux labels.
 
-  There is a corner case where the test does not work.
+   For example, a test may succeed on a platform with SELinux enabled.
+   If, after reboot SELinux is disabled or the SELinux policy has not
+   been loaded, the IMA policy rule will prevent the boot.
 
-  On boot, all selinux labels must exist.  But during these test cp,
-  they do not have to exist.
+   If, after a successful test, the SELinux policy is updated and
+   labels present in the IMA policy do not exist anymore, the IMA
+   policy rule will prevent the boot.
 
-  Explain it and the recovery procedure.
+.. _runtime-custom-policy:
 
-.. _run-time-custom-policy:
-
-Run Time Custom Policy
+Runtime Custom Policy
 ^^^^^^^^^^^^^^^^^^^^^^
 
-A policy can be augmented at run time. A custom policy from a file can
-be copied (cp can be used) to ``/sys/kernel/security/ima/policy``.
+The policy in ``/sys/kernel/security/ima/policy`` can be augmented at
+runtime.
 
-If a boot time custom policy was not specified, the first custom policy
-replaces the existing policy.
+If a boot time custom policy was not specified, the first runtime
+custom policy replaces the existing policy.
 
-If a boot time custom policy was specified, the first custom policy is
-appended to the exist policy.
+If a boot time custom policy was specified, the first runtime custom
+policy, if permitted, is appended to the existing policy.
 
 Subsequent updates, if permitted, are appends.
 
 If the kernel is configured with :ref:`config-ima-write-policy` false,
-the copy may be done once per boot. If true, the policy may be updated
-multiple times.
+one update is permitted, which is either the
+:ref:`boot-time-custom-policy` or a :ref:`runtime-custom-policy`.  If
+true, the policy may be updated multiple times.
 
-A malformed policy will report the error ``cp: error writing 'policy':
-Invalid argument`` and ``dmesg`` will display the error.
+Any of the below methods can be used if policies are permitted to be
+unsigned (see :ref:`func-policy-check`):
 
-As an alternative, a fully qualified path name can be copied. A slash
-(/) as the first character causes the contents to be treated as a file
-name rather than a list of policy rules. The contents of that file is
-the list of policy rules.
+::
 
-This alternative is required when appraisals require signed policies.
-See :ref:`func-policy-check`.
+   echo /home/user/tmpfile > /sys/kernel/security/ima/policy
+   cp tmpfile /sys/kernel/security/ima/policy
+   cat tmpfile > /sys/kernel/security/ima/policy
 
+A malformed policy will report the error ``Invalid argument`` and
+``dmesg`` will display the error. An unsigned or incorrectly signed
+policy file will report the error ``Permission denied``.
 
-.. warning::
+The latter two methods stream the policy rules line by line. They will
+not succeed when the rule :ref:`func-policy-check` is present,
+requiring a policy to be signed.
 
-   Test with signed policies. Do cat and cp both work?
+The first method, required when appraisals require signed policies,
+streams the fully qualified path name. The slash (/) as the first
+character causes the stream to be treated as a file name rather than a
+list of policy rules. The kernel reads the entire file and can check
+the signature before loading the policy.

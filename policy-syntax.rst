@@ -8,7 +8,7 @@ Each line defines a policy rule. A policy rule contains these fields:
 * `Policy Syntax Action`_
 * `Policy Syntax Conditions`_
 
-A rule must have an action. An action must have at least one condition
+A rule must have an action. A rule must have at least one condition
 and may have more than one.
 
 The policy is parsed until the first match for each of the three
@@ -22,14 +22,14 @@ Policy Syntax Action
 
 An Action is often followed by :ref:`policy-syntax-conditions`.
 Without conditions, the rule matches anything.  Such a rule typically
-follows a set of _dont rules.
+follows a set of "dont\_" rules.
 
 The meta-data has either a hash or a signature.
 
 -  ``measure`` - add a measurement to the IMA event log and the TPM PCR
 -  ``dont_measure`` - do not measure the event
 -  ``appraise`` - evaluate a file’s integrity. A file’s integrity may be a
-   file hash or signature.
+   file hash or signature.  Appraisal requires a :ref:`func` condition.
 -  ``dont_appraise`` - do not appraise the event
 -  ``audit`` - include the file hash into the audit log. There is no
    dont_audit.
@@ -38,42 +38,47 @@ The meta-data has either a hash or a signature.
    reboot
 - ``dont_hash`` - opposite of hash
 
-The use case for ``hash`` is as follows:
+   The use case for ``hash`` is as follows:
 
-There can be one set of policy rules at boot, another custom policy
-when running. Suppose that the custom policy does not appraise certain
-files, but the boot time policy (being generic) would appraise them.
-When such a file is created, it would fail appraisal at a reboot.
+   There can be one set of policy rules at boot, another custom policy
+   when running. Suppose that the custom policy does not appraise certain
+   files, but the boot time policy (being generic) would appraise them.
+   When such a file is created, it would fail appraisal at a reboot.
 
-To avoid the failure, ``hash`` (in the custom policy) causes a hash to
-be calculated. At the reboot, the hash is correct and the boot time
-policy rule does not cause a failure.
+   To avoid appraisal failure of a newly created file by the boot
+   policy, install a ``hash`` rule (in the custom policy) to have a
+   hash created for the file. At the reboot, the hash is correct and
+   the boot time ``appraise`` policy rule does not cause a failure.
 
 A measurement never blocks access to a file.
 
-An appraisal failure action depends on several factors:
+An appraisal failure may block the operation specified by the
+:ref:`func` condition.  The action depends on several factors:
 
--  If the kernel parameter :ref:`config-ima-appraise-bootparam` is false, IMA
-   must be in enforce mode. The function is blocked.
+- If the kernel parameter :ref:`config-ima-appraise-bootparam` is
+  false, IMA must be in ``enforce`` mode. The operation is blocked.
 
--  If the kernel parameter :ref:`config-ima-appraise-bootparam` is
-   true, there are four different boot modes. They can be specified in the
-   :ref:`boot-command-line-arguments` :ref:`ima-appraise`.
+- If the kernel parameter :ref:`config-ima-appraise-bootparam` is
+  true, there are four different boot modes. They can be specified in the
+  :ref:`boot-command-line-arguments` :ref:`ima-appraise`.
 
-   -  :ref:`ima-appraise` = ``enforce`` - The function is blocked.
-   -  :ref:`ima-appraise` = ``off`` - The function is not blocked.
-   -  :ref:`ima-appraise` = ``log`` - Log the failure to the system log. The function is not blocked.
+   - :ref:`ima-appraise` = ``enforce`` - The operation is blocked.
+   - :ref:`ima-appraise` = ``off`` - The operation is not blocked.
+   - :ref:`ima-appraise` = ``log`` - Log the failure to the system log.
+     The operation is not blocked.
    - :ref:`ima-appraise` = ``fix`` - Update the file hash and label
-     it.  See :ref:`evm` = ``fix`` for updating the :ref:`evm-hmac`. A
-     signature cannot be updated.
+     it.  See :ref:`evm` = ``fix`` for updating the :ref:`evm-hmac`. An
+     asymmetric (e.g., RSA, ECDSA) signature cannot be updated.
 
 .. _policy-syntax-conditions:
 
 Policy Syntax Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The conditions qualify the action. Each action must have at least one
-condition.  Conditions form a logical AND.
+These conditions qualify the :ref:`policy-syntax-action`. Each action
+must have at least one condition.  If a policy rule has multiple
+conditions then all of these conditions have to be met for the action
+to be triggered (logical AND).
 
 File policy rules may include the filesystem, owner, etc.,
 but not the path name.  The file can be anywhere or have links.  The
@@ -108,7 +113,7 @@ func                              measure        appraise audit hash
 
 ``KEXEC_KERNEL_CHECK``, ``KEXEC_INITRAMFS_CHECK``, and
 ``KEXEC_CMDLINE`` apply to a soft reboot (a kexec() system call), not
-the the original hard boot.  The hard boot items should be measured by
+the original hard boot.  The hard boot items should be measured by
 the firmware.
 
 .. _func-mmap-check:
@@ -116,7 +121,7 @@ the firmware.
 func=MMAP_CHECK
 '''''''''''''''''''''''''
 
-This triggers when a file, such as libraries, is mmapped into
+This triggers when a file, such as a library, is mmapped into
 memory.
 
 This can be used for the case where a file is open for read (not
@@ -127,18 +132,19 @@ execute) and later mmapped for execute.
 func=BPRM_CHECK
 '''''''''''''''''''''''''
 
-Binary program check triggers when a file is about to be executed
-as a program. It uses the existing (parent) process credentials.
+Binary program check triggers when a file is about to be executed as a
+program. It uses the existing (parent) process credentials. See also
+:ref:`func-creds-check`, which triggers using the child process
+credentials.
 
-It triggers when the file is locked before execution. It ensures
-that the file cannot be modified by an open for write, which could
-occur if the func=FILE_CHECK mask=MAY_EXEC rule was used.
-
-See also :ref:`func-creds-check`, which triggers using the child
-process credentials.
+   The ``BPRM_CHECK`` rule triggers as close as possible to file
+   execution, when the file can no longer be modified.
+   With a :ref:`func-file-check` :ref:`mask` =MAY_EXEC rule, it is
+   possible for the file to be modified by an open for write after the
+   rule triggers but before the actual execution.
 
 Example: If user 48 is the apache user id, this policy rule
-triggers when a file is executed by the the apache httpd daemon.
+triggers when a file is executed by the apache httpd daemon.
 
 ::
 
@@ -151,7 +157,7 @@ executed.
 
       appraise func=BPRM_CHECK mask=MAY_EXEC fowner=0
 
-Example: This policy rule measures every executable, but not
+Example: This policy rule measures all executables, but not
 configuration files.
 
 ::
@@ -195,7 +201,10 @@ runs as unconfined_t, ignoring the context of the parent process.
 func=FILE_CHECK
 '''''''''''''''''''''''''
 
-This triggers on a file open, see mask_.
+This triggers on a file open, see :ref:`mask`.
+
+This rule is not recommended with :ref:`mask` =MAY_EXEC.  Use
+:ref:`func-bprm-check`.
 
 ::
 
@@ -238,7 +247,7 @@ Note:
 
    The system does its own signature checking independent of IMA if
    ``CONFIG_MODULE_SIG`` is enabled and either
-   ``CONFIG_MODULE_SIG_FORCE`` is enabled the boot command line
+   ``CONFIG_MODULE_SIG_FORCE`` is enabled or the boot command line
    contains ``module.sig_enforce``.
 
    Kernel modules are located in the ``/lib/modules/`uname
@@ -274,26 +283,32 @@ time.
 func=POLICY_CHECK
 '''''''''''''''''''''''''
 
-This triggers on loading a file as an additional custom IMA policy.
+This triggers on loading a file as an additional IMA
+:ref:`custom-policy`.
 
-If this rule was not already present, it will trigger on
-future custom policy loads, but not the one being loaded.
+If this rule was not already present at the time that a policy is
+loaded, it will trigger on future custom policy loads, but not the one
+being loaded.
 
-Since a custom policy replaces the :ref:`built-in-policy-rules`,
-that policy should also have ``func=POLICY_CHECK`` to complete
-the chain of trust.
+Since a custom policy replaces the :ref:`built-in-policy-rules`, that
+policy should also have ``func=POLICY_CHECK`` to complete the chain of
+trust.
+
+This ``appraise`` rule asserts that the policy replacing the built-in
+policy, either at boot time using ``/etc/ima/ima-policy`` or at
+runtime by copying to ``/sys/kernel/security/ima/policy``, must be
+validly signed. The signature over the file is verified (appraised)
+using a key on the :ref:`dot-ima` keyring. If correct, the file
+contents are copied.
+
 
 ::
 
    appraise func=POLICY_CHECK
 
-then the policy replacing the built-in policy, either at boot time using
-/etc/ima/policy or at run time by copying to
-/sys/kernel/security/ima/policy, must be validly signed.
+See :ref:`runtime-custom-policy` for guidance on handling a signed
+policy.
 
-Copying at run time cannot directly copy policy rules. Rather, copy a
-fully qualified path name. The signature over the file is verified
-(appraised). If correct, the file contents are copied.
 
 .. _func-kexec-kernel-check:
 
@@ -384,9 +399,9 @@ the default or boot command line specifier.
 func=CRITICAL_DATA
 '''''''''''''''''''''''''
 
-This triggers on a change to critical data stored in kernel
-memory such as an SELinux policy or mode, device-mapper targets
-like dm-crypt and dm-verity state, and the kernel version.
+This triggers on a change to security critical data stored in kernel
+memory such as an SELinux policy or state, device-mapper targets like
+dm-crypt and dm-verity state, and the kernel version.
 
 ``CRITICAL_DATA`` forces the IMA template to :ref:`ima-buf`
 independent of the default or boot command line specifier.
@@ -421,11 +436,13 @@ hash algorithms. The approved algorithm list is in the policy rule.
 
    appraise func=SETXATTR_CHECK appraise_algos=sha256,sha384,sha512
 
+.. _mask:
+
 mask
 ^^^^
 
-mask qualifies and is only legal with func=FILE_CHECK. Without ``mask``,
-the rule triggers on any of read, write, execute, or append.
+mask qualifies and is only legal with :ref:`func-file-check`. Without
+``mask``, the rule triggers on any of read, write, execute, or append.
 
 The values match the kernel flags:
 
@@ -446,12 +463,12 @@ matches read or read/write.
 keyrings
 ^^^^^^^^^
 
-See :ref:`keyrings` for a description of the keyrings..
+See :ref:`keyrings` for a description of the keyrings.
 
-keyrings qualifies and is only legal with func=KEY_CHECK.
+keyrings qualifies and is only legal with :ref:`func-key-check`.
 
-Without keyrings=, KEY_CHECK measures all keyrings. With keyrings=, it
-only measures the keyrings that are listed.
+Without keyrings, :ref:`func-key-check` measures all keyrings. With
+``keyrings=``, it only measures the keyrings that are listed.
 
 The commonly used keyrings are:
 
@@ -482,15 +499,16 @@ header
 When the magic numbers are not available, see fsname_.
 
 For the include actions (i.e., not the dont\_ actions), fsmagic
-qualifies and is only legal with func=FILE_CHECK.
+qualifies and is only legal with :ref:`func-file-check`.
 
 IMA looks at the magic values of the filesystem itself, not those of the
 individual files. The magic number indicates the filesystem type.
 
-The most common use case for fsmagic is with dont_measure, to
-exclude a filesystem from the measurement list. For example, a
-built-in policy excludes tmpfs, which holds /tmp. Temporary files
-typically cannot be included on an approved list of file hashes.
+The most common use case for fsmagic is with ``dont_measure``, to
+exclude files residing on a particular filesystem from being
+measured. For example, a built-in policy excludes tmpfs, which holds
+/tmp. Temporary files typically cannot be included on an approved list
+of file hashes.
 
 The command ``df -Th`` displays the file types present on a system.
 
@@ -543,13 +561,13 @@ Examples:
 fsuuid
 ^^^^^^^^^^
 
-fsuuid represents the filesystem uuid.
+fsuuid represents the filesystem (partition) uuid.
 
-The uuid is not standard. It is typically a random number.
-The uuid can be viewed using ``blkid`` as root.
+This uuid is not standard across platforms. It is typically a random
+number.  The uuid can be viewed using ``blkid`` as root.
 
 A useful application of fsuuid is to define different rules for
-different file systems. This permits testing without bricking a
+different filesystems. This permits testing without bricking a
 system.  For example, the signed operating system and stable
 components can be put on a read-only file system and appraised, while
 unsigned files being tested are on another, not appraised file system.
@@ -613,7 +631,7 @@ E.g., a policy rule could specify a file in the wheel group.
 label
 ^^^^^^^^
 
-label qualifies and is only legal with func=CRITICAL_DATA.
+label qualifies and is only legal with :ref:`func-critical-data`.
 
 Values include:
 
@@ -650,7 +668,7 @@ The allowed values are:
 
 ``modsig`` requires :ref:`config-ima-appraise-modsig`.
 
-Thise example appraises an executable fs-verity file, and requires a
+This example appraises an executable fs-verity file, and requires a
 ``sigv3``.
 
 ::
@@ -658,7 +676,8 @@ Thise example appraises an executable fs-verity file, and requires a
     appraise func=BPRM_CHECK digest_type=verity appraise_type=sigv3
 
 This example measures and appraises a kexec kernel image with an
-appended signature.
+appended signature or a signature in a ``security.ima`` extended
+attribute..
 
 ::
 
@@ -704,16 +723,17 @@ For an attestation server to validate an EVM signature, use the
 permit_directio
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-This condition has no parameters. If the file is open with the
+This condition has no parameters. If the file is opened with the
 ``O_DIRECT`` flag, this rule prevents the file from being measured or
 appraised.
 
-Direct I/O (open with the ``O_DIRECT`` flag) is used to
-bypass file system buffering. The open permits direct access, not
-through the filesystem, often for databases.
+Direct I/O (open with the ``O_DIRECT`` flag) is used to bypass
+filesystem buffering. The open permits direct access to the file
+without buffering.  It is often used for databases.
 
-IMA brings the entire file into memory, defeating the purpose of
-direct I/O. This rule prevents that.
+Without ``permit_directio``, IMA would read the entire file, thus thus
+defeating the expected performance gain expected from direct I/O. The
+following rules show how to prevent this:
 
    ::
 
@@ -761,7 +781,7 @@ See :ref:`config-fs-verity`.
 appraise_flag
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-``appraise-flag`` affects only :ref:`appraisal` of a file with an
+``appraise_flag`` affects only :ref:`appraisal` of a file with an
 appended :ref:`signature`.
 
 The permitted value is:
@@ -784,7 +804,7 @@ kernel modules. Therefore, other items would never be on the
 :ref:`dot-blacklist`, and checking it would incur an unnecessary
 performance penalty.
 
-These examples show that :ref:`dot-blacklist` keyring is only
+These examples show that the :ref:`dot-blacklist` keyring is only
 checked for a file data :ref:`hash` in the two above cases.
 
 ::
@@ -800,11 +820,11 @@ appraise_algos
 ``appraise_algos`` provides the approved signature hash algorithm list
 to the :ref:`func-setxattr-check` policy rule.
 
-The value is a comma separated list, and can include any
-algorithm built into the kernel
+The value is a comma separated list of hash algorithms, and can
+include any hash algorithm built into the kernel.
 
-In this example, only SHA-256 and SHA-384 are accepted when adding a ``security.ima``
-file signature extended attribute.
+In this example, only SHA-256 and SHA-384 are accepted when adding a
+``security.ima`` file signature extended attribute.
 
 ::
 
@@ -823,7 +843,7 @@ The use case for a ``pcr=`` rule is a Linux-based (not UEFI) boot
 loader. Here, IMA in the boot loader is measuring and extending PCRs
 other than PCR 10.
 
-This example shows the firmware to operation system transition (kexec)
+This example shows the firmware to operating system transition (kexec)
 measured into PCR 4 and the initramfs measured into PCR 5.
 
 ::
@@ -834,7 +854,8 @@ measured into PCR 4 and the initramfs measured into PCR 5.
 Note:
 
    There is no guaranteed range check on the PCR value.  Kernel
-   6.2.14-200 accepts PCR 0-63.
+   6.2.14-200 accepts PCR 0-63.  A typical TPM supports PCR 0-23 but
+   some are restricted based on locality.
 
 
 .. _obj-user-equals:
@@ -934,7 +955,7 @@ This string is an LSM SELinux label.
 
       Needs examples.
 
-selinux variations
+SELinux variations
 ^^^^^^^^^^^^^^^^^^^^
 
 Builtin policy rules may measure too much. Measurement and appraisal
