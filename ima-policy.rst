@@ -205,6 +205,7 @@ For a PowerVM guest, the secure boot state can be tested by looking at
 the device tree property ``/proc/device-tree/ibm,secure-boot``. If its
 value is greater than 1, secure boot is enabled, else it is disabled.
 
+
 .. warning::
 
    For OpenPOWER, ...
@@ -279,7 +280,7 @@ ima_policy=tcb
    measure func=MMAP_CHECK mask=MAY_EXEC
    measure func=BPRM_CHECK mask=MAY_EXEC           binary executed
    measure func=FILE_CHECK mask=^MAY_READ euid=0
-   measure func=FILE_CHECK mask=^MAY_READ uid=0    root executed r/o or r/w
+   measure func=FILE_CHECK mask=^MAY_READ uid=0    root opened r/o, r/w
    measure func=MODULE_CHECK
    measure func=FIRMWARE_CHECK
    measure func=POLICY_CHECK
