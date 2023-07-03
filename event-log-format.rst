@@ -799,7 +799,8 @@ When triggered by the measure :ref:`func-critical-data` policy rule,
 it measures data such as the SELinux state. The :ref:`n-ng` field
 may be:
 
-* ``selinux-state`` - 
+* ``selinux-state`` - a non-nul terminated string holding the SELinux
+  state
 * ``selinux-policy-hash`` - 
 
 .. warning::
