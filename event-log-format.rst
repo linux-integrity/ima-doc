@@ -827,6 +827,7 @@ measures data as it is loaded on different :ref:`keyrings`. The
 
 * :ref:`dot-ima-1`
 * :ref:`dot-builtin-trusted-keys-1`
+* :ref:`dot-platform`  
 * :ref:`dot-blacklist-1`
 * others to be documented
 
