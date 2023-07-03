@@ -1,10 +1,11 @@
+===================================
 IMA Policy
-----------
+===================================
 
 .. _measure-policy-rule-design:
 
 Measure Policy Rule Design
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 While a good design should measure all security relevant events, there
 are good reasons to not simply "measure everything".
@@ -61,7 +62,7 @@ verifier cannot assess its security properties.
 .. _appraise-policy-rule-design:
 
 Appraise Policy Rule Design
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 Appraisal rules are restricted based on ``func`` values as shown in
 the :ref:`func` table.
@@ -125,7 +126,7 @@ E.g., :ref:`appraise-type` can require a signature.
 .. _policy-rule-order:
 
 Policy Rule Order
-~~~~~~~~~~~~~~~~~~~
+===================================
 
 Policy rules can originate from several sources.  They are determined in this order
 
@@ -160,7 +161,7 @@ the concatenation of the policies in a hard coded order listed in
 .. _reading-policies:
 
 Reading Policies
-~~~~~~~~~~~~~~~~~~~
+===================================
 
 The policy rules currently in effect can be viewed in the pseudo-file
 ``/sys/kernel/security/ima/policy``.
@@ -171,7 +172,7 @@ the kernel.
 .. _built-in-policy-rules:
 
 Built-in Policy Rules
-~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 Built-in policy rules are compiled into the kernel. Their contents
 cannot be changed, but some can be replaced at boot time or runtime.
@@ -216,12 +217,12 @@ command line yields a policy with no policy rules.
 .. _ima-measurement-policies:
 
 IMA Measurement Policies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 Refer to :ref:`fsmagic` for the value meanings. See :ref:`policy-rule-order`.
 
 ima_tcb
-'''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Deprecated, see :ref:`ima-policy-tcb`.
 
@@ -250,7 +251,7 @@ ima_tcb
 .. _ima-policy-tcb:
 
 ima_policy=tcb
-'''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   ``tcb`` applies an IMA policy that meets the needs of the Trusted
   Computing Base (TCB).
@@ -288,7 +289,7 @@ ima_policy=tcb
 .. _ima-policy-critical-data:
 
 ima_policy=critical_data
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   ``critical_data`` applies a policy that contains this
   :ref:`func-critical-data` rule.
@@ -300,14 +301,14 @@ ima_policy=critical_data
 .. _ima-appraise-policies:
 
 IMA Appraise Policies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 See :ref:`policy-rule-order`.
 
 .. _ima-policy-secure-boot:
 
 ima_policy=secure_boot
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   ``secure_boot`` appraises loaded kernel modules, firmware, the kexec
   kernel image and the IMA policy itself, based on a file signature
@@ -323,7 +324,7 @@ ima_policy=secure_boot
 .. _ima-appraise-tcb:
 
 ima_appraise_tcb
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Deprecated, same as :ref:`ima-policy-appraise-tcb`.
 
@@ -331,7 +332,7 @@ ima_appraise_tcb
 .. _ima-policy-appraise-tcb:
 
 ima_policy=appraise_tcb
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   ``appraise_tcb`` appraises all files owned by root. The policy
   excludes some "pseudo" filesystem from appraisal.
@@ -372,7 +373,7 @@ which requires all files to be signed.  Hashes are insufficiant.
 .. _ima-policy-fail-securely:
 
 ima_policy=fail_securely
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``file_securely`` affects the appraisal of untrusted mounted
 filesystems. An example is a FUSE filesystem.
@@ -393,10 +394,10 @@ A filesystem not mounted by root is considered untrusted and always
 fails appraisal.
 
 IMA Template Configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 ima_template
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boot command line argument sets a logging format for the
 :ref:`ima-event-log`.  See :ref:`config-ima-default-template` for the
@@ -405,7 +406,7 @@ See the values in :ref:`template-data-fields` for the
 effects.
 
 ima_template_fmt
-''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boot command line argument sets a logging format for the
 :ref:`ima-event-log`. See :ref:`template-data-fields`
@@ -422,7 +423,7 @@ for the custom template legal values.
 .. _custom-policy:
 
 Custom Policy
-~~~~~~~~~~~~~
+===================================
 
 A custom policy may specified at boot time or at runtime, or both.
 
@@ -450,7 +451,7 @@ shows a signing utility.
 .. _boot-time-custom-policy:
 
 Boot Time Custom Policy
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 The boot time policy, if specified in ``/etc/ima/ima-policy``, is
 loaded during Linux initialization. That is, early in Linux boot, a
@@ -483,7 +484,7 @@ use ``dmesg`` to check for errors.
 .. _runtime-custom-policy:
 
 Runtime Custom Policy
-^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 The policy in ``/sys/kernel/security/ima/policy`` can be augmented at
 runtime.

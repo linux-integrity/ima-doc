@@ -46,7 +46,8 @@ log. This can be useful for analytics and forensics.
 .. _measurement:
 
 Measurement
-------------------
+===================================
+
 
 IMA measurement has several steps:
 
@@ -68,7 +69,7 @@ See :ref:`measure-policy-rule-design` for implications.
 .. _appraisal:
 
 Appraisal
--------------
+===================================
 
 IMA Appraisal occurs only for file data. IMA generates a hash over the
 file, and validates it against meta-data to determine whether the file
@@ -117,7 +118,7 @@ information can be viewed in the system audit log with
 .. _hash:
 
 Hash
-~~~~~~~~~~
+-----------------------------------
 
 .. warning::
 
@@ -163,7 +164,7 @@ a read/write policy. The hash will be updated on a write, even in
 .. _signature:
 
 Signature
-~~~~~~~~~~~~
+-----------------------------------
 
 Signed files are immutable.
 
@@ -211,7 +212,7 @@ invalid.
 .. _audit:
 
 Audit
-------------------
+===================================
 
 Audit includes file hashes in the audit log, which can be used to
 augment existing system security analytics/forensics. IMA-audit
@@ -241,7 +242,7 @@ have ``type=INTEGRITY_RULE`` and the entry includes:
 .. _extended-verification-module:
 
 Extended Verification Module (EVM)
-----------------------------------------
+===================================
 
 EVM (Extended Verification Module) detects tampering of file
 meta-data. :ref:`evm-hmac` is limited to offline protection.
@@ -303,7 +304,7 @@ The same IMA :ref:`appraisal` rules trigger EVM appraisal if EVM is
 enabled.  See :ref:`evm-build-flags`.
 
 Enabling EVM
-~~~~~~~~~~~~~~~
+-----------------------------------
 
 The EVM extended attribute in ``security.evm`` can be
 viewed with
@@ -380,7 +381,7 @@ the resulting value will be 3.
 .. _evm-hmac:
 
 EVM HMAC
-~~~~~~~~~~~
+-----------------------------------
 
 This is an HMAC-sha1 across a set of security extended attributes,
 storing the HMAC as the extended attribute ``security.evm``.  The
@@ -426,7 +427,7 @@ systems for verification.
 .. _evm-signature:
 
 EVM Signature
-~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 When EVM asymmetric signature enforcement has been enabled, the
 verification key (X.509 certificate) must be available on the
@@ -448,7 +449,7 @@ meta-data signature in a distro package.
 .. _keyrings:
 
 Keyrings
-------------------------
+===================================
 
 The below kernel keyrings affect IMA.
 
@@ -462,7 +463,7 @@ To view the values, use :ref:`keyctl-show`.
 .. _`dot-builtin-trusted-keys`:
 
 .builtin_trusted_keys
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 These keys (certificates) are compiled into the kernel and loaded at
 boot time.
@@ -478,7 +479,7 @@ boot time.
 .. _dot-secondary-trusted-keys:
 
 .secondary_trusted_keys
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 These keys (certificates) are signed by a key on the
 :ref:`dot-builtin-trusted-keys` or :ref:`dot-machine` keyring.
@@ -495,7 +496,7 @@ They are loaded using :ref:`keyctl`.
 .. _`dot-machine`:
 
 .machine
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 The ``.machine`` keyring holds Machine Owner Keys (``MOK``), The
 ``MOK`` keys are registered using :ref:`mokutil`.  At boot time, a
@@ -546,7 +547,7 @@ The ``.machine`` keyring can only be enabled if
 .. _`dot-ima`:
 
 .ima
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 Only certificates signed by a key on the
 :ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
@@ -565,7 +566,7 @@ The key used for verification is based on the :ref:`public-key-identifier`.
 .. _`dot-evm`:
 
 .evm
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 Only certificates signed by a key on the
 :ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
@@ -584,7 +585,7 @@ The key used for verification is based on the :ref:`public-key-identifier`.
 .. _`dot-platform`:
 
 .platform
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 The ``.platform`` keyring holds Machine Owner Keys (``MOK``).
 
@@ -614,7 +615,7 @@ Otherwise, keys are loaded on the ``.platform`` keyring.
 .. _dot-blacklist:
 
 .blacklist
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 The ``.blacklist`` keyring holds keys and hashes that are not approved
 / have been revoked.
@@ -637,10 +638,10 @@ See :ref:`config-system-blacklist-keyring` and :ref:`appraise-flag`.
 |
 
 kexec Implications
--------------------
+===================================
 
 kexec Background
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 kexec is a soft boot. The command boots a new kernel image with new
 command line arguments. It does not cycle back to the hardware
@@ -652,7 +653,7 @@ The policy rules are set by the new kernel :ref:`build-flags` and
 .. _kexec-ima-impact:
 
 kexec IMA Impact
-~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 Since the hardware is not initialized, the TPM PCRs, and specifically
 the IMA PCR, are not reset back to zeros.  Therefore, an attestation
@@ -683,7 +684,7 @@ the size of the in-memory log.  See :ref:`measure-policy-rule-design`.
 
 
 kexec IMA Configuration
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 These items affect kexec measure and appraisal:
 
@@ -721,7 +722,7 @@ This policy rule measures the kexec boot command line. See
 .. _appended-signatures:
 
 Appended Signatures
-------------------------
+===================================
 
 Appended signatures are an alternative to signatures in extended
 attributes or the pecoff header.

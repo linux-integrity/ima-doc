@@ -7,7 +7,7 @@ IMA Configuration
 ===================
 
 Kernel Support
---------------------
+===================================
 
 IMA is now compiled in by most distros.  See the build flag
 CONFIG_IMA_. Known distros are:
@@ -31,7 +31,7 @@ Configuration takes three forms:
 .. _build-flags:
 
 Build Flags
--------------
+===================================
 
 Linux build flags are options that are passed to the compiler when
 building the kernel.
@@ -113,7 +113,7 @@ https://github.com/torvalds/linux/blob/master/security/integrity/ima/Kconfig
 .. _general-build-flags:
 
 General
-~~~~~~~~~~~~
+-----------------------------------
 
 * CONFIG_INTEGRITY_
 * CONFIG_IMA_
@@ -125,7 +125,7 @@ General
 .. _config-integrity:
 
 CONFIG_INTEGRITY
-^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables the integrity subsystem, which includes the
 Integrity Measurement Architecture (IMA), Extended Verification Module
@@ -144,14 +144,14 @@ Refer to the individual components for additional details.
 .. _config-ima:
 
 CONFIG_IMA
-^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables IMA.
 
 .. _config-ima-write-policy:
 
 CONFIG_IMA_WRITE_POLICY
-^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables multiple appends to the custom IMA policy. See
 :ref:`runtime-custom-policy`.
@@ -159,7 +159,7 @@ This boolean enables multiple appends to the custom IMA policy. See
 .. _config-ima-read-policy:
 
 CONFIG_IMA_READ_POLICY
-^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables reading the current IMA policy.  See
 :ref:`reading-policies`.  This option allows the root user to see the
@@ -171,7 +171,7 @@ policy file will exist but the mode bits will not permit a read.
 .. _config-ima-default-hash:
 
 CONFIG_IMA_DEFAULT_HASH
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This string specifies the file data hash algorithm for measurement,
 appraisal, and audit. It is overridden by the
@@ -189,14 +189,14 @@ Supported values are:
 .. _config-fs-verity:
 
 CONFIG_FS_VERITY
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables ``fs-verity`` read-only file-based authenticity protection.
 
 .. _compiled-in-policies:
 
 Compiled-In Policies
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 Build flags can specify appraisal policy rules that are present at run
 time if the :ref:`boot-command-line-arguments` are not used.
@@ -216,7 +216,7 @@ not replaced.  The other flags determine rules that can be replaced.
 .. _config-ima-arch-policy:
 
 CONFIG_IMA_ARCH_POLICY
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 This boolean enables compiled-in architecture specific policy
@@ -252,7 +252,7 @@ boot and trusted boot).
 .. _arm-and-x86:
 
 ARM and x86
-'''''''''''''''
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. warning::
 
    **FIXME test this**
@@ -284,7 +284,7 @@ adds these rules to measure the kernel and kernel modules:
 .. _powerpc:
 
 PowerPC
-'''''''''''''''
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If firmware secure boot is enabled, ``CONFIG_IMA_ARCH_POLICY`` adds
 this rule:
@@ -327,7 +327,7 @@ this rule
 .. _config-module-sig:
 
 CONFIG_MODULE_SIG
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables an alternative method (not IMA) for validating
  appended signatures.
@@ -337,7 +337,7 @@ See :ref:`config-ima-arch-policy`.
 .. _config-ima-appraise-build-policy:
 
 CONFIG_IMA_APPRAISE_BUILD_POLICY
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables compiled-in IMA policy rules. They are effective
 at runtime without needing an :ref:`ima-policy` on the boot
@@ -359,7 +359,7 @@ An alternative to the compiled-in policy rules is
 .. _config-ima-appraise-require-firmware-sigs:
 
 CONFIG_IMA_APPRAISE_REQUIRE_FIRMWARE_SIGS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables a policy rule to appraise
 firmware. :ref:`config-ima-appraise-build-policy` enables this
@@ -375,7 +375,7 @@ It requires all firmware to be signed.  See :ref:`func` and
 .. _config-ima-appraise-require-kexec-sigs:
 
 CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables a policy rule to appraise kexec'ed kernel
 images. :ref:`config-ima-appraise-build-policy` enables this flag.
@@ -391,7 +391,7 @@ public key on the trusted IMA keyring. See :ref:`func` and
 .. _config-ima-appraise-require-module-sigs:
 
 CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables a policy rule to appraise kernel module
 signatures.  :ref:`config-ima-appraise-build-policy` enables this
@@ -408,7 +408,7 @@ by a public key on the trusted IMA keyring.  See :ref:`func` and
 .. _config-ima-appraise-require-policy-sigs:
 
 CONFIG_IMA_APPRAISE_REQUIRE_POLICY_SIGS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables a policy rule to appraise IMA policy
 signatures. :ref:`config-ima-appraise-build-policy` enables this
@@ -427,7 +427,7 @@ by a key on the trusted IMA keyring.See :ref:`func`,
 .. _measure:
 
 Measure
-~~~~~~~~~~~
+-----------------------------------
 
 The configuration flags affecting measurement are below.  See :ref:`policy-rule-order`.
 
@@ -442,7 +442,7 @@ The configuration flags affecting measurement are below.  See :ref:`policy-rule-
 .. _config-ima-default-template:
 
 CONFIG_IMA_DEFAULT_TEMPLATE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This string sets the default value for the :ref:`ima-event-log`
 :ref:`built-in-templates`, which specifies the IMA event log format.
@@ -459,7 +459,7 @@ The value depends upon the kernel release.  A typical value is
 .. _config-ima-measure-pcr-idx:
 
 CONFIG_IMA_MEASURE_PCR_IDX
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This decimal number sets the PCR index used by IMA.  The default is 10.
 
@@ -468,7 +468,7 @@ See also the policy rule :ref:`pcr-value`.
 .. _config-ima-kexec:
 
 CONFIG_IMA_KEXEC
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables carrying the IMA measurement list across a kexec
 soft boot.
@@ -483,7 +483,7 @@ be very large.
 .. _config-ima-disable-htable:
 
 CONFIG_IMA_DISABLE_HTABLE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean affects measurement behavior. In detail, there are three
 factors:
@@ -533,7 +533,7 @@ file was still in the hash2 state.
 .. _config-ima-measure-asymmetric-keys:
 
 CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables measuring asymmetric keys when the key is loaded
 onto a keyring. IMA policy rules can either measure keys loaded onto
@@ -565,7 +565,7 @@ Examples:
 .. _config-ima-lsm-rules:
 
 CONFIG_IMA_LSM_RULES
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables policy rules containing LSM labels.
 
@@ -580,7 +580,7 @@ will be rejected.  See :ref:`runtime-custom-policy`.
 .. _config-ima-queue-early-boot-keys:
 
 CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :ref:`built-in-policy-rules` do not have rules to measure keys added
 to :ref:`keyrings`.  I.e., they do not have a :ref:`func-key-check`
@@ -593,7 +593,7 @@ specified, the queue is replayed so that each key can be measured.
 .. _appraise:
 
 Appraise
-~~~~~~~~~~~~
+-----------------------------------
 
 The configuration flags affecting appraisal are below.  See :ref:`policy-rule-order`.
 
@@ -612,7 +612,7 @@ The configuration flags affecting appraisal are below.  See :ref:`policy-rule-or
 .. _config-ima-appraise:
 
 CONFIG_IMA_APPRAISE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables verifying local file integrity.
 
@@ -626,7 +626,7 @@ See also :ref:`config-evm`.
 .. _config-ima-appraise-bootparam:
 
 CONFIG_IMA_APPRAISE_BOOTPARAM
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean allows the different :ref:`ima-appraise` modes to be
 specified on the boot command line.
@@ -640,7 +640,7 @@ for debug or fixing hashes.
 .. _config-ima-appraise-modsig:
 
 CONFIG_IMA_APPRAISE_MODSIG
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean adds support for signatures appended to files. The format of the
 appended signature is the same as that used for signed kernel modules.  The
@@ -653,7 +653,7 @@ See the policy rule :ref:`appraise-type` ``modsig``.
 .. _config-ima-trusted-keyring:
 
 CONFIG_IMA_TRUSTED_KEYRING
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables use of the trusted :ref:`dot-ima` and :ref:`dot-evm`
 keyrings, as opposed to the ``_ima`` and ``_evm`` keyrings.
@@ -662,7 +662,7 @@ keyrings, as opposed to the ``_ima`` and ``_evm`` keyrings.
 .. _config-integrity-signature:
 
 CONFIG_INTEGRITY_SIGNATURE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables signature verification. See
 :ref:`config-integrity-asymmetric-keys`.
@@ -671,7 +671,7 @@ This boolean enables signature verification. See
 .. _config-integrity-asymmetric-keys:
 
 CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables asymmetric key verification using asymmetric keys
 on the :ref:`keyrings`.
@@ -681,7 +681,7 @@ See also :ref:`config-integrity-signature`.
 .. _config-ima-appraise-signed-init:
 
 CONFIG_IMA_APPRAISE_SIGNED_INIT
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean causes the built-in :ref:`ima-policy-appraise-tcb` to load
 a policy rule requiring all root owned files be signed, as opposed to
@@ -690,7 +690,7 @@ being hashed.
 .. _config-system-blacklist-keyring:
 
 CONFIG_SYSTEM_BLACKLIST_KEYRING
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, the :ref:`dot-blacklist` keyring is checked
 before keys can be loaded onto :ref:`keyrings`.
@@ -698,7 +698,7 @@ before keys can be loaded onto :ref:`keyrings`.
 .. _config-load-uefi-keys:
 
 CONFIG_LOAD_UEFI_KEYS 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, the :ref:`dot-platform` keyring is
 provisioned with keys from the UEFI DB and the :ref:`dot-blacklist`
@@ -708,7 +708,7 @@ keyring is provisioned with keys from the UEFI DBX.
 .. _config-load-ipl-keys:
 
 CONFIG_LOAD_IPL_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, the :ref:`dot-platform` keyring and the
 :ref:`dot-blacklist` keyring are provisioned for S390.
@@ -717,7 +717,7 @@ When this boolean is set, the :ref:`dot-platform` keyring and the
 .. _config-load-ppc-keys:
 
 CONFIG_LOAD_PPC_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, the :ref:`dot-platform` keyring and the
 :ref:`dot-blacklist` keyring are provisioned for POWER.
@@ -726,7 +726,7 @@ When this boolean is set, the :ref:`dot-platform` keyring and the
 .. _evm-build-flags:
 
 EVM Build Flags
-~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 The configuration flags affecting EVM are below:
 
@@ -741,7 +741,7 @@ The configuration flags affecting EVM are below:
 .. _config-evm:
 
 CONFIG_EVM
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables EVM appraisal of extended attributes and file
 meta-data.
@@ -751,7 +751,7 @@ See :ref:`extended-verification-module`.
 .. _config-encrypted-keys:
 
 CONFIG_ENCRYPTED_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This tristate enables :ref:`evm-hmac`.
 
@@ -763,7 +763,7 @@ desired.
 .. _config-user-decrypted-data:
 
 CONFIG_USER_DECRYPTED_DATA
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean permits the user to instantiate the :ref:`evm-hmac` ``encrypted key``
 with user-provided decrypted data using :ref:`keyctl`.
@@ -781,7 +781,7 @@ See https://www.kernel.org/doc/html/latest/security/keys/trusted-encrypted.html
 .. _config-trusted-keys:
 
 CONFIG_TRUSTED_KEYS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This tristate enables the generation and load of a :ref:`evm-hmac` ``master key``.
 This is a ``trusted key`` type.
@@ -797,7 +797,7 @@ See https://www.kernel.org/doc/html/latest/security/keys/trusted-encrypted.html
 .. _config-evm-add-xattrs:
 
 CONFIG_EVM_ADD_XATTRS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean permits the user to add additional EVM extended
 attributes (xattrs) at runtime.
@@ -811,7 +811,7 @@ See :ref:`extended-verification-module` for the default list.
 .. _config-evm-extra-smack-xattrs:
 
 CONFIG_EVM_EXTRA_SMACK_XATTRS
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean adds additional SMACK EVM extended attributes (xattrs)
 for the HMAC calculation.  It adds:
@@ -823,7 +823,8 @@ for the HMAC calculation.  It adds:
 .. _keyring-configuration:
 
 Keyring Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
+
 
 The configuration flags affecting trusted :ref:`keyrings` are:
 
@@ -836,7 +837,7 @@ The configuration flags affecting trusted :ref:`keyrings` are:
 .. _config-secondary-trusted-keyring:
 
 CONFIG_SECONDARY_TRUSTED_KEYRING
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables the :ref:`dot-secondary-trusted-keys` keyring to
 which extra keys may be added, provided those keys are not on a deny
@@ -847,14 +848,14 @@ list and are vouched for by a key built into the kernel, a key on the
 .. _config-integrity-platform-keyring:
 
 CONFIG_INTEGRITY_PLATFORM_KEYRING
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This boolean enables the :ref:`dot-platform` keyring.
 
 .. _config-integrity-machine-keyring:
 
 CONFIG_INTEGRITY_MACHINE_KEYRING
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, registered machine owner key certificates
 are loaded by default on the :ref:`dot-machine` keyring.
@@ -872,7 +873,7 @@ default.
 .. _config-integrity-ca-machine-keyring:
 
 CONFIG_INTEGRITY_CA_MACHINE_KEYRING
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, registered ``MOK`` key signing certificates
 (X.509 CA bit and keyCertSign true) are loaded on the
@@ -884,7 +885,7 @@ See also :ref:`config-integrity-ca-machine-keyring-max`.
 .. _config-integrity-ca-machine-keyring-max:
 
 CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX  
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, registered ``MOK`` key signing CA
 certificates (X.509 CA bit and keyCertSign true, and digitalSignature
@@ -896,7 +897,7 @@ This boolean overrides :ref:`config-integrity-ca-machine-keyring`.
 .. _boot-command-line-arguments:
 
 Boot Command Line Arguments
-----------------------------
+===================================
 
 These boot command line arguments can be added on the boot command line.
 
@@ -910,12 +911,12 @@ These boot command line arguments can be added on the boot command line.
 .. _hash-specifiers:
 
 Hash Specifiers
-~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 .. _ima-hash:
 
 ima_hash
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_hash=`` argument specifies the file data hash algorithm
 used.  It overrides the :ref:`config-ima-default-hash` algorithm.
@@ -958,12 +959,12 @@ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/crypto/h
 .. _policy-specifiers:
 
 Policy Specifiers
-~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 .. _ima-policy:
 
 ima_policy
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_policy=`` argument specifies boot time IMA policy rules.
 There are several :ref:`built-in-policy-rules`. Selecting an IMA built-in
@@ -1011,12 +1012,12 @@ parse the ``|`` or the ``"`` correctly.
 .. _appraise-specifiers:
 
 Appraise Specifiers
-~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 .. _ima-appraise:
 
 ima_appraise
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_appraise=`` argument can change the default ``enforce``
 appraise mode.
@@ -1098,7 +1099,7 @@ extended attribute), and rebooting with ima_appraise= ``enforce``.
 .. _evm:
 
 evm
-^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``evm`` argument can take one value, ``evm=fix``.  It requires
 :ref:`ima-appraise` ``=fix``.
@@ -1110,12 +1111,12 @@ It has the same effect as :ref:`ima-appraise` ``=fix``, but updates the
 .. _template-specifiers:
 
 Template Specifiers
-~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------------
 
 .. _ima-template:
 
 ima_template
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_template=`` argument specifies boot time :ref:`ima-event-log`
 :ref:`built-in-templates`.  There are several 
@@ -1142,7 +1143,7 @@ supported values for ``ima_template=`` are:
 .. _ima-canonical-fmt:
 
 ima_canonical_fmt  
-^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_canonical_fmt`` option sets the canonical format for the binary runtime
 measurements, instead of host native format.
@@ -1157,7 +1158,7 @@ on big endian machines.
 .. _ima-template-fmt:
 
 ima_template_fmt
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As an alternative to the built-in templates, a custom template can be
 specified using the fields from :ref:`template-data-fields`,

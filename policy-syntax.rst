@@ -1,7 +1,8 @@
 .. _policy-syntax:
 
+===================================
 Policy Syntax
--------------
+===================================
 
 Each line defines a policy rule. A policy rule contains these fields:
 
@@ -18,7 +19,7 @@ statements will come before “do” statements.
 .. _policy-syntax-action:
 
 Policy Syntax Action
-~~~~~~~~~~~~~~~~~~~~
+===================================
 
 An Action is often followed by :ref:`policy-syntax-conditions`.
 Without conditions, the rule matches anything.  Such a rule typically
@@ -73,7 +74,7 @@ An appraisal failure may block the operation specified by the
 .. _policy-syntax-conditions:
 
 Policy Syntax Conditions
-~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 These conditions qualify the :ref:`policy-syntax-action`. Each action
 must have at least one condition.  If a policy rule has multiple
@@ -88,7 +89,7 @@ file data hash is what uniquely identifies the file.
 .. _func:
 
 func
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 Some ``func`` values are only valid for certain Actions, and some
 ``measure`` values force an IMA template.
@@ -119,7 +120,7 @@ the firmware.
 .. _func-mmap-check:
 
 func=MMAP_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers when a file, such as a library, is mmapped into
 memory.
@@ -130,7 +131,7 @@ execute) and later mmapped for execute.
 .. _func-bprm-check:
 
 func=BPRM_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Binary program check triggers when a file is about to be executed as a
 program. It uses the existing (parent) process credentials. See also
@@ -175,7 +176,7 @@ process executes into.
 .. _func-creds-check:
 
 func=CREDS_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``CREDS_CHECK`` triggers when a file is about to be executed as a
 program. It uses the credentials that will be when the new child
@@ -199,7 +200,7 @@ runs as unconfined_t, ignoring the context of the parent process.
 .. _func-file-check:
 
 func=FILE_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on a file open, see :ref:`mask`.
 
@@ -214,7 +215,7 @@ This rule is not recommended with :ref:`mask` =MAY_EXEC.  Use
 .. _func-module-check:
 
 func=MODULE_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on loading a kernel module (e.g., a device driver, a .ko
 file).
@@ -260,14 +261,14 @@ Note:
 .. _func-path-check:
 
 func=PATH_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Obsolete. Do not use. Use :ref:`func-file-check`.
 
 .. _func-firmware-check:
 
 func=FIRMWARE_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on loading a file as a firmware blob into the
 kernel. An example of firmware is peripheral firmware loaded at run
@@ -281,7 +282,7 @@ time.
 .. _func-policy-check:
 
 func=POLICY_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on loading a file as an additional IMA
 :ref:`custom-policy`.
@@ -313,7 +314,7 @@ policy.
 .. _func-kexec-kernel-check:
 
 func=KEXEC_KERNEL_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on loading a kernel image using kexec.
 
@@ -336,7 +337,7 @@ Example:
 .. _func-kexec-initramfs-check:
 
 func=KEXEC_INITRAMFS_CHECK
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on loading the file as an initramfs in the kexec() system
 call.
@@ -360,7 +361,7 @@ Example:
 .. _func-kexec-cmdline:
 
 func=KEXEC_CMDLINE
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on loading the kexec boot command line in the kexec() system
 call.
@@ -379,7 +380,7 @@ independent of the default or boot command line specifier.
 .. _func-key-check:
 
 func=KEY_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers when keys are added onto a key ring. See `keyrings`_ for
 examples.
@@ -397,7 +398,7 @@ the default or boot command line specifier.
 .. _func-critical-data:
 
 func=CRITICAL_DATA
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on a change to security critical data stored in kernel
 memory such as an SELinux policy or state, device-mapper targets like
@@ -415,7 +416,7 @@ independent of the default or boot command line specifier.
 .. _func-setxattr-check:
 
 func=SETXATTR_CHECK
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This triggers on a call to :ref:`setfattr` to set the ``security.ima``
 file signature extended attribute.  The required :ref:`appraise-algos`
@@ -439,7 +440,7 @@ hash algorithms. The approved algorithm list is in the policy rule.
 .. _mask:
 
 mask
-^^^^
+-----------------------------------
 
 mask qualifies and is only legal with :ref:`func-file-check`. Without
 ``mask``, the rule triggers on any of read, write, execute, or append.
@@ -461,7 +462,7 @@ matches read or read/write.
 .. _`keyrings-condition`:
 
 keyrings
-^^^^^^^^^
+-----------------------------------
 
 See :ref:`keyrings` for a description of the keyrings.
 
@@ -491,7 +492,7 @@ The \| is an OR list.
 .. _fsmagic:
 
 fsmagic
-^^^^^^^^^^
+-----------------------------------
 
 Hex value, prefix with 0x. A reference for the values is this `kernel
 header
@@ -529,7 +530,7 @@ triggers on ext4 filesystems.
 
 
 fsname
-^^^^^^^^^^
+-----------------------------------
 
 ``fsname`` can be used instead of fsmagic_ on filesystems such as XFS, where
 the magic numbers are private and not exposed.
@@ -559,7 +560,7 @@ Examples:
 
 
 fsuuid
-^^^^^^^^^^
+-----------------------------------
 
 fsuuid represents the filesystem (partition) uuid.
 
@@ -586,32 +587,32 @@ Examples of the syntax is
    without unmount.**
 
 uid=id
-^^^^^^^^^^
+-----------------------------------
 
 Filter by the calling process user id. id is a decimal value. The
 ``=``, ``<``, and ``>`` operators are supported.
 
 
 euid=id
-^^^^^^^^^^
+-----------------------------------
 
 Filter by the calling process effective user id. id is a decimal
 value. The ``=``, ``<``, and ``>`` operators are supported.
 
 gid=id
-^^^^^^^^^^
+-----------------------------------
 
 Filter by the calling process group id. id is a decimal value. The
 ``=``, ``<``, and ``>`` operators are supported.
 
 egid=id
-^^^^^^^^^^
+-----------------------------------
 
 Filter by the calling process effective group id. id is a decimal
 value. The ``=``, ``<``, and ``>`` operators are supported.
 
 fowner=id
-^^^^^^^^^^
+-----------------------------------
 
 Filter by the file owner id. id is a decimal value. The ``=``, ``<``,
 and ``>`` operators are supported.
@@ -621,7 +622,7 @@ executing it. If could be used to detect an attack in a system library
 when a non-root user executes it.
 
 fgroup=id
-^^^^^^^^^^
+-----------------------------------
 
 Filter by the file group id. id is a decimal value.  The ``=``, ``<``, and
 ``>`` operators are supported.
@@ -629,7 +630,7 @@ Filter by the file group id. id is a decimal value.  The ``=``, ``<``, and
 E.g., a policy rule could specify a file in the wheel group.
 
 label
-^^^^^^^^
+-----------------------------------
 
 label qualifies and is only legal with :ref:`func-critical-data`.
 
@@ -644,7 +645,7 @@ Example::
 .. _appraise-type:
 
 appraise_type
-^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 When present, this condition specifies that a ``security.ima`` hash is
 not permitted and which signature formats are permitted.  See
@@ -688,7 +689,7 @@ attribute..
 .. _template:
 
 template
-^^^^^^^^^^^^^^^
+-----------------------------------
 
 This condition overrides the format of the :ref:`ima-event-log` /
 :ref:`template-data` for the rule that is triggered.  **It is
@@ -721,7 +722,7 @@ For an attestation server to validate an EVM signature, use the
 
 
 permit_directio
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This condition has no parameters. If the file is opened with the
 ``O_DIRECT`` flag, this rule prevents the file from being measured or
@@ -748,7 +749,7 @@ following rules show how to prevent this:
 .. _digest-type:
 
 digest_type
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This condition requires a file to have an fs-verity file digest
 rather than the regular IMA file hash.
@@ -779,7 +780,7 @@ See :ref:`config-fs-verity`.
 .. _appraise-flag:
 
 appraise_flag
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 ``appraise_flag`` affects only :ref:`appraisal` of a file with an
 appended :ref:`signature`.
@@ -815,7 +816,7 @@ checked for a file data :ref:`hash` in the two above cases.
 .. _appraise-algos:
 
 appraise_algos
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 ``appraise_algos`` provides the approved signature hash algorithm list
 to the :ref:`func-setxattr-check` policy rule.
@@ -833,7 +834,7 @@ In this example, only SHA-256 and SHA-384 are accepted when adding a
 .. _pcr-value:
 
 pcr=value
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 value is a positive decimal number.
 
@@ -861,7 +862,7 @@ Note:
 .. _obj-user-equals:
 
 obj_user=
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This string is an LSM label.
 
@@ -878,7 +879,7 @@ This string is an LSM label.
 .. _obj-role-equals:
 
 obj_role=
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 
 The string is an LSM label.
@@ -896,7 +897,7 @@ The string is an LSM label.
 .. _obj-type-equals:
 
 obj_type=
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 The string is an LSM label. See :ref:`obj-type` for examples.
 
@@ -913,7 +914,7 @@ have approved hash values.
 .. _subj-user-equals:
 
 subj_user=
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This string is an LSM SELinux label.
 
@@ -929,7 +930,7 @@ Example:
 .. _subj-role-equals:
 
 subj_role=
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This string is an LSM SELinux label.
 
@@ -945,7 +946,7 @@ Example:
 .. _subj-type-equals:
 
 subj_type=
-^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This string is an LSM SELinux label.
 
@@ -956,7 +957,7 @@ This string is an LSM SELinux label.
       Needs examples.
 
 SELinux variations
-^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 Builtin policy rules may measure too much. Measurement and appraisal
 of log files are not useful, generating events every time one is
@@ -966,7 +967,7 @@ which files are measured.
 See :ref:`selinux-labels`.
 
 SMACK
-^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 .. warning::
 

@@ -4,14 +4,15 @@
 
 .. _ima-event-log:
 
+===================================
 IMA Event Log
-----------------
+===================================
 
 IMA Log Verification
-~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 IMA Attestation Background
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 An IMA attester and verifier design should note several differences
 from verifying a pre-OS log. They occur because IMA measurements can
@@ -42,7 +43,7 @@ acquired.
    100K events.
 
 IMA Attestation Recommendations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 An implementation of an attester and verifier should consider the
 following recommendations.
@@ -72,7 +73,7 @@ following recommendations.
    few or no new events need be processed.
 
 Multiple PCRs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 IMA may extend to more than one PCR using the policy condition
 :ref:`pcr-value`. Even in this case, the payload is added to the
@@ -93,7 +94,7 @@ PCR digest matches that of the quote.
 .. _ima-event-log-location:
 
 IMA Event Log Location
-~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 The Linux kernel creates and writes the IMA Event Log (also known as
 the measurement list or integrity log) pseudo-files.
@@ -154,7 +155,7 @@ provide means to recreate the original record so that hashes can be
 verified. The verifier validates the log against the quote signature.
 
 IMA Event Log Format
-~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 This details the binary IMA event log format, field by field.
 
@@ -176,7 +177,7 @@ boot and the log can grow to 100,000 over time based on usage.
 .. _ima-event-log-ascii-format:
 
 IMA Event Log Ascii Format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 .. warning::
 
@@ -185,12 +186,12 @@ IMA Event Log Ascii Format
 .. _ima-event-log-binary-format:
 
 IMA Event Log Binary Format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 An IMA event record has the following fields.
 
 PCR Index
-^^^^^^^^^
+-----------------------------------
 
 This is a 4-byte integer representing the PCR Index.
 
@@ -202,7 +203,7 @@ not been extended.  E.g., the event log may contain PCR 17 or PCR 24.
 
 
 Template Hash
-^^^^^^^^^^^^^
+-----------------------------------
 
 This is normally a 20-byte SHA-1 hash of the Template Data field. It can
 also be all zeros.
@@ -227,7 +228,7 @@ There are currently two PCR extend schemes. This document calls them
 Type 1 and Type 2 because there is no defacto term in use.
 
 PCR Extend Type 1 (zero pad)
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  PCR SHA-1 Bank
 
@@ -242,7 +243,7 @@ The SHA-256 bank is extended with the SHA-1 value (the Template Hash or
 all ones) padded with 12 bytes of zero.
 
 PCR Extend Type 2 (hash)
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  PCR SHA-1 Bank
 
@@ -257,7 +258,7 @@ If the Template Hash is all zeros, the bank is extended with all ones to
 the length of the hash algorithm,
 
 Template Name Length
-^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This is a 4-byte integer representing the length of the Template Name
 field.
@@ -265,7 +266,7 @@ field.
 Question: What is the maximum length?
 
 Template Name
-^^^^^^^^^^^^^
+-----------------------------------
 
 This is a printable string representing the template name.
 
@@ -275,7 +276,7 @@ For legal names, see :ref:`built-in-templates` and
 :ref:`template-data-fields`.
 
 Template Data Length
-^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 This is a 4-byte integer representing the length of the Template Data
 field.
@@ -286,7 +287,7 @@ field.
 .. _template-data:
 
 Template Data
-^^^^^^^^^^^^^
+-----------------------------------
 
 See `Template Data Fields`_ for the contents of this field.
 
@@ -299,7 +300,7 @@ The template is specified in this order:
 .. _built-in-templates:
 
 Built-in Templates
-~~~~~~~~~~~~~~~~~~~~
+===================================
 
 The predefined / built-in template names below can be
 
@@ -347,7 +348,7 @@ Field	            Built-in Templates Using the Field
 .. _`ima`:
 
 ima
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   SHA-1 digest and file name.
 
@@ -356,7 +357,7 @@ ima
 .. _`ima-ng`:
 
 ima-ng
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   Digest and file name.
 
@@ -365,7 +366,7 @@ ima-ng
 .. _`ima-sig`:
 
 ima-sig
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   Digest, file name, and signature.
 
@@ -374,7 +375,7 @@ ima-sig
 .. _`ima-buf`:
 
 ima-buf
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   d-ng_ \| n-ng_ \| buf_
 
@@ -384,7 +385,7 @@ ima-buf
 .. _`ima-modsig`:
 
 ima-modsig
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   d-ng_ \| n-ng_ \| sig_ \| d-modsig_ \| modsig_
 
@@ -413,28 +414,28 @@ See :ref:`func-module-check` for kernel module appraisal details. See
 .. _`ima-ngv2`:
 
 ima_ngv2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   d-ngv2_ \| n-ng_
 
 .. _`ima-sigv2`:
 
 ima-sigv2
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   d-ngv2_ \| n-ng_ \| sig_
 
 .. _`evm-sig`:
 
 evm-sig
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
   d-ng_ \| n-ng_ \| evmsig_ \| xattrnames_ \| xattrlengths_ \| xattrvalues_ \| iuid_ \| igid_ \| imode_
 
 .. _template-data-fields:
 
 Template Data Fields
-~~~~~~~~~~~~~~~~~~~~
+===================================
 
 Template data can have the following fields. Unless specified, each is
 preceded by a 4-byte length.  Each entry is separated by a ``|``
@@ -446,14 +447,14 @@ What happens if a field appears multiple times?
 .. _d:
 
 d
-^^^^^^
+-----------------------------------
 
 ``d`` is 20-byte digest, SHA-1 or zero padded MD-5 (no length)
 
 .. _d-ng:
 
 d-ng
-^^^^^^
+-----------------------------------
 
 ``d-ng`` is a :ref:`hash-length` + :ref:`hash-algorithm` +
 :ref:`file-data-hash`.
@@ -468,7 +469,7 @@ input includes the appended signature if present in the file.
 .. _hash-length:
 
 Hash Length
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a 4-byte integer representing the combined length of the
 :ref:`hash-algorithm` and :ref:`file-data-hash` fields. Those fields
@@ -477,7 +478,7 @@ do not have explicit lengths.
 .. _hash-algorithm:
 
 Hash Algorithm
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a string representing the hash algorithm of the
 File Data Hash field. The values are the same as those
@@ -497,7 +498,7 @@ terminator.
 .. _file-data-hash:
 
 File Data Hash
-''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a hash of the file data. It can be either the IMA digest (a
 digest of the entire file) or the fs-verity digest.
@@ -519,7 +520,7 @@ field.
 .. _d-modsig:
   
 d-modsig
-^^^^^^^^^^^^
+-----------------------------------
 
 ``d-modsig`` is a :ref:`hash-length` + :ref:`hash-algorithm` +
 :ref:`file-data-hash`. It is similar to d-ng_, but the input to the
@@ -536,7 +537,7 @@ When there is no appended signature, this field will have a
 .. _d-ngv2:
 
 d-ngv2
-^^^^^^
+-----------------------------------
 
 ``d-ngv2`` contains a 4-byte length + prefix + hash algorithm +
 :ref:`file-data-hash`. The length is that of the prefix and hash
@@ -561,7 +562,7 @@ terminator after the second ``:``.
 .. _n:
 
 n
-^^^^^
+-----------------------------------
 
 ``n`` is a file name within the :ref:`ima` template. ``n`` cannot be used
 in a custom template.
@@ -577,10 +578,10 @@ See :ref:`n-ng` :ref:`file-name` for the description.
 .. _n-ng:
 
 n-ng
-^^^^
+-----------------------------------
 
 File Name Length
-''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a 4-byte integer representing the length of the file name,
 including the nul terminator. The maximum value is MAXPATHLEN +1,
@@ -592,7 +593,7 @@ currently 4097.
 .. _file-name:
 
 File Name
-''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For ``n-ng``, this is a nul terminated string representing the name of
 the file that was measured.
@@ -612,7 +613,7 @@ error.  Typical errors are:
 .. _sig:
 
 sig
-^^^
+-----------------------------------
 
 This field contains the file :ref:`signature`. This field describes
 the :ref:`signature-hash-algorithm`.  The signature algorithm is
@@ -648,14 +649,14 @@ IMA supports several signature algorithms, including:
 .. _signature-length:
 
 Signature Length
-''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a 4-byte integer representing the total length of the Signature
 Header and Signature fields. The value may be zero, indicating that
 those two fields are not present.
 
 Signature Header
-''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This field is fixed at 9 bytes, consisting of 5 fields.
 
@@ -673,7 +674,7 @@ certificate, which contains the signature algorithm.
 .. _signature-type:
 
 Signature Type
-_____________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a 1-byte field.
 
@@ -696,7 +697,7 @@ The legal values are:
 .. _signature-version:
 
 Signature Version
-_____________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a 1-byte field.
 
@@ -708,7 +709,7 @@ The legal values are:
 .. _signature-hash-algorithm:
 
 Hash Algorithm
-_____________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a 1-byte field representing the hash algorithm used for the File
 Data Hash.
@@ -742,7 +743,7 @@ The values are:
 .. _public-key-identifier:
 
 Public Key Identifier
-_____________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a 4-byte field that identifies the public key. It is the last 4
 bytes of the key's X.509 certificate Subject Key Identifier.
@@ -750,7 +751,7 @@ bytes of the key's X.509 certificate Subject Key Identifier.
 .. _signature-size:
 
 Signature Size
-_____________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This is a 2-byte integer representing the size of the Signature field
 in **big endian** format.
@@ -762,7 +763,7 @@ in **big endian** format.
 .. _log-signature:
 
 Signature
-'''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This field represents the signature over the File Data Hash using the
 key specified by the Public Key Identifier and the hash algorithm
@@ -774,7 +775,7 @@ represented by the (two) Hash Algorithm fields, the signature
 .. _evmsig:
 
 evmsig
-^^^^^^^^^^^
+-----------------------------------
 
 ``evmsig`` follows the format of :ref:`sig`.  The
 :ref:`signature-type` is ``0x05`` EVM_XATTR_PORTABLE_DIGSIG.
@@ -782,7 +783,7 @@ evmsig
 .. _buf:
 
 buf
-^^^
+-----------------------------------
 
 ``buf`` is a 4 byte length plus a buffer.
 
@@ -832,14 +833,14 @@ measures data as it is loaded on different :ref:`keyrings`. The
 .. _dot-ima-1:
 
 .ima
-''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If the file name is ``.ima``, ``buf`` is a DER encoded X.509 IMA certificate.
 
 .. _dot-builtin-trusted-keys-1:
 
 .builtin_trusted_keys
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If the file name is ``.builtin_trusted_keys``, ``buf`` is a DER encoded X.509
 built-in certificate.
@@ -847,7 +848,7 @@ built-in certificate.
 .. _dot-blacklist-1:
 
 .blacklist
-''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If the file name is ``.blacklist``, 
 
@@ -862,7 +863,7 @@ If the file name is ``.blacklist``,
 
 
 kexec-cmdline
-'''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If the file name is ``kexec-cmdline``, ``buf`` is a non-nul terminated
 string of boot command line arguments.
@@ -873,7 +874,7 @@ call.
 .. _modsig:
 
 modsig
-^^^^^^^^^^^^
+-----------------------------------
 
 ``modsig`` is a PKCS#7 DER encoding of the appended signature. See the CMS
 document as in RFC 5652.
@@ -892,7 +893,7 @@ signature.
 .. _uuid:
 
 uuid
-^^^^^^^^^^^^
+-----------------------------------
 
 .. warning::
 
@@ -901,7 +902,7 @@ uuid
 .. _iuid:
 
 iuid
-^^^^^^^^^^^^
+-----------------------------------
 
 ``iuid`` is a 4-byte length plus the file user ID as in etc/passwd.
 
@@ -912,7 +913,7 @@ idmapped user ID within a container.
 .. _igid:
 
 igid
-^^^^^^^^^^^^
+-----------------------------------
 
 ``iuid`` is a 4-byte length plus the file group ID as in etc/passwd.
 
@@ -922,7 +923,7 @@ idmapped group ID within a container.
 .. _imode:
 
 imode
-^^^^^^^^^^^^
+-----------------------------------
 
 ``imode`` is a 4-byte length plus the file mode (e.g., user, group,
 other).
@@ -930,7 +931,7 @@ other).
 .. _xattrnames:
 
 xattrnames
-^^^^^^^^^^^^
+-----------------------------------
 
 ``xattrnames`` is a 4-byte length and a nul terminated text list of
 xattr names (separated by ``|``).  The length can be zero if no xattrs
@@ -949,7 +950,7 @@ For example names, see :ref:`extended-verification-module`.
 .. _xattrlengths:
 
 xattrlengths
-^^^^^^^^^^^^
+-----------------------------------
 
 ``xattrlengths`` is a 4-byte length plus a list of the 4-byte lengths
 of the :ref:`xattrvalues` fields. The order of the lengths is
@@ -969,7 +970,7 @@ determined by the order of the :ref:`xattrnames`.
 .. _xattrvalues:
 
 xattrvalues
-^^^^^^^^^^^^
+-----------------------------------
 
 ``xattrvalues`` is a 4-byte length of all the values plus a list of
 values. The order and content of the values are determined by the
@@ -988,7 +989,7 @@ values. The order and content of the values are determined by the
        sum of the content fields.
 
 Integer Format
-~~~~~~~~~~~~~~
+===================================
 
 Multi-byte integer values (PCR index, length, etc.) are in the byte
 order of the host where the event log was created. The sender can

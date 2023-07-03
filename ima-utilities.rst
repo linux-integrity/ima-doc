@@ -1,5 +1,6 @@
+===================================
 Utilities
--------------
+===================================
 
 .. warning::
 
@@ -12,7 +13,7 @@ pages.
 .. _evmctl:
 
 evmctl
-~~~~~~~~~~~~~~~~~
+===================================
 
 Package:
 
@@ -41,7 +42,7 @@ Package:
 .. _evmctl-portable-signature:
 
 evmctl portable signature
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 To create a portable :ref:`evm-signature`, use this example.  It needs
 root because it writes ``security.evm``.
@@ -64,7 +65,7 @@ The result can be viewed with
 .. _evmctl-policy-signature:
 
 evmctl policy signature
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 To generate an unencrypted private key (non-protected):
 
@@ -141,7 +142,7 @@ boot process).
    Remove usage help.  Instead provide examples for typical applications.
 
 evmctl fsverity signature
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 
 .. warning::
@@ -157,7 +158,7 @@ evmctl fsverity signature
 .. _keyctl:
 
 keyctl
-~~~~~~~~~~~~~~~~~
+===================================
 
 Package:
 
@@ -189,7 +190,7 @@ Package:
 .. _keyctl-show:
 
 keyctl show
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 ``show`` lists keys on one of the :ref:`keyrings`.
 
@@ -208,7 +209,7 @@ To see if one of the :ref:`keyrings` exists:
 
 
 keyctl add key to keyring
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 .. warning::
 
@@ -273,7 +274,7 @@ keyctl add key to keyring
 .. _sign-file:
 
 sign-file
-~~~~~~~~~~~~~~~~~
+===================================
 
 Package:
 
@@ -292,7 +293,7 @@ template.  See :ref:`sign-file-appended-signature` for an example.
 .. _sign-file-appended-signature:
 
 sign-file appended signature
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------
 
 Appended signatures can be measured and appraised with the
 :ref:`func-module-check`, :ref:`func-kexec-kernel-check`, and
@@ -319,7 +320,7 @@ rules for testing.
 
 
 verify-file
-~~~~~~~~~~~~~~~~~
+===================================
 
 .. warning::
 
@@ -329,7 +330,7 @@ verify-file
 .. _xz:
 
 xz
-~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 Package:
 
@@ -353,7 +354,7 @@ Example:
 .. _mokutil:
 
 mokutil
-~~~~~~~~~~~~~~~~~
+===================================
 
 Package:
 
@@ -368,7 +369,7 @@ Package:
 .. _setfattr:
 
 setfattr
-~~~~~~~~~~~~~~~~~~
+===================================
 
 ``setfattr`` sets the extended attributes of filesystem objects.
 
@@ -384,7 +385,7 @@ setfattr
    setfattr -n security.ima -v 0x12434567 executable.bin
 
 fsverity
-~~~~~~~~~~~~~~~~~~~
+===================================
 
 .. warning::
 
@@ -410,7 +411,7 @@ fsverity
 .. _efikeygen:
 
 efikeygen
-~~~~~~~~~~~~~~~~
+===================================
 
 Package:
 
@@ -419,7 +420,7 @@ Package:
 .. _ima_inspect:
 
 ima-inspect
-~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 .. warning::
 

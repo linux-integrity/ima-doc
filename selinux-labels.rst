@@ -1,7 +1,8 @@
 .. _selinux-labels:
 
+===================================
 SELinux Labels
---------------
+===================================
 
 Some Linux Security Modules (LSM) maintain file metadata, which can be
 leveraged using IMA :ref:`policy-syntax-conditions` such as
@@ -47,7 +48,7 @@ User ID labels (user, role, and domain) can be displayed with
 .. _obj-type:
 
 obj_type
-~~~~~~~~~~~~~~~~~~~
+===================================
 
 ``obj_type`` can be used in the policy rule :ref:`obj-type-equals`.
 
