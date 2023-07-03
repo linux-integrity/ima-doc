@@ -795,6 +795,32 @@ The buffer contains a variable length buffer whose contents is
 determined by the :ref:`n-ng` field. The :ref:`n-ng` field
 is not a file name.
 
+These policy rules create a non-zero length ``buf``.
+
+::
+
+   measure func=KEY_CHECK
+   measure func=CRITICAL_DATA
+   measure func=KEXEC_CMDLINE
+
+func=KEY_CHECK
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When triggered by the measure :ref:`func-key-check` policy rule, it
+measures data as it is loaded on different :ref:`keyrings`. The
+:ref:`n-ng` field is the nul terminated name of the keyring.
+
+``buf`` can be a DER encoded X.509 IMA certificate or a
+:ref:`dot-blacklist` hash.
+
+.. warning::
+
+   A sample had a 32-byte value which appeared to be a hash. If so,
+   where does the hash algorithm come from?
+
+func=CRITICAL_DATA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When triggered by the measure :ref:`func-critical-data` policy rule,
 it measures data such as the SELinux state. The :ref:`n-ng` field
 may be:
@@ -805,73 +831,22 @@ may be:
 
 .. warning::
 
-   Define the meaning of the strings.
+   Define all n-ng field names and the meaning of the strings.
 
-When triggered by the measure :ref:`func-kexec-cmdline` policy rule,
-the :ref:`n-ng` field is
+func=KEXEC_CMDLINE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* :ref:`kexec-cmdline-1`
+When triggered by the measure :ref:`func-kexec-cmdline` policy rule
+and a kexec() call, the :ref:`n-ng` field is
 
+* ``kexec-cmdline``
 
-::
+``buf`` is a non-nul terminated string of boot command line arguments.
 
-   measure func=KEXEC_CMDLINE
-   measure func=CRITICAL_DATA
 
 .. warning::
 
    document the ``boot_aggregate`` measurement somewhere.  What triggers it?
-
-When triggered by the measure :ref:`func-key-check` policy rule, it
-measures data as it is loaded on different :ref:`keyrings`. The
-:ref:`n-ng` field is the nul terminated name of the keyring:
-
-* :ref:`dot-ima-1`
-* :ref:`dot-builtin-trusted-keys-1`
-* :ref:`dot-platform`  
-* :ref:`dot-blacklist-1`
-* others to be documented
-
-.. _dot-ima-1:
-
-.ima
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If the file name is ``.ima``, ``buf`` is a DER encoded X.509 IMA certificate.
-
-.. _dot-builtin-trusted-keys-1:
-
-.builtin_trusted_keys
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If the file name is ``.builtin_trusted_keys``, ``buf`` is a DER encoded X.509
-built-in certificate.
-
-.. _dot-blacklist-1:
-
-.blacklist
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If the file name is ``.blacklist``, 
-
-.. warning::
-
-   Keys and hashes added to the :ref:`dot-blacklist` keyring.
-
-   What is the contents of buf? A sample had a 32-byte value which
-   appeared to be a hash. If so, where does the hash algorithm come from?
-
-.. _kexec-cmdline-1:
-
-
-kexec-cmdline
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If the file name is ``kexec-cmdline``, ``buf`` is a non-nul terminated
-string of boot command line arguments.
-
-This measurement is triggered by :ref:`func-kexec-cmdline` and a kexec()
-call.
 
 .. _modsig:
 
