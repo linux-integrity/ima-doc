@@ -549,7 +549,11 @@ The legal values for the prefix, determined by the :ref:`digest-type`
 policy rule, are:
 
 * ``ima:``
-* ``verity``
+* ``verity:``
+
+.. warning::
+
+   What is the maximum length of the prefix?
 
 Examples of the prefix and hash algorithm are below. There is one nul
 terminator after the second ``:``.

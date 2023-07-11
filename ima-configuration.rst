@@ -1151,6 +1151,15 @@ measurements, instead of host native format.
 It forces the event log to store all integral values as little endian
 on big endian machines.
 
+**Recommendation:**
+
+This option is suggested on all big endian machines, since a verifier
+may not be written to handle big endian event logs.
+
+It is strongly suggested on a big endian machine that may receive a
+kexec(), since the event log may otherwise be a mix of big and little
+endian measurements.
+
 .. warning::
 
    **FIXME Test this**
