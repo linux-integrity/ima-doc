@@ -266,10 +266,10 @@ The EVM extended attribute ``security.evm`` has two forms:
 The file meta-data does not include the file name. It therefore does
 not protect against rename attacks (e.g., renaming mv to rm).
 
-Specifically, appraisal covers this list of meta-data.  The list is
-the same for :ref:`evm-hmac` or :ref:`evm-signature`, but a ``portable
-signature`` excludes the last two items, which are installation
-specific.
+Specifically, appraisal covers this list of meta-data - extended
+attributes and some inode meta-data.  The list is the same for
+:ref:`evm-hmac` or :ref:`evm-signature`, but a ``portable signature``
+excludes the last two items, which are installation specific.
 
   * ``security.ima``
   * ``security.selinux``
@@ -331,7 +331,7 @@ Bit	  Effect
 1	  Enable signature verification
 2	  Permit modification of EVM-protected meta-data at runtime.
 
-          Not supported if HMAC verification and creation is enabled.
+          Not allowed if HMAC verification and creation is enabled.
 31	  Disable further runtime modification of EVM state
           (``/sys/kernel/security/integrity/evm/evm``)
 ===	  ================================================================================
