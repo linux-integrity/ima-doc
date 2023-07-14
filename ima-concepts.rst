@@ -128,7 +128,7 @@ This stores a file data hash in the extended attribute
 ``security.ima``.  The format is:
 
 * 0x04 - ``IMA_XATTR_DIGEST_NG``
-* hash algorithm see :ref:`hash-algorithm`
+* hash algorithm see :ref:`signature-hash-algorithm`
 * hash binary
 
 See the :ref:`ima-appraise` boot command line argument and the
