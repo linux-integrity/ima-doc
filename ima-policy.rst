@@ -187,6 +187,12 @@ configuration file (persistent).
 The pseudofile ``/proc/cmdline`` will display the boot command line.
 ``grubby --info=ALL`` displays all the boot command choices.
 
+Specifying none of the below ``ima_policy`` options on the boot
+command line yields a policy with no policy rules.
+
+Secure Boot rules
+------------------------------------
+
 Enabling secure boot in the firmware adds these policy statements:
 
 ::
@@ -195,24 +201,24 @@ Enabling secure boot in the firmware adds these policy statements:
    measure func=MODULE_CHECK
 
 
-
 For EFI-based systems, the secure boot state can be tested with
 
 ::
 
    mokutil --sb state
 
-For a PowerVM guest, the secure boot state can be tested by looking at
-the device tree property ``/proc/device-tree/ibm,secure-boot``. If its
-value is greater than 1, secure boot is enabled, else it is disabled.
+For a PowerVM guest, the secure boot state can be tested by viewing
+the device tree property in the pseudo-file
+``/proc/device-tree/ibm,secure-boot``.  The values are:
 
+* 0 - secure boot disabled
+* 1 - audit only, secure boot not enforced, failures are logged
+* 2 = secure boot enabled
 
-.. warning::
-
-   For OpenPOWER, ...
-
-Specifying none of the below ``ima_policy`` options on the boot
-command line yields a policy with no policy rules.
+On OpenPOWER systems, the secure boot state is indicated by the
+presence of the device tree property
+``/proc/device-tree/ibm,secure-boot/os-secureboot-enforcing``.  If the
+pseudo-file exists, secure boot is enabled,  else it is disabled.
 
 .. _ima-measurement-policies:
 

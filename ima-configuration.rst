@@ -218,7 +218,6 @@ not replaced.  The other flags determine rules that can be replaced.
 CONFIG_IMA_ARCH_POLICY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 This boolean enables compiled-in architecture specific policy
 rules. If enabled, it loads its IMA appraise rules before other
 compiled-in or built-in command line appraise rules, so they cannot be
@@ -246,7 +245,8 @@ always adds measure rules for :ref:`arm-and-x86` UEFI based platforms.
 
 These policy rules are based partially on the firmware secure boot
 status (e.g. :ref:`arm-and-x86` UEFI, :ref:`powerpc` firmware secure
-boot and trusted boot).
+boot and trusted boot). See :ref:`built-in-policy-rules` for a method
+of deterimining whether secure boot is enabled.
 
 
 .. _arm-and-x86:
