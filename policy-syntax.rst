@@ -785,6 +785,12 @@ appraise_flag
 ``appraise_flag`` affects only :ref:`appraisal` of a file with an
 appended :ref:`signature`.
 
+As of kernel 6.6 (plus backports), this flag is superfluous, as the
+feature is always enabled. A :ref:`hash` or a :ref:`signature` is
+checked against the :ref:`dot-blacklist` for all files.
+
+The pre-6.6 optimization is described below.
+
 The permitted value is:
 
 *  ``appraise_flag=check_blacklist``
