@@ -185,7 +185,7 @@ specified on the boot command line (single boot) or in the grub
 configuration file (persistent).
 
 The pseudofile ``/proc/cmdline`` will display the boot command line.
-``grubby --info=ALL`` displays all the boot command choices.
+``grubby --info=ALL`` displays all the kernel choices.
 
 Specifying none of the below ``ima_policy`` options on the boot
 command line yields a policy with no policy rules.

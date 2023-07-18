@@ -923,6 +923,12 @@ are present.
 
 For example names, see :ref:`extended-verification-module`.
 
+   Note: There is redundancy that should be validated by the verifier.
+
+   * The 4-byte length should equal the string length plus one for the
+     nul terminator.
+
+
 .. warning::
 
    This documentation needs a full specification of for each name's
@@ -940,13 +946,11 @@ determined by the order of the :ref:`xattrnames`.
    Note: :ref:`xattrnames`, :ref:`xattrlengths`, and
    :ref:`xattrvalues` must be specified together.
 
-   Note: There are several redundant fields that should be validated
-   by the verifier.
+   Note: There is redundancy that should be validated by the verifier.
 
-   * The number of :ref:`xattrnames` multiplied by 4 should equal the
-     value of the ``xattrlengths`` length.
-   * The sum of the 4-byte lengths of the :ref:`xattrvalues` fields
-     should equal the 4-byte length of the :ref:`xattrvalues` field.
+   * The ``xattrlengths`` length should be a multiple of 4.
+   * The number of :ref:`xattrnames` should equal the value of the
+     ``xattrlengths`` length divided by 4.
 
 .. _xattrvalues:
 
@@ -961,13 +965,10 @@ values. The order and content of the values are determined by the
    Note: :ref:`xattrnames`, :ref:`xattrlengths`, and
    :ref:`xattrvalues` must be specified together.
 
-     Note: There is redundancy that should be validated
-     by the verifier.
+   Note: There is redundancy that should be validated by the verifier.
 
-     * The number of fields should equal the number of names in
-       :ref:`xattrnames`.
-     * The 4-byte length of the ``xattrvalues`` field should equal the
-       sum of the content fields.
+   * The sum of the 4-byte lengths of the :ref:`xattrvalues` fields
+     should equal the 4-byte length of the :ref:`xattrvalues` field.
 
 Integer Format
 ===================================
