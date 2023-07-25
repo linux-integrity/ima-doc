@@ -190,16 +190,10 @@ The pseudofile ``/proc/cmdline`` will display the boot command line.
 Specifying none of the below ``ima_policy`` options on the boot
 command line yields a policy with no policy rules.
 
-Secure Boot rules
+.. _secure-boot-state:
+
+Secure Boot State
 ------------------------------------
-
-Enabling secure boot in the firmware adds these policy statements:
-
-::
-
-   measure func=KEXEC_KERNEL_CHECK
-   measure func=MODULE_CHECK
-
 
 For EFI-based systems, the secure boot state can be tested with
 
@@ -219,6 +213,8 @@ On OpenPOWER systems, the secure boot state is indicated by the
 presence of the device tree property
 ``/proc/device-tree/ibm,secure-boot/os-secureboot-enforcing``.  If the
 pseudo-file exists, secure boot is enabled,  else it is disabled.
+
+For the effect on policies, see :ref:`config-ima-arch-policy`.
 
 .. _ima-measurement-policies:
 

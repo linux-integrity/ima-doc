@@ -240,13 +240,14 @@ If ``CONFIG_MODULE_SIG`` is true, the kernel will verify a kernel
 module appended signature. If false, ``CONFIG_IMA_ARCH_POLICY`` will
 add an IMA appraise :ref:`func-module-check` rule.
 
-In addition to the fallback appraise rules, ``CONFIG_IMA_ARCH_POLICY``
-always adds measure rules for :ref:`arm-and-x86` UEFI based platforms.
+In addition to the appraise rules, ``CONFIG_IMA_ARCH_POLICY``
+always adds trusted boot measure rules for :ref:`arm-and-x86` UEFI
+based platforms.
 
-These policy rules are based partially on the firmware secure boot
-status (e.g. :ref:`arm-and-x86` UEFI, :ref:`powerpc` firmware secure
-boot and trusted boot). See :ref:`built-in-policy-rules` for a method
-of deterimining whether secure boot is enabled.
+These policy rules are based on the firmware boot status
+(e.g. :ref:`arm-and-x86` UEFI secure boot, :ref:`powerpc` secure boot
+and trusted boot). See :ref:`secure-boot-state` for a method of
+determining whether secure and/or trusted boot is enabled.
 
 
 .. _arm-and-x86:
@@ -274,7 +275,8 @@ this rule to appraise kernel modules:
    appraise func=MODULE_CHECK appraise_type=imasig
 
 Regardless of those configuration flags, ``CONFIG_IMA_ARCH_POLICY``
-adds these rules to measure the kernel and kernel modules:
+adds these rules to measure the kernel and kernel modules.  It does
+not differentiate between secure and trusted boot.
 
 ::
 

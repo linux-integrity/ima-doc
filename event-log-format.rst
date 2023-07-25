@@ -413,7 +413,7 @@ See :ref:`func-module-check` for kernel module appraisal details. See
 
 .. _`ima-ngv2`:
 
-ima_ngv2
+ima-ngv2
 -----------------------------------
 
   d-ngv2_ \| n-ng_
@@ -783,6 +783,9 @@ evmsig
 
 ``evmsig`` follows the format of :ref:`sig`.  The
 :ref:`signature-type` is ``0x05`` EVM_XATTR_PORTABLE_DIGSIG.
+
+If a signature exists in ``security.ima`` it is stored.  Otherwise,
+the signature in ``security.evm`` is stored.
 
 .. _buf:
 
