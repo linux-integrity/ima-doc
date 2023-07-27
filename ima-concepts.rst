@@ -41,7 +41,53 @@ separate verifier.
 **IMA** :ref:`audit` includes the file hash in the system's audit
 log. This can be useful for analytics and forensics.
 
+
+Threat Model
+===================================
+
+.. warning::
+
+   Under construction.
+
+IMA detects an attempt to access an invalid item. The TPM provides
+cryptographic integrity over the measurement log, which can be reported
+to a verifier. It covers threats such as:
+
+* Unsigned software.
+* Software signed with an unknown or revoked key.
+* Software that has been altered after signing.
+
+
+The measurement log verifier can further detect:
+
+* Running unapproved software.
+* Running approved but back level software.
+* A file with an unexpected file name.
+
+These attacks are not in scope:
+
+Memory Attacks
+-----------------------------------
+
+IMA measures and appraises items when they are first accessed.  An
+attack that modifies memory after the access will not be detected.
+
+Examples:
+
+* A run-time alteration of memory, such as an mmap'ed file.
+* An alteration of the appraise flag to disable appraisal.
+
+File Name Changes
+-----------------------------------
+
+IMA does not appraise the file name, which is associated with the
+directory, not the file meta-data.
+
+For example, an the executable renamed from ``mv`` renamed to ``rm``
+will still pass appraisal. The file name will be measured.
+
 |
+
 
 .. _measurement:
 
@@ -234,7 +280,7 @@ have ``type=INTEGRITY_RULE`` and the entry includes:
 
 * file name
 * hash algorithm and hash
-* ppid, pid,auid, uid, gid, euid, suid, fsuid, egid, sgid, fsgid
+* ppid, pid, uuid, uid, gid, euid, suid, fsuid, egid, sgid, fsgid
 * the command that triggered the rule
 
 |
@@ -245,7 +291,7 @@ Extended Verification Module (EVM)
 ===================================
 
 EVM (Extended Verification Module) detects tampering of file
-meta-data. :ref:`evm-hmac` is limited to offline protection.
+meta-data. :ref:`evm-hmac` is limited to off-line protection.
 :ref:`evm-signature` can also protect against runtime tampering.
 
 :ref:`evm-signature` aims at protecting files that are not expected to
