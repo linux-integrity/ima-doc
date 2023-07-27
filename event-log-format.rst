@@ -893,6 +893,9 @@ iuid
 This measures the user ID of the original, actual file, not the
 idmapped user ID within a container.
 
+The length will be zero if the item being measured is not a
+file. Examples are the boot aggregate or critical data.
+
 
 .. _igid:
 
@@ -904,6 +907,9 @@ igid
 This measures the group ID of the original, actual file, not the
 idmapped group ID within a container.
 
+The length will be zero if the item being measured is not a
+file. Examples are the boot aggregate or critical data.
+
 .. _imode:
 
 imode
@@ -911,6 +917,9 @@ imode
 
 ``imode`` is a 4-byte length plus the file mode (e.g., user, group,
 other).
+
+The length will be zero if the item being measured is not a
+file. Examples are the boot aggregate or critical data.
 
 .. _xattrnames:
 

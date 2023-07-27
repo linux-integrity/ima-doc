@@ -1140,7 +1140,9 @@ supported values for ``ima_template=`` are:
 * :ref:`ima-modsig`
 * :ref:`ima-ngv2`
 * :ref:`ima-sigv2`
-* :ref:`evm-sig`
+* (:ref:`evm-sig`) - While this is currently allowed, it is not
+  recommended because it would apply to items that are not files with
+  EVM signature attributes.
 
 .. _ima-canonical-fmt:
 
