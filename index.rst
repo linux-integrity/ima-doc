@@ -11,6 +11,7 @@ IMA
    :caption: Contents
 
    ima-intro
+   quick-start
    ima-concepts
    ima-configuration
    ima-policy
