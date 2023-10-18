@@ -188,6 +188,9 @@ IMA Event Log Ascii Format
 IMA Event Log Binary Format
 ===================================
 
+The log can be displayed in human-readable for using the recipe at
+:ref:`ima-log-parsing`.
+
 An IMA event record has the following fields.
 
 PCR Index

@@ -429,3 +429,32 @@ ima-inspect
    
    **FIXME Needs testing and a sample command line input and output.**
 
+imaextend
+===================================
+
+``imaextend`` includes sereral functions related to the :ref:`ima-event-log`.
+
+Package:
+
+* Fedora: tss2
+* Ubuntu: libtss0
+
+.. _ima-log-parsing:
+
+IMA log parsing
+-------------------
+
+The :ref:`ima-event-log-binary-format` can be displayed using this command:
+
+..
+
+   tssimaextend -le -sim -v -if filename
+
+* -le indicates a little endian log.  Omit for the (rare) big endian log.
+
+* -sim indicates that simulated PCR values should be calculated, as
+  opposed to extending to a TPM.
+* -v requests a verbose trace of the events
+* -filename indicates the location of the log, which can be
+  ``/sys/kernel/security/ima/binary_runtime_measurements``, but is
+  often saved on a file for debugging.
