@@ -330,13 +330,13 @@ excludes the last two items, which are installation specific.
   * inode number (i_ino)
   * generation (i_generation)
 
-``security.selinux`` is enabled when SELinux is enabled.
+``security.selinux`` is included when SELinux is enabled.
 
 ``security.SMACK64`` is included when SMACK is enabled. The other
 SMACK attributes are added when :ref:`config-evm-extra-smack-xattrs`
 is set.
 
-``security.apparmor`` is enabled when AppArmor is enabled.
+``security.apparmor`` is included when AppArmor is enabled.
 
 Additional security extended attributes can be included at runtime by
 adding them to ``/sys/kernel/security/integrity/evm/evm_xattrs`` if
