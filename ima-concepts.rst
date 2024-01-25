@@ -514,6 +514,8 @@ To view the values, use :ref:`keyctl-show`.
 These keys (certificates) are compiled into the kernel and loaded at
 boot time.
 
+View using :ref:`keyctl-show`.
+
 ``.builtin_trusted_keys`` verify loading of:
 
 * :ref:`dot-secondary-trusted-keys` certificates
@@ -521,23 +523,6 @@ boot time.
 * kernel modules
 * kexec'd kernel images
 
-
-.. _dot-secondary-trusted-keys:
-
-.secondary_trusted_keys
------------------------------------
-
-These keys (certificates) are signed by a key on the
-:ref:`dot-builtin-trusted-keys` or :ref:`dot-machine` keyring.
-
-They are loaded using :ref:`keyctl`.
-
-``.secondary_trusted_keys`` verify loading of:
-
-* other :ref:`dot-secondary-trusted-keys` certificates
-* :ref:`dot-ima` certificates
-* kernel modules
-* kexec'd kernel images
 
 .. _`dot-machine`:
 
@@ -590,6 +575,39 @@ The ``.machine`` keyring can only be enabled if
 
    Suggest getting picture from Elaine's talk
 
+.. warning::
+
+   How to use mokutil. Find someone else.
+
+   https://blogs.oracle.com/linux/post/the-machine-keyring
+   https://www.mankier.com/1/efikeygen#Synopsis
+
+.. _dot-secondary-trusted-keys:
+
+.secondary_trusted_keys
+-----------------------------------
+
+These keys (certificates) are signed by a key on the
+:ref:`dot-builtin-trusted-keys`, :ref:`dot-machine`, or
+:ref:`dot-secondary-trusted-keys` keyring.
+
+They are loaded using :ref:`keyctl`.
+
+View using :ref:`keyctl-show`.
+
+.. warning::
+
+   https://blogs.oracle.com/linux/post/the-machine-keyring
+   https://www.mankier.com/1/efikeygen
+   $ efikeygen -d /etc/pki/pesign --ca --self-sign --nickname="mokcert" --common-name='CN=FooBar' --serial=00  --kernel
+
+``.secondary_trusted_keys`` verify loading of:
+
+* other :ref:`dot-secondary-trusted-keys` certificates
+* :ref:`dot-ima` certificates
+* kernel modules
+* kexec'd kernel images
+
 .. _`dot-ima`:
 
 .ima
@@ -639,10 +657,6 @@ It provides a separate, distinct keyring for platform trusted keys,
 which the kernel automatically populates during initialization from
 values provided by the platform.
 
-``MOK`` keys are registered using :ref:`mokutil`.  At boot time, a
-one-time firmware (e.g. UEFI) menu prompts to accept the registered
-keys.
-
 If secure boot in the firmware is disabled, if the firmware
 variables are clear, or if :ref:`config-integrity-platform-keyring` is
 clear, keys are not loaded onto either the :ref:`dot-machine` or
@@ -650,9 +664,14 @@ clear, keys are not loaded onto either the :ref:`dot-machine` or
 
 Otherwise, keys are loaded on the ``.platform`` keyring.
 
-* UEFI - DB keys
+* UEFI - Secure Boot ``db`` keys, excluding ``dbx`` keys
+* Machine owner (MOK) keys if secure boot is enabled
 * PowerPC - platform and deny listed keys for POWER
 * S390 - IPL keys
+  
+Additional ``MOK`` keys are registered using :ref:`mokutil`.  At boot
+time, a one-time firmware (e.g. UEFI) menu prompts to accept the
+registered keys. See :ref:`mokutil-platform` for a sample procedure.
 
 ``.platform`` keys verify loading of
 

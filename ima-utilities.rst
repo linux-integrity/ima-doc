@@ -198,6 +198,8 @@ Show the keys on the :ref:`dot-machine` keyring
 
 ::
 
+   keyctl show %keyring:.builtin_trusted_keys
+   keyctl show %keyring:.secondary_trusted_keys
    keyctl show %keyring:.machine
    keyctl show %keyring:.platform
 
@@ -366,6 +368,47 @@ Package:
 
    https://lwn.net/Articles/868595/
 
+.. _mokutil-platform:
+
+mokutil MOK .platform Key Generation
+------------------------------------------------
+
+``mokutil`` can be used to add a key to the :ref:`dot-platform` keyring.
+
+View the existing keyring:
+
+::
+
+   keyctl show %:.platform
+
+Create a signing certificate to be enrolled. By default, The key will
+be put in /etc/pki/pesign.
+
+::
+
+   efikeygen --ca --self-sign --nickname="mokcert" --common-name='CN=MyCo' --serial=123
+
+Export the public certificate to a file.
+
+::
+
+   certutil -L -d /etc/pki/pesign -n "mokcert" -o mokcert.der -r
+
+Import the public certificate into the MOK.  This stages the public key.
+
+::
+
+   mokutil --import ./mokcert.der
+
+Reboot. A UEFI prompt should appear. Accept the key, using the
+password from ``mokutil``.
+
+View the updated keyring:
+
+::
+
+   keyctl show %:.platform
+
 .. _setfattr:
 
 setfattr
@@ -413,9 +456,14 @@ fsverity
 efikeygen
 ===================================
 
+his tool generates keys for PE image signing.
+
 Package:
 
 * RedHat, Fedora - pesign
+* Debian, Ubuntu - pesign
+
+  
 
 .. _ima_inspect:
 
@@ -446,7 +494,7 @@ IMA log parsing
 
 The :ref:`ima-event-log-binary-format` can be displayed using this command:
 
-..
+::
 
    tssimaextend -le -sim -v -if filename
 
