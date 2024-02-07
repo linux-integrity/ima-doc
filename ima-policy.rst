@@ -199,7 +199,7 @@ For EFI-based systems, the secure boot state can be tested with
 
 ::
 
-   mokutil --sb state
+   mokutil --sb-state
 
 For a PowerVM guest, the secure boot state can be tested by viewing
 the device tree property in the pseudo-file

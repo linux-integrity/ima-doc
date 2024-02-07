@@ -194,14 +194,13 @@ keyctl show
 
 ``show`` lists keys on one of the :ref:`keyrings`.
 
-Show the keys on the :ref:`dot-machine` keyring
-
 ::
 
    keyctl show %keyring:.builtin_trusted_keys
    keyctl show %keyring:.secondary_trusted_keys
    keyctl show %keyring:.machine
    keyctl show %keyring:.platform
+   keyctl show %keyring:.ima
 
 To see if one of the :ref:`keyrings` exists:
 
@@ -368,12 +367,28 @@ Package:
 
    https://lwn.net/Articles/868595/
 
-.. _mokutil-platform:
+.. _mokutil-sb-state:
 
-mokutil MOK .platform Key Generation
+mokutil Secure Boot State
 ------------------------------------------------
 
-``mokutil`` can be used to add a key to the :ref:`dot-platform` keyring.
+``mokutil`` can be used to probe the secure boot state.
+
+::
+
+   mokutil --sb-state
+
+
+.. _mokutil-mok-keygen:
+
+
+mokutil MOK Key Generation
+------------------------------------------------
+
+``mokutil`` can be used to add a key to the :ref:`dot-machine` and
+:ref:`dot-platform` keyrings.
+
+Run as ``root``.
 
 View the existing keyring:
 
@@ -408,6 +423,37 @@ View the updated keyring:
 ::
 
    keyctl show %:.platform
+
+.. note::
+
+   With the --ca argument, the key attributes are
+
+   ::
+
+      	Digital Signature, Certificate Sign, CRL Sign
+                CA:TRUE
+
+   Without the --ca argument, the key attributes are
+
+   ::
+
+      Digital Signature, Key Encipherment, Data Encipherment
+
+.. note::
+
+   Non-root experiments can be performed as below, creating a tmp
+   directory.  The ``pki`` utility is in
+
+   * Fedora: dogtag-pki-tools
+   * Ubuntu: pki-tools
+
+   ::
+
+	pki -c pwd -d tmp client-init
+        efikeygen --ca --self-sign --nickname="mokcert" --common-name='CN=MyCo' --serial=123 -d tmp
+        certutil -L -d tmp -n "mokcert" -o mokcert.der -r
+        openssl x509 -inform der -in mokcert.der -noout -text
+
 
 .. _setfattr:
 
@@ -463,7 +509,8 @@ Package:
 * RedHat, Fedora - pesign
 * Debian, Ubuntu - pesign
 
-  
+See https://www.mankier.com/1/efikeygen
+
 
 .. _ima_inspect:
 

@@ -884,6 +884,14 @@ keyring.
 
 See also :ref:`config-integrity-ca-machine-keyring-max`.
 
+======================  ===================================
+Distribution		State
+----------------------  -----------------------------------
+Ubuntu 23		not set
+----------------------  -----------------------------------
+Fedora 39		set
+======================  ===================================
+
 .. _config-integrity-ca-machine-keyring-max:
 
 CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX  
@@ -895,6 +903,15 @@ false) are loaded on the :ref:`dot-machine` keyring. Others go on the
 :ref:`dot-platform` keyring.
 
 This boolean overrides :ref:`config-integrity-ca-machine-keyring`.
+
+======================  ===================================
+Distribution		State
+----------------------  -----------------------------------
+Ubuntu 23		not set
+----------------------  -----------------------------------
+Fedora 39		set
+======================  ===================================
+
 
 .. _boot-command-line-arguments:
 

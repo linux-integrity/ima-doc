@@ -529,17 +529,33 @@ View using :ref:`keyctl-show`.
 .machine
 -----------------------------------
 
-The ``.machine`` keyring holds Machine Owner Keys (``MOK``), The
-``MOK`` keys are registered using :ref:`mokutil`.  At boot time, a
-one-time UEFI menu prompts to accept the registered keys.
+and
 
-The ``.machine`` keyring has the ability to store only CA
-certificates, and put the rest on the :ref:`dot-platform` keyring,
+.. _`dot-platform`:
+
+.platform
+-----------------------------------
+
+The :ref:`dot-machine` and :ref:`dot-platform` keyrings hold Machine
+Owner Keys (``MOK``). They provide separate, distinct keyrings for
+platform trusted keys, which the kernel automatically populates during
+initialization from values provided by the platform.
+
+Additional ``MOK`` keys are registered using :ref:`mokutil`.  At boot
+time, a one-time firmware (e.g. UEFI) menu prompts to accept the
+registered keys. See :ref:`mokutil-mok-keygen` for a sample procedure.
+
+The :ref:`dot-machine` keyring has the ability to store only CA
+certificates and put the rest on the :ref:`dot-platform` keyring,
 separating the code signing keys from the keys that are used to sign
-certificates. This unlocks the use of the ``.machine`` keyring as a
-trust anchor for IMA.
+certificates. This unlocks the use of the :ref:`dot-machine` keyring
+as a trust anchor for IMA.
 
-If secure boot in the UEFI firmware is disabled, the keys are not
+If secure boot in the UEFI firmware is disabled (see
+:ref:`secure-boot-state`), keys are not loaded onto either the
+:ref:`dot-machine` or :ref:`dot-platform` keyring.
+
+if :ref:`config-integrity-platform-keyring` is clear, keys are not
 loaded onto either the :ref:`dot-machine` or :ref:`dot-platform` keyring.
 
 Otherwise,if the UEFI variables MokListRT/ MokListXRT are clear,
@@ -547,40 +563,42 @@ registered keys are loaded on the :ref:`dot-platform` keyring.
 
 Otherwise, if :ref:`config-integrity-ca-machine-keyring-max` is set, only
 registered CA signing key certificates (X.509 CA bit and keyCertSign
-true, and digitalSignature false) are loaded on the ``.machine``
+true, and digitalSignature false) are loaded on the :ref:`dot-machine`
 keyring. The rest are loaded on the :ref:`dot-platform` keyring.
 
-Otherwise, if :ref:`config-integrity-ca-machine-keyring` is set, only the
-registered signing key certificates (X.509 CA bit and keyCertSign
-true) are loaded on the ``.machine`` keyring. The remainder are loaded
-on the :ref:`dot-platform` keyring.
+Otherwise, if :ref:`config-integrity-ca-machine-keyring` is set, only
+the registered signing key certificates (X.509 CA bit and keyCertSign
+true) are loaded on the :ref:`dot-machine` keyring. The remainder are
+loaded on the :ref:`dot-platform` keyring.
 
 Otherwise, if :ref:`config-integrity-machine-keyring` is set, all the
-registered ``MOK`` keys are loaded on the ``.machine`` keyring.
+registered ``MOK`` keys are loaded on the :ref:`dot-machine` keyring.
 
 Otherwise, the keys are loaded on the :ref:`dot-platform` keyring.
 
-The ``.machine`` keyring can only be enabled if
+The :ref:`dot-machine` keyring can only be enabled if
 :ref:`config-secondary-trusted-keyring` and
 :ref:`config-integrity-machine-keyring` are set.
 
-``.machine`` keys verify loading of
+These keys are loaded on the :ref:`dot-machine` or :ref:`dot-platform`
+keyring:
+
+* UEFI - Secure Boot ``db`` keys, excluding ``dbx`` keys
+* Machine owner (MOK) keys if secure boot is enabled
+* PowerPC - platform and deny listed keys for POWER
+* S390 - IPL keys
+  
+:ref:`dot-machine` keys verify loading of
 
 * :ref:`dot-secondary-trusted-keys` certificates
 * :ref:`dot-ima` certificates
 * kernel modules
 * kexec'd kernel images
 
-.. warning::
+:ref:`dot-platform` keys verify loading of
 
-   Suggest getting picture from Elaine's talk
-
-.. warning::
-
-   How to use mokutil. Find someone else.
-
-   https://blogs.oracle.com/linux/post/the-machine-keyring
-   https://www.mankier.com/1/efikeygen#Synopsis
+* kernel modules (for some downstream distros)
+* kexec'd kernel images
 
 .. _dot-secondary-trusted-keys:
 
@@ -594,12 +612,6 @@ These keys (certificates) are signed by a key on the
 They are loaded using :ref:`keyctl`.
 
 View using :ref:`keyctl-show`.
-
-.. warning::
-
-   https://blogs.oracle.com/linux/post/the-machine-keyring
-   https://www.mankier.com/1/efikeygen
-   $ efikeygen -d /etc/pki/pesign --ca --self-sign --nickname="mokcert" --common-name='CN=FooBar' --serial=00  --kernel
 
 ``.secondary_trusted_keys`` verify loading of:
 
@@ -618,8 +630,9 @@ Only certificates signed by a key on the
 keyrings may be loaded onto the ``.ima`` keyring.
 
 ``.ima`` keys are loaded from ``/etc/keys/ima`` at boot time using a
-dracut script calling :ref:`keyctl`. They cannot be compiled into the
-kernel.
+dracut script ``modules.d/(nn)integrity/ima-keys-load.sh`` calling
+:ref:`keyctl`. They cannot be compiled into the kernel. If the script
+is absent, keys will not automatically be loaded.
 
 Keys on the ``.ima`` keyring are used for
 
@@ -645,37 +658,6 @@ Keys on the ``.evm`` keyring are used for
 * :ref:`evm-signature` verification.
 
 The key used for verification is based on the :ref:`public-key-identifier`.
-
-.. _`dot-platform`:
-
-.platform
------------------------------------
-
-The ``.platform`` keyring holds Machine Owner Keys (``MOK``).
-
-It provides a separate, distinct keyring for platform trusted keys,
-which the kernel automatically populates during initialization from
-values provided by the platform.
-
-If secure boot in the firmware is disabled, if the firmware
-variables are clear, or if :ref:`config-integrity-platform-keyring` is
-clear, keys are not loaded onto either the :ref:`dot-machine` or
-:ref:`dot-platform` keyring.
-
-Otherwise, keys are loaded on the ``.platform`` keyring.
-
-* UEFI - Secure Boot ``db`` keys, excluding ``dbx`` keys
-* Machine owner (MOK) keys if secure boot is enabled
-* PowerPC - platform and deny listed keys for POWER
-* S390 - IPL keys
-  
-Additional ``MOK`` keys are registered using :ref:`mokutil`.  At boot
-time, a one-time firmware (e.g. UEFI) menu prompts to accept the
-registered keys. See :ref:`mokutil-platform` for a sample procedure.
-
-``.platform`` keys verify loading of
-
-* kexec'd kernel images
 
 .. _dot-blacklist:
 
