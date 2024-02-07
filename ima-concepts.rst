@@ -590,10 +590,10 @@ keyring:
   
 :ref:`dot-machine` keys verify loading of
 
-* :ref:`dot-secondary-trusted-keys` certificates
-* :ref:`dot-ima` certificates
 * kernel modules
 * kexec'd kernel images
+* :ref:`dot-secondary-trusted-keys` certificates
+* :ref:`dot-ima` certificates
 
 :ref:`dot-platform` keys verify loading of
 

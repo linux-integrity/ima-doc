@@ -360,12 +360,8 @@ mokutil
 Package:
 
 * Fedora - mokutil
+* Ubuntu - mokutil
 
-.. warning::
-
-   Add examples for registering .machine keys. .platform keys
-
-   https://lwn.net/Articles/868595/
 
 .. _mokutil-sb-state:
 
