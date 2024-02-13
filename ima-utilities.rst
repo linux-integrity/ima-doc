@@ -202,6 +202,11 @@ keyctl show
    keyctl show %keyring:.platform
    keyctl show %keyring:.ima
 
+The output data includes
+
+* Subject CN - as text
+* X509v3 Subject Key Identifier - as hexascii
+
 To see if one of the :ref:`keyrings` exists:
 
 ::
@@ -374,15 +379,13 @@ mokutil Secure Boot State
 
    mokutil --sb-state
 
-
 .. _mokutil-mok-keygen:
-
 
 mokutil MOK Key Generation
 ------------------------------------------------
 
-``mokutil`` can be used to add a key to the :ref:`dot-machine` and
-:ref:`dot-platform` keyrings.
+``mokutil`` can be used to add (import) a key to the
+:ref:`dot-machine` and :ref:`dot-platform` keyrings.
 
 Run as ``root``.
 
@@ -449,6 +452,28 @@ View the updated keyring:
         efikeygen --ca --self-sign --nickname="mokcert" --common-name='CN=MyCo' --serial=123 -d tmp
         certutil -L -d tmp -n "mokcert" -o mokcert.der -r
         openssl x509 -inform der -in mokcert.der -noout -text
+
+.. _mokutil-mok-export:
+
+mokutil MOK Key Export
+------------------------------------------------
+
+``mokutil`` can be used to view (export) a key from the
+:ref:`dot-machine` and :ref:`dot-platform` keyrings.
+
+Run as ``root``.
+
+::
+
+   mokutil --export
+
+The keys are exported in ``der`` format.  A key can be viewed using,
+e.g.,
+
+::
+
+   openssl x509 -inform der -in MOK-0005.der -text -noout
+
 
 
 .. _setfattr:
