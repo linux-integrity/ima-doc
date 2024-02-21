@@ -377,7 +377,7 @@ which requires all files to be signed.  Hashes are insufficiant.
 ima_policy=fail_securely
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``file_securely`` affects the appraisal of untrusted mounted
+``fail_securely`` affects the appraisal of untrusted mounted
 filesystems. An example is a FUSE filesystem.
 
    FUSE (Filesystem in Userspace) filesystems are inherently untrusted.  A
