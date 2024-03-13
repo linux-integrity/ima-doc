@@ -197,9 +197,21 @@ keyctl show
 ::
 
    keyctl show %keyring:.builtin_trusted_keys
+
+::
+
    keyctl show %keyring:.secondary_trusted_keys
+
+::
+
    keyctl show %keyring:.machine
+
+::
+
    keyctl show %keyring:.platform
+
+::
+
    keyctl show %keyring:.ima
 
 The output data includes
@@ -474,6 +486,53 @@ e.g.,
 
    openssl x509 -inform der -in MOK-0005.der -text -noout
 
+.. _mokutil-mok-delete:
+
+mokutil MOK Key Delete
+------------------------------------------------
+
+``mokutil`` can be used to delete (the opposite of import) a key from
+the :ref:`dot-machine` and :ref:`dot-platform` keyrings.
+
+Run as ``root``.
+
+View the existing keyring:
+
+::
+
+   keyctl show %:.platform
+
+If the ``der`` format key is not available, use
+:ref:`mokutil-mok-export` to export and view the keys. Chose the key
+to be deleted.
+
+This is the first step in deleting the key, specifying a deletion
+password:
+
+::
+
+   mokutil --delete MOK-000n.der
+
+Check using:
+
+::
+
+   mokutil --list-delete
+
+Then reboot.
+
+.. note::
+
+
+   **The MOK prompt lasts for only a few seconds. Be at the machine
+   during the reboot. If the prompt is missed and the machine boots,
+   start over.**
+
+
+Follow the prompt steps, entering the password, and then let the
+platform boot.
+
+Confirm by viewing the keyring.
 
 
 .. _setfattr:
