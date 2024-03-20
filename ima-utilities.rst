@@ -380,10 +380,11 @@ Package:
 * Ubuntu - mokutil
 
 
-.. _mokutil-sb-state:
+.. _sb-state:
 
-mokutil Secure Boot State
-------------------------------------------------
+Secure Boot State
+===================================
+
 
 ``mokutil`` can be used to probe the secure boot state.
 
@@ -391,13 +392,15 @@ mokutil Secure Boot State
 
    mokutil --sb-state
 
-.. _mokutil-mok-keygen:
+.. _kernel-signing-key-generation:
 
-mokutil MOK Key Generation
-------------------------------------------------
+Kernel Signing Key Generation
+===================================
 
-``mokutil`` can be used to add (import) a key to the
-:ref:`dot-machine` and :ref:`dot-platform` keyrings.
+This is a method for generating a kernel image signing key and loading
+the certificate into the UEFI MOK database. At reboot, the public key
+is loaded on the :ref:`dot-platform` keyring. The private key and
+certificate are stored in a database at ``/etc/pki/pesign``.
 
 Run as ``root``.
 
@@ -407,27 +410,39 @@ View the existing keyring:
 
    keyctl show %:.platform
 
-Create a signing certificate to be enrolled. By default, The key will
-be put in /etc/pki/pesign.
+Create the signing key and certificate to be enrolled. By default,
+they are put in ``/etc/pki/pesign`` databases.
 
 ::
 
    efikeygen --ca --self-sign --nickname="mokcert" --common-name='CN=MyCo' --serial=123
 
-Export the public certificate to a file.
+Export the certificate from the database to a file.
 
 ::
 
    certutil -L -d /etc/pki/pesign -n "mokcert" -o mokcert.der -r
 
-Import the public certificate into the MOK.  This stages the public key.
+Import the certificate into the MOK.  This stages the certificate.
 
 ::
 
    mokutil --import ./mokcert.der
 
-Reboot. A UEFI prompt should appear. Accept the key, using the
+Reboot. A UEFI prompt should appear. Accept the certificate, using the
 password from ``mokutil``.
+
+.. note::
+
+   **The MOK prompt lasts for only a few seconds. Be at the machine
+   during the reboot. If the prompt is missed and the machine boots,
+   start over.**
+
+View the updated MOK:
+
+::
+
+   mokutil -l
 
 View the updated keyring:
 
@@ -437,14 +452,14 @@ View the updated keyring:
 
 .. note::
 
-   With the --ca argument, the key attributes are
+   With the --ca argument, the certificate attributes are
 
    ::
 
       	Digital Signature, Certificate Sign, CRL Sign
                 CA:TRUE
 
-   Without the --ca argument, the key attributes are
+   Without the --ca argument, the certificate attributes are
 
    ::
 
@@ -465,13 +480,12 @@ View the updated keyring:
         certutil -L -d tmp -n "mokcert" -o mokcert.der -r
         openssl x509 -inform der -in mokcert.der -noout -text
 
-.. _mokutil-mok-export:
+.. _mok-certificate-export:
 
-mokutil MOK Key Export
-------------------------------------------------
+MOK Certificate Export
+===================================
 
-``mokutil`` can be used to view (export) a key from the
-:ref:`dot-machine` and :ref:`dot-platform` keyrings.
+``mokutil`` can be used to export a certificate from the MOK.
 
 Run as ``root``.
 
@@ -479,20 +493,21 @@ Run as ``root``.
 
    mokutil --export
 
-The keys are exported in ``der`` format.  A key can be viewed using,
-e.g.,
+The certificates are exported in ``der`` format.  A certificate can be
+viewed using, e.g.,
 
 ::
 
    openssl x509 -inform der -in MOK-0005.der -text -noout
 
-.. _mokutil-mok-delete:
+.. _-mok-certificate-delete:
 
-mokutil MOK Key Delete
-------------------------------------------------
+MOK Certificate Delete
+===================================
 
-``mokutil`` can be used to delete (the opposite of import) a key from
-the :ref:`dot-machine` and :ref:`dot-platform` keyrings.
+``mokutil`` can be used to delete (the opposite of import) a
+certificate from the MOK and the :ref:`dot-machine` and
+:ref:`dot-platform` keyrings.
 
 Run as ``root``.
 
@@ -502,12 +517,12 @@ View the existing keyring:
 
    keyctl show %:.platform
 
-If the ``der`` format key is not available, use
-:ref:`mokutil-mok-export` to export and view the keys. Chose the key
-to be deleted.
+If the ``der`` format certificate is not available, use
+:ref:`mok-certificate-export` to export and view the
+certificates. Chose the certificate to be deleted.
 
-This is the first step in deleting the key, specifying a deletion
-password:
+This is the first step in deleting the certificate, specifying a
+deletion password:
 
 ::
 
@@ -533,6 +548,36 @@ Follow the prompt steps, entering the password, and then let the
 platform boot.
 
 Confirm by viewing the keyring.
+
+.. _pesign_darabase:
+
+pesign database
+===================================
+
+View the database.
+
+::
+
+   certutil -d /etc/pki/pesign -K
+
+Export the certificate from the database to a file.
+
+::
+
+   certutil -L -d /etc/pki/pesign -n "mokcert" -o mokcert.der -r
+
+Delete the key and certificate from the databases.
+
+::
+
+   certutil -d /etc/pki/pesign -F -n "mokcert"
+
+To delete an orphan key (after deleting just the certificate),
+where the fingerprint is listed with ``-K``.
+
+::
+
+   certutil -d /etc/pki/pesign -F -k fingerprint
 
 
 .. _setfattr:

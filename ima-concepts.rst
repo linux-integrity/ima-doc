@@ -543,7 +543,8 @@ initialization from values provided by the platform.
 
 Additional ``MOK`` keys are registered using :ref:`mokutil`.  At boot
 time, a one-time firmware (e.g. UEFI) menu prompts to accept the
-registered keys. See :ref:`mokutil-mok-keygen` for a sample procedure.
+registered keys. See :ref:`kernel-signing-key-generation` for a sample
+procedure.
 
 The :ref:`dot-machine` keyring has the ability to store only CA
 certificates and put the rest on the :ref:`dot-platform` keyring,
