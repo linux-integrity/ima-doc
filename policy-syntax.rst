@@ -220,6 +220,32 @@ func=MODULE_CHECK
 This triggers on loading a kernel module (e.g., a device driver, a .ko
 file).
 
+Note:
+
+IMA only measures and appraises kernel modules loaded by the
+finit_module() syscall. IMA does not measure or appraise kernel
+modules loaded by the init_module() syscall.
+
+if ``CONFIG_MODULE_SIG`` is enabled, then the init_module() syscall is
+used. An application can avoid the func=MODULE_CHECK measurement by
+calling init_module() specifying a memory buffer rather than a disk
+file. In this case, func=MODULE_CHECK is ineffective.
+
+This policy is better, but can still be bypassed.
+
+::
+
+   measure func=FILE_CHECK mask=MAY_READ uid=0
+
+
+If ``CONFIG_MODULE_SIG`` is disabled (the better choice),
+finit_module() is used and measurements will occur.
+
+The system does its own signature checking independent of IMA if
+``CONFIG_MODULE_SIG`` is enabled and either
+``CONFIG_MODULE_SIG_FORCE`` is enabled or the boot command line
+contains ``module.sig_enforce``.
+
 For :ref:`ima-modsig`:
 
    If there is a ``measure`` rule but no ``appraise`` rule, the
@@ -239,23 +265,6 @@ For :ref:`ima-modsig`:
 
    measure func=MODULE_CHECK template=ima-modsig
    appraise func=MODULE_CHECK appraise_type=imasig|modsig
-
-Note:
-
-   Uncompressed modules use the finit_module() syscall, permitting
-   IMA to appraise the module.  Compressed modules use the init_module()
-   syscall, and IMA will fail the IMA signature check.
-
-   The system does its own signature checking independent of IMA if
-   ``CONFIG_MODULE_SIG`` is enabled and either
-   ``CONFIG_MODULE_SIG_FORCE`` is enabled or the boot command line
-   contains ``module.sig_enforce``.
-
-   Kernel modules are located in the ``/lib/modules/`uname
-   -r`/kernel/`` directories.  Uncompressed modules have the ``.ko``
-   extension, while compressed modules have other extensions, e.g.,
-   ``.ko.xz``. See :ref:`xz` for an uncompress function.
-
 
 
 .. _func-path-check:
