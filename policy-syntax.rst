@@ -411,10 +411,11 @@ func=CRITICAL_DATA
 
 This triggers on a change to security critical data stored in kernel
 memory such as an SELinux policy or state, device-mapper targets like
-dm-crypt and dm-verity state, and the kernel version.
+dm-crypt and dm-verity state, or the kernel version.
 
 ``CRITICAL_DATA`` forces the IMA template to :ref:`ima-buf`
 independent of the default or boot command line specifier.
+The measurement log data is described in buf :ref:`buf-critical-data`.
 
 ::
 

@@ -828,6 +828,8 @@ measures data as it is loaded on different :ref:`keyrings`. The
    A sample had a 32-byte value which appeared to be a hash. If so,
    where does the hash algorithm come from?
 
+.. _buf-critical-data:
+
 func=CRITICAL_DATA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -837,7 +839,38 @@ may be:
 
 * ``selinux-state`` - a non-nul terminated string holding the SELinux
   state
-* ``selinux-policy-hash`` - 
+* ``selinux-policy-hash``
+
+* ``dm_table_load``
+
+   - ``dm_version`` =n.n.n;
+   - device metadata
+
+      + ``name`` =device name,
+      + ``uuid`` =uuid,
+      + ``major`` =n,
+      + ``minor`` =n,
+      + ``minor_count`` =n,
+      + ``num_targets`` =n;
+
+   - table_load_data
+
+      + ``target_index`` =n,
+      + ``target_begin`` =n,
+      + ``target_len`` =n,
+      + ``target_name`` =[linear/crypt/integrity],
+      + ``target_version`` =n.n.n
+      + ``device_name`` =n:n,``start`` =n;
+
+* ``dm_device_resume``
+
+   - ``dm_version`` as above
+   - device metadata as above
+
+   - ``active_table_hash`` = hash algorithm : hash;
+   - ``current_device_capacity`` =n;
+
+* ``kernel_version`` version string
 
 .. warning::
 
