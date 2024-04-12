@@ -594,7 +594,7 @@ keyring:
 * kernel modules
 * kexec'd kernel images
 * :ref:`dot-secondary-trusted-keys` certificates
-* :ref:`dot-ima` certificates
+* :ref:`dot-ima` certificates on the :ref:`dot-ima` keyring
 
 :ref:`dot-platform` keys verify loading of
 

@@ -549,9 +549,115 @@ platform boot.
 
 Confirm by viewing the keyring.
 
-.. _pesign_darabase:
+.. _ima-ca-key-and-certificate:
 
-pesign database
+IMA CA Key and Certificate
+===================================
+
+The IMA CA key signs the :ref:`ima-signing-key`, which is used to sign
+files. The IMA CA certificate is installed on the :ref:`dot-machine`
+keyring.
+
+Note: This requires secure boot to be enabled, and
+:ref:`config-integrity-platform-keyring` and
+:ref:`config-integrity-ca-machine-keyring-max` set.
+
+Create the CA signing key and CA certificate using OpenSSL.  The key
+usage will be ``Certificate Sign``.  E.g.,
+
+::
+
+   openssl req -new -x509 -key privkey.pem -out imacacert.pem -days 3560 -passin pass:rrrr -addext "keyUsage=keyCertSign"
+
+Convert the certificate from ``pem`` to ``der`` format.
+
+::
+
+   openssl x509 -in imacacert.pem -out imacacert.der -outform der
+
+
+Use ``mokutil`` to stage the certificate for appending to the MOK database.
+
+::
+
+      mokutil --import ./imacacert.der
+
+Reboot. A UEFI prompt should appear. Accept the certificate, using the
+password from ``mokutil``.
+
+View the updated :ref:`dot-machine` keyring:
+
+::
+
+   keyctl show %:.machine
+
+.. _ima-signing-key:
+
+IMA Signing Key and Certificate
+===================================
+
+An IMA signing key signs files and other objects.  IMA :ref:`appraisal`
+uses certificates that are installed on the :ref:`dot-ima` keyring.
+
+Create the CA signing key and CA certificate using OpenSSL.
+
+::
+
+   openssl genrsa -out imakey.pem 2048
+
+Create the certificate signing request.
+
+::
+
+   openssl req -new -key imakey.pem -out imacsr.pem
+
+Sign the certificate with the :ref:`ima-ca-key-and-certificate`.
+
+::
+
+   openssl x509 -req -in imacsr.pem -CA imacacert.pem -CAkey imacakey.pem -outform der -out imacert.der -days 365 -extensions v3_ca -extfile imacert.cnf
+
+A sample configuratrion file is:
+
+::
+
+   [ v3_ca ]
+   authorityKeyIdentifier = keyid:always,issuer:always
+   basicConstraints = CA:false
+   keyUsage = nonRepudiation, digitalSignature
+
+View the resulting IMA signing key certificate:
+
+::
+
+   openssl x509 -in imacert.der -inform der -noout -text
+
+Get the :ref:`dot-ima` keyring ID, the first number in the output of:
+
+::
+
+   keyctl show %keyring:.ima
+
+Import the IMA signing key certificate onto the :ref:`dot-ima` keyring.
+
+::
+
+   evmctl import imacert.der <keyring-ID>
+
+Verify the result.
+
+::
+
+   keyctl show %keyring:.ima
+
+
+
+
+
+
+.. _pesign-database:
+
+pesign Database
 ===================================
 
 View the database.
@@ -646,7 +752,7 @@ ima-inspect
 
    https://github.com/mgerstner/ima-inspect does further parsing of the
    extended attributes.
-   
+
    **FIXME Needs testing and a sample command line input and output.**
 
 imaextend
