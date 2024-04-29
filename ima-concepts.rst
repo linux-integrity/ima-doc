@@ -503,7 +503,7 @@ Adding keys to a keyring can be measured.  See
 :ref:`config-ima-measure-asymmetric-keys`, :ref:`func-key-check`, and
 the :ref:`keyrings-condition` condition.
 
-To view the values, use :ref:`keyctl-show`.
+Use :ref:`keyctl-show` to view the values
 
 
 .. _`dot-builtin-trusted-keys`:

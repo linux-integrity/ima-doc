@@ -446,7 +446,7 @@ If running appraisal and
 
 is part of the built-in policy, the custom policy file is itself
 appraised. For example, the :ref:`boot-time-custom-policy`, typically
-``/etc/ima/ima-policy`` has to be signed.  :ref:`evmctl-policy-signature`
+``/etc/ima/ima-policy`` has to be signed.  :ref:`policy-signature`
 shows a signing utility.
 
 

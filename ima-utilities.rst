@@ -10,155 +10,13 @@ The intent is to provide command line samples that link to tasks
 described elsewhere.  It is **not** to duplicate the usage help or man
 pages.
 
-.. _evmctl:
-
-evmctl
+Utility Installation
 ===================================
-
-Package:
-
-* Fedora: ima-evm-utils
-* Ubuntu: ima-evm-utils
-
-   Note: The latest ``evmctl`` has an fs-verity test for the
-   :ref:`digest-type` policy condition.
-
-   This repo is at https://github.com/mimizohar/ima-evm-utils.git.  The
-   utility is installed in ``/usr/local/bin``. Build and test as follows:
-
-::
-
-   autoreconf -i
-   ./configure
-   make
-   sudo make install
-   cd tests
-   ./fsverity.test
-
-.. warning::
-
-   Add the configure rule for OpenSSL 3.x deprecated functions.
-
-.. _evmctl-portable-signature:
-
-evmctl portable signature
------------------------------------
-
-To create a portable :ref:`evm-signature`, use this example.  It needs
-root because it writes ``security.evm``.
-
-::
-
-   evmctl sign --imahash --portable --key <privkey.pem>  <pathname>
-
-The ``hash`` output is written to ``security.ima``.  The ``evm/ima
-signature`` output is written to ``security.evm``. The format of the
-IMA and EVM signatures is the same as that of the event log :ref:`sig`
-field, a header and a signature.
-
-The result can be viewed with
-
-::
-
-    getfattr -m - -e hex -d  <pathname>
-
-.. _evmctl-policy-signature:
-
-evmctl policy signature
------------------------------------
-
-To generate an unencrypted private key (non-protected):
-
-::
-
-   openssl genrsa -out rsa_private.pem 2048
-
-To generate the public key:
-
-::
-
-   openssl rsa -pubout -in rsa_private.pem -out rsa_public.pem
-
-To sign the IMA :ref:`custom-policy`:
-
-::
-
-   evmctl ima_sign --hashalgo sha256 --key privkey_ima.pem policy
-
-To sign all kernel modules with an IMA signature:
-
-::
-
-   find /lib/modules -name \*.ko -type f -uid 0 -exec evmctl ima_sign --key rsa_private.pem '{}' \;
-
-.. warning::
-
-   **FIXME Signature v1 support is being deprecated in
-   ima-evm-utils. Refer to commit 751a3957729d ("Deprecate IMA
-   signature version 1").**
-
-To sign immutable files (like kernel modules and application code),
-the ``evmctl`` command provided by the app-crypt/ima-evm-utils package
-**FIXME needs link** needs be used. But first, set up the kernel
-keyring:
-
-::
-
-   evmctl import --rsa rsa_public.pem $(keyctl newring _ima @u)
-
-This allows the IMA subsystem to validate the signature (which is also
-needed when initially setting the signature) by loading the public key
-onto the IMA keyring. This needs to be done every time the system
-boots, so it makes sense to do so within an initramfs (early in the
-boot process).
-
-.. warning::
-
-   Explain -imahash vs -ima_sign.
-
-   FIXME Merge samples from this documentation.
-
-   https://en.opensuse.org/SDB:Ima_evm#The_evmctl_utility
-
-   https://www.mankier.com/1/evmctl#Integrity_Keyrings
-
-   https://github.com/mimizohar/ima-evm-utils
-
-``evmctl`` was extended to pass file metadata using command line parameters:
-
-..
-
-  --ino          use custom inode for EVM
-  --uid          use custom UID for EVM
-  --gid          use custom GID for EVM
-  --mode         use custom Mode for EVM
-  --generation   use custom Generation for EVM(unspecified: from FS, empty: use 0)
-  --ima          use custom IMA signature for EVM
-  --selinux      use custom Selinux label for EVM
-  --caps         use custom Capabilities for EVM(unspecified: from FS, empty: do not use)
-
-.. warning::
-
-   Remove usage help.  Instead provide examples for typical applications.
-
-evmctl fsverity signature
------------------------------------
-
-
-.. warning::
-
-   Needs a review.
-
-   Sample fsverity measurement list w/signature
-
-   Before running the ima-evm-utils fsverity.test, generate keys using
-   genkeys.sh. Make sure that "test-rsa2048.key" is created.  Run the
-   test and then grep the ascii_runtime_measurements for "verity".
 
 .. _keyctl:
 
 keyctl
-===================================
+-----------------------------------
 
 Package:
 
@@ -187,12 +45,90 @@ Package:
    keyctl padd asymmetric "" [.system_keyring-ID] <[key-file]
    keyctl padd asymmetric "" 0x223c7853 <my_public_key.x509
 
-.. _keyctl-show:
 
-keyctl show
+.. _evmctl:
+
+evmctl
 -----------------------------------
 
-``show`` lists keys on one of the :ref:`keyrings`.
+Package:
+
+* Fedora: ima-evm-utils
+* Ubuntu: ima-evm-utils
+
+   Note: The latest ``evmctl`` has an fs-verity test for the
+   :ref:`digest-type` policy condition.
+
+   This repo is at https://github.com/mimizohar/ima-evm-utils.git.  The
+   utility is installed in ``/usr/local/bin``. Build and test as follows:
+
+::
+
+   autoreconf -i
+   ./configure
+   make
+   sudo make install
+   cd tests
+   ./fsverity.test
+
+.. warning::
+
+   Add the configure rule for OpenSSL 3.x deprecated functions.
+
+ .. _mokutil:
+
+mokutil
+-----------------------------------
+
+Package:
+
+* Fedora - mokutil
+* Ubuntu - mokutil
+
+.. _evmctl-portable-signature:
+
+evmctl portable signature
+===================================
+
+To create a portable :ref:`evm-signature`, use this example.  It needs
+root because it writes ``security.evm``.
+
+::
+
+   evmctl sign --imahash --portable --key <privkey.pem>  <pathname>
+
+The ``hash`` output is written to ``security.ima``.  The ``evm/ima
+signature`` output is written to ``security.evm``. The format of the
+IMA and EVM signatures is the same as that of the event log :ref:`sig`
+field, a header and a signature.
+
+The result can be viewed with
+
+::
+
+    getfattr -m - -e hex -d  <pathname>
+
+evmctl fsverity signature
+===================================
+
+
+.. warning::
+
+   Needs a review.
+
+   Sample fsverity measurement list w/signature
+
+   Before running the ima-evm-utils fsverity.test, generate keys using
+   genkeys.sh. Make sure that "test-rsa2048.key" is created.  Run the
+   test and then grep the ascii_runtime_measurements for "verity".
+
+.. _keyctl-show:
+
+View a keyring
+===================================
+
+
+``keyctl show`` lists keys on one of the :ref:`keyrings`.
 
 ::
 
@@ -227,7 +163,7 @@ To see if one of the :ref:`keyrings` exists:
 
 
 keyctl add key to keyring
------------------------------------
+===================================
 
 .. warning::
 
@@ -319,14 +255,28 @@ Appended signatures can be measured and appraised with the
 :ref:`func-file-check` rule.
 
 This example creates a signing key and an appended signature for a
-Linux kernel and initramfs.  The signature format format is
-PKCS#7.
+Linux kernel and initramfs.  The signature format format is PKCS#7.
+
+Create a signing key.
 
 ::
 
    openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=Subject/"
+
+View the key.
+
+::
+
    openssl x509 -text -inform der -in MOK.der -noout
+
+Sign with the private key.
+
+::
+
    /usr/src/kernels/`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der /boot/vmlinuz-6.1.6-200.fc37.x86_64
+
+::
+
    /usr/src/kernels/`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der /boot/initramfs-6.1.6-200.fc37.x86_64.img
 
 This kexec command does a soft boot, triggering measure and appraise
@@ -367,17 +317,6 @@ Example:
    cd /tmp
    xz -d -k -v wp512.ko.xz
    tail wp512.ko
-
-
-.. _mokutil:
-
-mokutil
-===================================
-
-Package:
-
-* Fedora - mokutil
-* Ubuntu - mokutil
 
 
 .. _sb-state:
@@ -650,6 +589,91 @@ Verify the result.
 
    keyctl show %keyring:.ima
 
+
+.. _policy-signature:
+
+Sign and Install a  Custom Policy
+===================================
+
+Use this to sign an IMA :ref:`custom-policy`: file.
+
+See :ref:`ima-signing-key` to generate a signing private key and
+install the verification certificate.
+
+To sign the IMA :ref:`custom-policy`:
+
+::
+
+   evmctl ima_sign --hashalgo sha256 --key imakey.pem policy
+
+To read the signature:
+
+::
+
+   getfattr -m - -e hex -d policy
+
+To install the policy.  The policy path must start with ``\``.
+
+::
+
+   echo /home/rooted-path/policy > /sys/kernel/security/ima/policy
+
+
+To sign all kernel modules with an IMA signature:
+
+::
+
+   find /lib/modules -name \*.ko -type f -uid 0 -exec evmctl ima_sign --key imakey.pem '{}' \;
+
+.. warning::
+
+   **FIXME Signature v1 support is being deprecated in
+   ima-evm-utils. Refer to commit 751a3957729d ("Deprecate IMA
+   signature version 1").**
+
+To sign immutable files (like kernel modules and application code),
+the ``evmctl`` command provided by the app-crypt/ima-evm-utils package
+**FIXME needs link** needs be used. But first, set up the kernel
+keyring:
+
+::
+
+   evmctl import --rsa rsa_public.pem $(keyctl newring _ima @u)
+
+This allows the IMA subsystem to validate the signature (which is also
+needed when initially setting the signature) by loading the public key
+onto the IMA keyring. This needs to be done every time the system
+boots, so it makes sense to do so within an initramfs (early in the
+boot process).
+
+.. warning::
+
+   Explain -imahash vs -ima_sign.
+
+   FIXME Merge samples from this documentation.
+
+   https://en.opensuse.org/SDB:Ima_evm#The_evmctl_utility
+
+   https://www.mankier.com/1/evmctl#Integrity_Keyrings
+
+   https://github.com/mimizohar/ima-evm-utils
+
+``evmctl`` was extended to pass file metadata using command line parameters:
+
+..
+
+  --ino          use custom inode for EVM
+  --uid          use custom UID for EVM
+  --gid          use custom GID for EVM
+  --mode         use custom Mode for EVM
+  --generation   use custom Generation for EVM(unspecified: from FS, empty: use 0)
+  --ima          use custom IMA signature for EVM
+  --selinux      use custom Selinux label for EVM
+  --caps         use custom Capabilities for EVM(unspecified: from FS, empty: do not use)
+
+.. warning::
+
+   Remove usage help.  Instead provide examples for typical applications.
 
 
 

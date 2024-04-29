@@ -813,6 +813,8 @@ These policy rules create a non-zero length ``buf``.
    measure func=CRITICAL_DATA
    measure func=KEXEC_CMDLINE
 
+.. _buf-key-check:
+
 func=KEY_CHECK
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
