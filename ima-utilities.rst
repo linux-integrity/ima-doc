@@ -571,6 +571,9 @@ View the resulting IMA signing key certificate:
 
    openssl x509 -in imacert.der -inform der -noout -text
 
+One Time Install
+------------------------
+
 Get the :ref:`dot-ima` keyring ID, the first number in the output of:
 
 ::
@@ -588,6 +591,48 @@ Verify the result.
 ::
 
    keyctl show %keyring:.ima
+
+
+Persistent Install
+--------------------
+
+Move the IMA signing key certificate to the staging area.  It must be
+in ``der``, not ``pem`` format.
+
+::
+
+   cp imacert.der /etc/keys/ima
+
+Modify the ``dracut`` module to load the IMA signing key
+certificate. The location is
+``/lib/dracut/modules.d/98integrity/module-setup.sh``
+
+* Change the check() return to 0.
+* Comment out the evm-enable.sh line
+
+Rebuild initramfs with the modified script.  Using a bash shell:
+
+::
+
+   dracut --kver $(uname -r) --force --add integrity
+
+Reboot.  Verify the result.
+
+::
+
+   keyctl show %keyring:.ima
+
+.. note::
+
+   To verify the inramfs update, run this is a temporary directory
+
+   ::
+
+       lsinitrd --unpack /boot/initramfs-$(uname -r).img
+
+   and verify that
+   ``./usr/lib/dracut/hooks/pre-pivot/61-ima-keys-load.sh`` exists.
+
 
 
 .. _policy-signature:
