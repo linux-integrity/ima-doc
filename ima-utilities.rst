@@ -162,68 +162,60 @@ To see if one of the :ref:`keyrings` exists:
    cat /proc/keys | grep platform
 
 
-keyctl add key to keyring
-===================================
+Build Kernel with IMA Key on keyring
+=====================================
 
 .. warning::
 
-   Incomplete notes on building a kernel with additional keys:
+   Incomplete and untested notes on building a kernel with additional keys:
 
-   Create self signed key and certificate
+   Create the IMA CA self signed key and certificate.  See
+   :ref:`ima-ca-key-and-certificate` for the creation and conversion
+   steps, but omit the ``mokutil`` step.
 
-   privkey_ima.pem signing key
-   x509_ima.der pubkey cert signed by ca key, self signed?
+   Clone the Linux kernel.
 
-   change to 2048, sha256
+   ::
 
-   > ima-gen-local-ca.sh
-   > ima-genkey.sh
+      git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable
+      cd linux-stable
 
-   > git clone Linux kernel from git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable
+   Build the CA key into the builtin keyring. Edit ~/kernelbuild/linux514/.config
 
-   > cd linux-stable
+   ::
 
-    Build ca key into builtin keyring
+      CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+      CONFIG_SYSTEM_TRUSTED_KEYRING=y
+      CONFIG_SYSTEM_TRUSTED_KEYS="certs/trusted_keys.pem"
 
-    Edit ~/kernelbuild/linux514/.config
+   ::
 
-    CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
-    CONFIG_SYSTEM_TRUSTED_KEYRING=y
-    CONFIG_SYSTEM_TRUSTED_KEYS="certs/trusted_keys.pem"
+      cp .../ima-local-ca.pem trusted_keys.pem
 
-    cp ~/ima-evm-utils/examples/ima-local-ca.pem trusted_keys.pem
+   Build the new Linux kernel.
 
-    keyctl show %keyring:.builtin_trusted_keys
+   ::
 
-    > make -j 24 O=../kernelbuild/linux514
+      make -j 24 O=../kernelbuild/linux514
 
-    # make modules_install install O=../kernelbuild/linux514
+   As root
 
+   ::
 
-    import ima public key certificate
+      make modules_install install O=../kernelbuild/linux514
 
-    Fancy automated way of getting the magic number:
+   Get the keyring IDs.
 
-    bash::
+   ::
 
-       function get_keyid () {
-          keyctl describe %keyring:$1 | sed 's/\([^:]*\).*/\1/'
-       }
+      keyctl show %keyring:.builtin_trusted_keys
+      keyctl show %keyring:.ima
 
-    keyrings are:
+   Import ima public key certificate
 
-    .builtin
-    .ima
+   ::
 
-    If builtin signs .ima
-    If not builtin, ?
-
-    keyctl show %keyring:.ima
-
-	get the magic number from .ima
-
-    evmctl import x509_ima.der 139899697
-    keyctl show %keyring:.ima
+      evmctl import x509_ima.der <IMA key ID>
 
 .. _sign-file:
 
@@ -504,9 +496,33 @@ Note: This requires secure boot to be enabled, and
 Create the CA signing key and CA certificate using OpenSSL.  The key
 usage will be ``Certificate Sign``.  E.g.,
 
+Create a configuration file similar to this sample imacacert.cfg:
+
 ::
 
-   openssl req -new -x509 -key privkey.pem -out imacacert.pem -days 3560 -passin pass:rrrr -addext "keyUsage=keyCertSign"
+  [ req ]
+  default_bits = 3072
+  distinguished_name = issuer_dn
+  prompt = no
+  string_mask = utf8only
+  x509_extensions = extensions
+
+  [ issuer_dn ]
+  O = IMA-CA
+  CN = IMA/EVM certificate signing key
+  emailAddress = ca@ima-ca.com
+
+  [ extensions ]
+  basicConstraints=CA:TRUE
+  subjectKeyIdentifier=hash
+  authorityKeyIdentifier=keyid:always,issuer
+  keyUsage = cRLSign, keyCertSign
+
+Generate the CA key and certificate:
+
+::
+
+   openssl req -new -x509 -out imacacert.pem -sha256 -days 3650 -batch -config imacacert.cfg -keyout imacakey.pem 
 
 Convert the certificate from ``pem`` to ``der`` format.
 
@@ -542,7 +558,7 @@ Create the CA signing key and CA certificate using OpenSSL.
 
 ::
 
-   openssl genrsa -out imakey.pem 2048
+   openssl genrsa -out imakey.pem 3072
 
 Create the certificate signing request.
 
@@ -550,20 +566,20 @@ Create the certificate signing request.
 
    openssl req -new -key imakey.pem -out imacsr.pem
 
+Create a configuration file similar to this sample imacert.cfg is:
+
+::
+
+   [ ext ]
+   authorityKeyIdentifier = keyid:always,issuer:always
+   basicConstraints = CA:false
+   keyUsage = nonRepudiation, digitalSignature
+
 Sign the certificate with the :ref:`ima-ca-key-and-certificate`.
 
 ::
 
-   openssl x509 -req -in imacsr.pem -CA imacacert.pem -CAkey imacakey.pem -outform der -out imacert.der -days 365 -extensions v3_ca -extfile imacert.cnf
-
-A sample configuratrion file is:
-
-::
-
-   [ v3_ca ]
-   authorityKeyIdentifier = keyid:always,issuer:always
-   basicConstraints = CA:false
-   keyUsage = nonRepudiation, digitalSignature
+   openssl x509 -req -in imacsr.pem -CA imacacert.pem -CAkey imacakey.pem -outform der -out imacert.der -days 365 -extensions ext -extfile imacert.cfg
 
 View the resulting IMA signing key certificate:
 
