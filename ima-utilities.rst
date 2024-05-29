@@ -501,7 +501,6 @@ Create a configuration file similar to this sample imacacert.cfg:
 ::
 
   [ req ]
-  default_bits = 3072
   distinguished_name = issuer_dn
   prompt = no
   string_mask = utf8only
@@ -518,17 +517,24 @@ Create a configuration file similar to this sample imacacert.cfg:
   authorityKeyIdentifier=keyid:always,issuer
   keyUsage = cRLSign, keyCertSign
 
-Generate the CA key and certificate:
+Generate an RSA-3072 CA key and certificate:
 
 ::
 
-   openssl req -new -x509 -out imacacert.pem -sha256 -days 3650 -batch -config imacacert.cfg -keyout imacakey.pem 
+   openssl req -new -x509 -out imacacert.pem -sha256 -pkeyopt rsa_keygen_bits:3072 -days 3650 -batch -config imacacert.cfg -keyout imacakey.pem
+
+Generate an ECC P256 CA key and certificate:
+
+::
+
+   openssl req -x509 -out imacacertecc.pem -newkey ec -pkeyopt ec_paramgen_curve:secp256k1 -days 3650 -keyout imacakeyecc.pem -config imacacert.cfg 
 
 Convert the certificate from ``pem`` to ``der`` format.
 
 ::
 
    openssl x509 -in imacacert.pem -out imacacert.der -outform der
+   openssl x509 -in imacacertecc.pem -out imacacertecc.der -outform der
 
 
 Use ``mokutil`` to stage the certificate for appending to the MOK database.
@@ -536,6 +542,10 @@ Use ``mokutil`` to stage the certificate for appending to the MOK database.
 ::
 
       mokutil --import ./imacacert.der
+
+::
+
+      mokutil --import ./imacacertecc.der
 
 Reboot. A UEFI prompt should appear. Accept the certificate, using the
 password from ``mokutil``.
@@ -554,17 +564,28 @@ IMA Signing Key and Certificate
 An IMA signing key signs files and other objects.  IMA :ref:`appraisal`
 uses certificates that are installed on the :ref:`dot-ima` keyring.
 
-Create the CA signing key and CA certificate using OpenSSL.
+Create the IMA signing key and certificate using OpenSSL.
+
+For RSA-3072 and ECC P256.
 
 ::
 
-   openssl genrsa -out imakey.pem 3072
-
-Create the certificate signing request.
+   openssl genrsa -out imakeyrsa.pem 3072
 
 ::
 
-   openssl req -new -key imakey.pem -out imacsr.pem
+   openssl ecparam -genkey -name prime256v1 -out imakeyecc.pem
+
+Create the certificate signing requests for the RSA and ECC keys.
+
+::
+
+   openssl req -new -key imakeyrsa.pem -out imacsrrsa.pem
+
+::
+
+   openssl req -new -key imakeyecc.pem -out imacsrecc.pem
+
 
 Create a configuration file similar to this sample imacert.cfg is:
 
@@ -575,17 +596,26 @@ Create a configuration file similar to this sample imacert.cfg is:
    basicConstraints = CA:false
    keyUsage = nonRepudiation, digitalSignature
 
-Sign the certificate with the :ref:`ima-ca-key-and-certificate`.
+Sign the certificate with the :ref:`ima-ca-key-and-certificate` for RSA-3072 and ECC P256.
 
 ::
 
-   openssl x509 -req -in imacsr.pem -CA imacacert.pem -CAkey imacakey.pem -outform der -out imacert.der -days 365 -extensions ext -extfile imacert.cfg
+   openssl x509 -req -in imacsrrsa.pem -CA imacacert.pem -CAkey imacakey.pem -outform der -out imacertrsa.der -days 365 -extensions ext -extfile imacert.cfg
+
+::
+
+   openssl x509 -req -in imacsrecc.pem -CA imacacert.pem -CAkey imacakey.pem -outform der -out imacertecc.der -days 365 -extensions ext -extfile imacert.cfg
+
 
 View the resulting IMA signing key certificate:
 
 ::
 
-   openssl x509 -in imacert.der -inform der -noout -text
+   openssl x509 -in imacertrsa.der -inform der -noout -text
+
+::
+
+   openssl x509 -in imacertecc.der -inform der -noout -text
 
 One Time Install
 ------------------------
@@ -600,9 +630,13 @@ Import the IMA signing key certificate onto the :ref:`dot-ima` keyring.
 
 ::
 
-   evmctl import imacert.der <keyring-ID>
+   evmctl import imacertrsa.der <keyring-ID>
 
-Verify the result.
+::
+
+   evmctl import imacertecc.der <keyring-ID>
+
+   Verify the result.
 
 ::
 
@@ -617,7 +651,11 @@ in ``der``, not ``pem`` format.
 
 ::
 
-   cp imacert.der /etc/keys/ima
+   cp imacertrsa.der /etc/keys/ima
+
+::
+
+   cp imacertecc.der /etc/keys/ima
 
 Modify the ``dracut`` module to load the IMA signing key
 certificate. The location is

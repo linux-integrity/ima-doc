@@ -230,19 +230,19 @@ ima_tcb
 
   ::
 
-   dont_measure fsmagic=0x9fa0		PROC_SUPER_MAGIC
-   dont_measure fsmagic=0x62656572	SYSFS_MAGIC
-   dont_measure fsmagic=0x64626720	DEBUGFS_MAGIC
-   dont_measure fsmagic=0x1021994	TMPFS_MAGIC
-   dont_measure fsmagic=0x1cd1		DEVPTS_SUPER_MAGIC
-   dont_measure fsmagic=0x42494e4d	BINFMTFS_MAGIC
-   dont_measure fsmagic=0x73636673	SECURITYFS_MAGIC
-   dont_measure fsmagic=0xf97cff8c	SELINUX_MAGIC
-   dont_measure fsmagic=0x43415d53	SMACK_MAGIC
-   dont_measure fsmagic=0x27e0eb	CGROUP_SUPER_MAGIC
-   dont_measure fsmagic=0x63677270	CGROUP2_SUPER_MAGIC
-   dont_measure fsmagic=0x6e736673	NSFS_MAGIC
-   dont_measure fsmagic=0xde5e81e4	EFIVARFS_MAGIC
+   dont_measure fsmagic=0x9fa0		# PROC_SUPER_MAGIC
+   dont_measure fsmagic=0x62656572	# SYSFS_MAGIC
+   dont_measure fsmagic=0x64626720	# DEBUGFS_MAGIC
+   dont_measure fsmagic=0x1021994	# TMPFS_MAGIC
+   dont_measure fsmagic=0x1cd1		# DEVPTS_SUPER_MAGIC
+   dont_measure fsmagic=0x42494e4d	# BINFMTFS_MAGIC
+   dont_measure fsmagic=0x73636673	# SECURITYFS_MAGIC
+   dont_measure fsmagic=0xf97cff8c	# SELINUX_MAGIC
+   dont_measure fsmagic=0x43415d53	# SMACK_MAGIC
+   dont_measure fsmagic=0x27e0eb	# CGROUP_SUPER_MAGIC
+   dont_measure fsmagic=0x63677270	# CGROUP2_SUPER_MAGIC
+   dont_measure fsmagic=0x6e736673	# NSFS_MAGIC
+   dont_measure fsmagic=0xde5e81e4	# EFIVARFS_MAGIC
    measure func=MMAP_CHECK mask=MAY_EXEC
    measure func=BPRM_CHECK mask=MAY_EXEC
    measure func=FILE_CHECK mask=MAY_READ uid=0
@@ -267,23 +267,23 @@ ima_policy=tcb
 
 ::
 
-   dont_measure fsmagic=0x9fa0		PROC_SUPER_MAGIC
-   dont_measure fsmagic=0x62656572	SYSFS_MAGIC
-   dont_measure fsmagic=0x64626720	DEBUGFS_MAGIC
-   dont_measure fsmagic=0x1021994	TMPFS_MAGIC
-   dont_measure fsmagic=0x1cd1		DEVPTS_SUPER_MAGIC
-   dont_measure fsmagic=0x42494e4d	BINFMTFS_MAGIC
-   dont_measure fsmagic=0x73636673	SECURITYFS_MAGIC
-   dont_measure fsmagic=0xf97cff8c	SELINUX_MAGIC
-   dont_measure fsmagic=0x43415d53	SMACK_MAGIC
-   dont_measure fsmagic=0x27e0eb	CGROUP_SUPER_MAGIC
-   dont_measure fsmagic=0x63677270	CGROUP2_SUPER_MAGIC
-   dont_measure fsmagic=0x6e736673	NSFS_MAGIC
-   dont_measure fsmagic=0xde5e81e4	EFIVARFS_MAGIC
+   dont_measure fsmagic=0x9fa0		# PROC_SUPER_MAGIC
+   dont_measure fsmagic=0x62656572	# SYSFS_MAGIC
+   dont_measure fsmagic=0x64626720	# DEBUGFS_MAGIC
+   dont_measure fsmagic=0x1021994	# TMPFS_MAGIC
+   dont_measure fsmagic=0x1cd1		# DEVPTS_SUPER_MAGIC
+   dont_measure fsmagic=0x42494e4d	# BINFMTFS_MAGIC
+   dont_measure fsmagic=0x73636673	# SECURITYFS_MAGIC
+   dont_measure fsmagic=0xf97cff8c	# SELINUX_MAGIC
+   dont_measure fsmagic=0x43415d53	# SMACK_MAGIC
+   dont_measure fsmagic=0x27e0eb	# CGROUP_SUPER_MAGIC
+   dont_measure fsmagic=0x63677270	# CGROUP2_SUPER_MAGIC
+   dont_measure fsmagic=0x6e736673	# NSFS_MAGIC
+   dont_measure fsmagic=0xde5e81e4	# EFIVARFS_MAGIC
    measure func=MMAP_CHECK mask=MAY_EXEC
-   measure func=BPRM_CHECK mask=MAY_EXEC           binary executed
+   measure func=BPRM_CHECK mask=MAY_EXEC           # binary executed
    measure func=FILE_CHECK mask=^MAY_READ euid=0
-   measure func=FILE_CHECK mask=^MAY_READ uid=0    root opened r/o, r/w
+   measure func=FILE_CHECK mask=^MAY_READ uid=0    # root opened r/o, r/w
    measure func=MODULE_CHECK
    measure func=FIRMWARE_CHECK
    measure func=POLICY_CHECK
@@ -342,19 +342,19 @@ ima_policy=appraise_tcb
 
   ::
 
-   dont_appraise fsmagic=0x9fa0		PROC_SUPER_MAGIC
-   dont_appraise fsmagic=0x62656572	SYSFS_MAGIC
-   dont_appraise fsmagic=0x64626720	DEBUGFS_MAGIC
-   dont_appraise fsmagic=0x1021994	TMPFS_MAGIC
-   dont_appraise fsmagic=0x858458f6	RAMFS_MAGIC
-   dont_appraise fsmagic=0x1cd1		DEVPTS_SUPER_MAGIC
-   dont_appraise fsmagic=0x42494e4d	BINFMTFS_MAGIC
-   dont_appraise fsmagic=0x73636673	SECURITYFS_MAGIC
-   dont_appraise fsmagic=0xf97cff8c	SELINUX_MAGIC
-   dont_appraise fsmagic=0x43415d53	SMACK_MAGIC
-   dont_appraise fsmagic=0x6e736673	NSFS_MAGIC
-   dont_appraise fsmagic=0x27e0eb	CGROUP_SUPER_MAGIC
-   dont_appraise fsmagic=0x63677270	CGROUP2_SUPER_MAGIC
+   dont_appraise fsmagic=0x9fa0		# PROC_SUPER_MAGIC
+   dont_appraise fsmagic=0x62656572	# SYSFS_MAGIC
+   dont_appraise fsmagic=0x64626720	# DEBUGFS_MAGIC
+   dont_appraise fsmagic=0x1021994	# TMPFS_MAGIC
+   dont_appraise fsmagic=0x858458f6	# RAMFS_MAGIC
+   dont_appraise fsmagic=0x1cd1		# DEVPTS_SUPER_MAGIC
+   dont_appraise fsmagic=0x42494e4d	# BINFMTFS_MAGIC
+   dont_appraise fsmagic=0x73636673	# SECURITYFS_MAGIC
+   dont_appraise fsmagic=0xf97cff8c	# SELINUX_MAGIC
+   dont_appraise fsmagic=0x43415d53	# SMACK_MAGIC
+   dont_appraise fsmagic=0x6e736673	# NSFS_MAGIC
+   dont_appraise fsmagic=0x27e0eb	# CGROUP_SUPER_MAGIC
+   dont_appraise fsmagic=0x63677270	# CGROUP2_SUPER_MAGIC
    appraise func=POLICY_CHECK appraise_type=imasig
    appraise fowner=0
 
