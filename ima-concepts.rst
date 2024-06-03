@@ -695,7 +695,8 @@ kexec is a soft boot. The command boots a new kernel image with new
 command line arguments. It does not cycle back to the hardware
 initialization typically performed by platform firmware.
 
-The policy rules are set by the new kernel :ref:`build-flags` and
+The policy rules are set by the new
+:ref:`kernel-configuration-options` and
 :ref:`boot-command-line-arguments`.
 
 .. _kexec-ima-impact:

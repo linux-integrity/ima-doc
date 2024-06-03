@@ -131,9 +131,12 @@ Policy Rule Order
 Policy rules can originate from several sources.  They are determined in this order
 
 #. :ref:`built-in-policy-rules` for measurement.  See :ref:`ima-policy-tcb`
-#. Architecture specific policy rules from :ref:`build-flags` such as :ref:`config-ima-arch-policy`.
+#. Architecture specific policy rules from
+   :ref:`kernel-configuration-options` such as
+   :ref:`config-ima-arch-policy`.
 #. :ref:`built-in-policy-rules` for secure boot appraisal.  See :ref:`ima-policy-secure-boot`.
-#. Build time policy rules from :ref:`build-flags` for finer control than :ref:`ima-policy-secure-boot`.
+#. Build time policy rules from :ref:`kernel-configuration-options`
+   for finer control than :ref:`ima-policy-secure-boot`.
 
    a. :ref:`config-ima-appraise-require-module-sigs`.
    b. :ref:`config-ima-appraise-require-firmware-sigs`.
@@ -144,8 +147,9 @@ Policy rules can originate from several sources.  They are determined in this or
 
 After a :ref:`custom-policy` is loaded, the order becomes:
 
-#. Architecture specific :ref:`build-flags` such as :ref:`config-ima-arch-policy`.
-#. Build time :ref:`build-flags` for finer control.
+#. Architecture specific :ref:`kernel-configuration-options` such as
+   :ref:`config-ima-arch-policy`.
+#. Build time :ref:`kernel-configuration-options` for finer control.
 
    a. :ref:`config-ima-appraise-require-module-sigs`.
    b. :ref:`config-ima-appraise-require-firmware-sigs`.

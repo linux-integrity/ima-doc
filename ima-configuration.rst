@@ -24,19 +24,22 @@ CONFIG_IMA_. Known distros are:
 
 Configuration takes three forms:
 
-* :ref:`build-flags`
+* :ref:`kernel-configuration-options`
 * :ref:`boot-command-line-arguments`
 * :ref:`custom-policy`
 
-.. _build-flags:
+.. _kernel-configuration-options:
 
-Build Flags
+Kernel Configuration Options
 ===================================
 
-Linux build flags are options that are passed to the compiler when
-building the kernel.
+Linux kernel configuration options, passed to the compiler, determine
+how the kernel image is built.
 
-The state of build flags can be viewed with, e.g.,
+The location of the kernel configuration file is either ``/boot`` or
+``/lib/modules/kernel-version/``.
+
+The state of a build flag can be viewed with, e.g.,
 
 ::
 
