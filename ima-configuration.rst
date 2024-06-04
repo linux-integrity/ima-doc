@@ -1013,23 +1013,24 @@ The supported appraise values for ``ima_policy=`` are:
 
 The two ways of using multiple specifiers are:
 
-* Multiple ``ima_policy=`` statements.  For example:
+* Recommended - Multiple ``ima_policy=`` statements.  For example:
 
 ::
 
   ima_policy=tcb ima_policy=critical_data
 
-* Multiple specifiers using this divider line format.  For example
+* Alternate - Multiple specifiers using this divider line format.  For
+  example
 
 ::
 
   ima_policy="tcb|critical_data"
 
-This divider line format requires the terms to be in ``"``.  One
-can either edit the boot command line interactively or edit the grub
-boot file, e.g., ``/boot/loader/entries`` on Fedora.  The
-``grubby --args=`` method cannot be used because grubby does not
-parse the ``|`` or the ``"`` correctly.
+This divider line format requires the terms to be in ``"``.  One can
+either edit the boot command line interactively or edit the grub boot
+file, e.g., ``/boot/loader/entries`` on Fedora.  The
+``grubby --args=`` method must escape the ``"`` characters in a shell
+dependent way.
 
 .. _appraise-specifiers:
 
