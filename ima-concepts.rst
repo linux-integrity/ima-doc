@@ -519,7 +519,7 @@ View using :ref:`keyctl-show`.
 ``.builtin_trusted_keys`` verify loading of:
 
 * :ref:`dot-secondary-trusted-keys` certificates
-* :ref:`dot-ima` certificates
+* :ref:`dot-ima` certificates on the :ref:`dot-ima` keyring
 * kernel modules
 * kexec'd kernel images
 
@@ -588,7 +588,7 @@ keyring:
 * Machine owner (MOK) keys if secure boot is enabled
 * PowerPC - platform and deny listed keys for POWER
 * S390 - IPL keys
-  
+
 :ref:`dot-machine` keys verify loading of
 
 * kernel modules
@@ -617,7 +617,7 @@ View using :ref:`keyctl-show`.
 ``.secondary_trusted_keys`` verify loading of:
 
 * other :ref:`dot-secondary-trusted-keys` certificates
-* :ref:`dot-ima` certificates
+* :ref:`dot-ima` certificates on the :ref:`dot-ima` keyring
 * kernel modules
 * kexec'd kernel images
 
@@ -627,8 +627,8 @@ View using :ref:`keyctl-show`.
 -----------------------------------
 
 Only certificates signed by a key on the
-:ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
-keyrings may be loaded onto the ``.ima`` keyring.
+:ref:`dot-builtin-trusted-keys`, :ref:`dot-secondary-trusted-keys`, or
+:ref:`dot-machine` keyrings may be loaded onto the ``.ima`` keyring.
 
 ``.ima`` keys are loaded from ``/etc/keys/ima`` at boot time using a
 dracut script ``modules.d/(nn)integrity/ima-keys-load.sh`` calling
