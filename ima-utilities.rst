@@ -165,79 +165,74 @@ To see if one of the :ref:`keyrings` exists:
 Build Kernel with IMA CA Key on keyring
 ==========================================
 
-.. warning::
+This procedure builds a kernel with the
+:ref:`ima-ca-key-and-certificate` on the
+:ref:`dot-builtin-trusted-keys` keyring. The key can be used to verify
+loading of an :ref:`ima-signing-key` on the :ref:`dot-ima` keyring.
 
-   Incomplete and untested notes on building a kernel with additional
-   IMA CA keys:
+First create the IMA CA key and self signed certificate.  See
+:ref:`ima-ca-key-and-certificate` for the creation and conversion
+steps, but omit the ``mokutil --import`` step.
 
-   The :ref:`ima-ca-key-and-certificate` on the
-   :ref:`dot-machine` keyring, (is this right???) can be used to
-   verify loading of an :ref:`ima-signing-key` on the :ref:`dot-ima`
-   keyring.
+Clone the Linux kernel.
 
-   First create the IMA CA key and self signed certificate.  See
-   :ref:`ima-ca-key-and-certificate` for the creation and conversion
-   steps, but omit the ``mokutil --import`` step.
+::
 
-   Clone the Linux kernel.
+   git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable
+   cd linux-stable
 
-   ::
+Get the other branches and tags.
 
-      git clone git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable
-      cd linux-stable
+::
 
-   Get the other branches and tags.
+   git remote update origin
 
-   ::
+Go to the branch corresponding to the current system.  E.g.,
 
-      git remote update origin
+::
 
-   Go to the branch corresponding to the current system.  E.g.,
+   git checkout --track -b linux-6.8.y origin/linux-6.8.y
 
-   ::
+Create a build directory and a subdirectory for the IMA CA
+certificate.  E.g.,
 
-      git checkout --track -b linux-6.8.y origin/linux-6.8.y
+::
 
-   Create a build directory and a subdirectory for the IMA CA
-   certificate.  E.g.,
+   mkdir -p ../kernelbuild/linux-6.8.y/certs
 
-   ::
+The build configuration file is typically created by copying and
+modifying an existing one.  E.g.,
 
-      mkdir -p ../kernelbuild/linux-6.8.y/certs
+::
 
-   The build configuration file is typically created by copying and
-   modifying an existing one.  E.g.,
+   cp /boot/config-6.8.11-300.fc40.x86_64 ../kernelbuild/linux-6.8.y/.config
 
-   ::
+Concatenate the CA certificates created in
+:ref:`ima-ca-key-and-certificate`.  E.g.,
 
-      cp /boot/config-6.8.11-300.fc40.x86_64 ../kernelbuild/linux-6.8.y/.config
+::
 
-   Concatenate the CA certificates created in
-   :ref:`ima-ca-key-and-certificate`.  E.g.,
+   cat imacacert.pem imacacertecc.pem > ../kernelbuild/linux-6.8.y/certs/imacacerts.pem
 
-   ::
+Edit the ``../kernelbuild/linux-6.8.y/.config`` file and add the IMA
+CA certificates, e.g.,
 
-      cat imacacert.pem imacacertecc.pem > ../kernelbuild/linux-6.8.y/certs/imacacerts.pem
+::
 
-   Edit the ``../kernelbuild/linux-6.8.y/.config`` file and add the
-   IMA CA certificates, e.g.,
+   CONFIG_SYSTEM_TRUSTED_KEYS="certs/imacacerts.pem"
 
-   ::
+Build the new Linux kernel.
 
-      CONFIG_SYSTEM_TRUSTED_KEYS="certs/imacacerts.pem"
+::
 
-   Build the new Linux kernel.
+   make localmodconfig O=../kernelbuild/linux-6.8.y
+   make -j 8 O=../kernelbuild/linux-6.8.y
 
-   ::
+Copy the results to ``\boot``.
 
-      make localmodconfig O=../kernelbuild/linux-6.8.y
-      make -j 8 O=../kernelbuild/linux-6.8.y
+::
 
-   Copy the results to ``\boot``.
-
-   ::
-
-      sudo make modules_install install O=../kernelbuild/linux-6.8.y
+   sudo make modules_install install O=../kernelbuild/linux-6.8.y
 
 .. _sign-file:
 
