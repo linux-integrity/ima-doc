@@ -38,7 +38,7 @@ Appraisal is similar to the pre-OS secure boot concept.
 The appraisal system is local, and requires neither a TPM nor a
 separate verifier.
 
-**IMA** :ref:`audit` includes the file hash in the system's audit
+**IMA** :ref:`ima-audit` includes the file hash in the system's audit
 log. This can be useful for analytics and forensics.
 
 
@@ -255,33 +255,88 @@ invalid.
 
 |
 
-.. _audit:
+.. _ima-audit:
 
-Audit
+IMA Audit
 ===================================
 
-Audit includes file hashes in the audit log, which can be used to
-augment existing system security analytics/forensics. IMA-audit
-extends the IMA policy ABI with the :ref:`policy-syntax-action`
-keyword ``audit``.
+IMA-Audit includes file hashes in the system audit log, which can be
+used to augment existing system security
+analytics and/or forensics. IMA-audit extends the IMA policy ABI with the
+:ref:`policy-syntax-action` keyword ``audit``.
 
-There are no built-in audit policy rules.
+There are no built-in policies containing audit rules.
 
-Example policy to audit executable files and files open by
-user 1001:
+Example policy to audit executable files and files open by user 10:
 
 ::
 
    audit func=BPRM_CHECK mask=MAY_EXEC
-   audit func=FILE_CHECK mask=MAY_READ fowner=1001
+   audit func=FILE_CHECK mask=MAY_READ fowner=0
 
-The audit log is in the ``/var/log/audit`` directory.  The entry will
-have ``type=INTEGRITY_RULE`` and the entry includes:
+The system audit log is in the ``/var/log/audit`` directory.  The
+entry will have ``type=INTEGRITY_RULE`` and the entry includes:
 
 * file name
 * hash algorithm and hash
 * ppid, pid, uuid, uid, gid, euid, suid, fsuid, egid, sgid, fsgid
 * the command that triggered the rule
+
+|
+
+
+.. _ima-integrity-audit-events:
+
+IMA Integrity Audit Events
+===================================
+
+Separate from :ref:`ima-audit`, IMA adds several integrity events
+to the system audit log ``/var/log/audit/audit.log``.
+
+Events that require a measure policy rule include:
+
+* integrity violations 
+* failure to extend the TPM PCR
+
+Events that require an appraise policy rule include:
+
+* failure to mmap a file
+* failure to load or update a IMA policy
+
+Events that require any policy rule include:
+
+* failure to calculate a file hash
+
+Events that occur independent of policy rules include:
+
+* failure to calculate the boot_aggregate
+* loading IMA policy rules
+
+.. warning::
+
+   TODO classify unsupported hash algorithms
+
+**Integrity violations** include open writers or Time of Measure /
+Time of Use (ToMToU). They are logged in the :ref:`template-hash`
+field of the :ref:`ima-event-log`.
+
+Open writers means a file was first open for write and now is open for
+read, because the writer can write while the reader is doing a
+measurement.
+
+Time of Measure / Time of Use means a file was first open for read and
+now is open for write, so the measured file can be modified.
+
+An example of an open writers audit event is:
+
+::
+
+   type=INTEGRITY_PCR msg=audit(1721934216.094:1227): pid=3546 uid=0 auid=1000 ses=2 subj=unconfined_u:unconfined_r:unconfined_t:s0 op=invalid_pcr cause=open_writers comm="grep" name="/var/log/audit/audit.log" dev="sda3" ino=21348467 res=1 errno=0UID="root" AUID="kgold"
+
+**Failure to mmap a file** occurs when a file is first mmap'ed for
+write and now is mmap'ed for execute.
+
+
 
 |
 

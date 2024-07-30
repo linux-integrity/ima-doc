@@ -8,6 +8,8 @@
 IMA Event Log
 ===================================
 
+The IMA Event Log is also known as the IMA measurement list.
+
 IMA Log Verification
 ===================================
 
@@ -204,6 +206,7 @@ and the policy rule condition :ref:`pcr-value`.
 Due to :ref:`pcr-value`, the event log may contain events that have
 not been extended.  E.g., the event log may contain PCR 17 or PCR 24.
 
+.. _template-hash:
 
 Template Hash
 -----------------------------------
