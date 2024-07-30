@@ -10,14 +10,14 @@ Measure Policy Rule Design
 While a good design should measure all security relevant events, there
 are good reasons to not simply "measure everything".
 
-As described below, only stable, mostly read-only, well
-known items should be measured.  Examples are binaries, shared
-libraries, and system configuration files. Frequently changing items
+As described below, only stable, mostly read-only, well known files
+and other items should be measured.  Examples are binaries, shared
+libraries, and system configuration files. Frequently changing files
 should not be measured.  Examples are log files or databases.
 
-1. **Performance**.  The TPM is slow. This not an issue if items
+1. **Performance**.  The TPM is slow. This not an issue if files
 rarely change, since IMA tracks measurements and does not re-measure
-an item that has not changed.  However, items that change often will
+a file that has not changed.  However, files that change often will
 cause frequent measurements, degrading performance.
 
 2. **Event log size**: Each log record can be 300 bytes. A system
@@ -31,7 +31,7 @@ linearly with the number of kexec's.
 
 See :ref:`kexec-ima-impact`.
 
-However, if a measured item changes often, there is no longer any
+However, if a measured file changes often, there is no longer any
 typical log size.  Each change can cause a new measurement and
 millions of measurements are possible.
 
@@ -55,8 +55,8 @@ the attester.  The verifier does this by comparing the event log
 hashes to approved lists.  For example, the verifier might have a list
 of file hashes for executables and shared libraries.
 
-However, items that change often will not have approved hashes.
-Hashes cannot be reversed to calculate the item.  Therefore, the
+However, files that change often will not have approved hashes.
+Hashes cannot be reversed to calculate the file.  Therefore, the
 verifier cannot assess its security properties.
 
 .. _appraise-policy-rule-design:

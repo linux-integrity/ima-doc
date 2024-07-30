@@ -250,7 +250,7 @@ Location:
 * Ubuntu - /usr/src/linux-kernel-headers-\`uname -r\`/scripts/sign-file
 
 Use ``sign-file`` to add an appended signature to a kernel module, a
-kernel image, or an initramfs.  These items support the :ref:`ima-modsig`
+kernel image, or an initramfs.  These files support the :ref:`ima-modsig`
 template.  See :ref:`sign-file-appended-signature` for an example.
 
 .. _sign-file-appended-signature:

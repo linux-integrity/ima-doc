@@ -49,7 +49,7 @@ Threat Model
 
    Under construction.
 
-IMA detects an attempt to access an invalid item. The TPM provides
+IMA detects an attempt to access an invalid file. The TPM provides
 cryptographic integrity over the measurement log, which can be reported
 to a verifier. It covers threats such as:
 
@@ -69,8 +69,9 @@ These attacks are not in scope:
 Memory Attacks
 -----------------------------------
 
-IMA measures and appraises items when they are first accessed.  An
-attack that modifies memory after the access will not be detected.
+IMA measures and appraises files and other items when they are first
+accessed.  An attack that modifies memory after the access will not be
+detected.
 
 Examples:
 
