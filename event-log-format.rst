@@ -8,7 +8,8 @@
 IMA Event Log
 ===================================
 
-The IMA Event Log is also known as the IMA measurement list.
+The IMA Measurement Event Log is also known as the IMA measurement
+list.
 
 IMA Log Verification
 ===================================

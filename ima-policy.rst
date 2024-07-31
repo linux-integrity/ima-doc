@@ -131,10 +131,11 @@ Policy Rule Order
 Policy rules can originate from several sources.  They are determined in this order
 
 #. :ref:`built-in-policy-rules` for measurement.  See :ref:`ima-policy-tcb`
-#. Architecture specific policy rules from
+#. :ref:`architecture-specific-policy-rules` from
    :ref:`kernel-configuration-options` such as
    :ref:`config-ima-arch-policy`.
-#. :ref:`built-in-policy-rules` for secure boot appraisal.  See :ref:`ima-policy-secure-boot`.
+#. :ref:`built-in-policy-rules` for secure boot appraisal.  See
+   :ref:`ima-policy-secure-boot`.
 #. Build time policy rules from :ref:`kernel-configuration-options`
    for finer control than :ref:`ima-policy-secure-boot`.
 
@@ -147,7 +148,8 @@ Policy rules can originate from several sources.  They are determined in this or
 
 After a :ref:`custom-policy` is loaded, the order becomes:
 
-#. Architecture specific :ref:`kernel-configuration-options` such as
+#. :ref:`architecture-specific-policy-rules` from
+   :ref:`kernel-configuration-options` such as
    :ref:`config-ima-arch-policy`.
 #. Build time :ref:`kernel-configuration-options` for finer control.
 
@@ -173,16 +175,27 @@ The policy rules currently in effect can be viewed in the pseudo-file
 The policy can be read if :ref:`config-ima-read-policy` is true when building
 the kernel.
 
+Initial Policy Rules
+===================================
+
+The initial policy rules are in effect before possible replacement by
+a :ref:`custom-policy`.
+
+These include:
+
+* :ref:`built-in-policy-rules`
+* :ref:`architecture-specific-policy-rules`
+
 .. _built-in-policy-rules:
 
 Built-in Policy Rules
-===================================
+------------------------------------
 
 Built-in policy rules are compiled into the kernel. Their contents
-cannot be changed, but some can be replaced at boot time or runtime.
-They are specified using the :ref:`boot-command-line-arguments`.  The
-policy rules added when secure boot is enabled in the firmware are not
-replaced.
+cannot be changed but can be replaced by a
+:ref:`boot-time-custom-policy` and/or a :ref:`runtime-custom-policy`.
+They are specified using the :ref:`boot-command-line-arguments`
+:ref:`ima-policy`.
 
 The boot command selects the built-in policy. The command can be
 specified on the boot command line (single boot) or in the grub
@@ -192,12 +205,19 @@ The pseudofile ``/proc/cmdline`` will display the boot command line.
 ``grubby --info=ALL`` displays all the kernel choices.
 
 Specifying none of the below ``ima_policy`` options on the boot
-command line yields a policy with no policy rules.
+command line yields a policy with no built-in policy rules.
 
-.. _secure-boot-state:
+.. _architecture-specific-policy-rules:
 
-Secure Boot State
+Architecture Specific Policy Rules
 ------------------------------------
+
+The architecture specific policy rules depend on the secure boot state
+(x86) or the secure and trusted boot states (Power). The rules added
+when secure boot is enabled in the firmware cannot be replaced by a
+:ref:`custom-policy`.
+
+For the effect on policies, see :ref:`config-ima-arch-policy`.
 
 For EFI-based systems, the secure boot state can be tested with
 
@@ -217,8 +237,6 @@ On OpenPOWER systems, the secure boot state is indicated by the
 presence of the device tree property
 ``/proc/device-tree/ibm,secure-boot/os-secureboot-enforcing``.  If the
 pseudo-file exists, secure boot is enabled,  else it is disabled.
-
-For the effect on policies, see :ref:`config-ima-arch-policy`.
 
 .. _ima-measurement-policies:
 

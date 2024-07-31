@@ -3,35 +3,35 @@ IMA and EVM Concepts
 ======================
 
 
-The Linux runtime Integrity Measurement Architecture (IMA) calculates
-hash values of executables and other sensitive system files. The hash
+The Linux Integrity Measurement Architecture (IMA) calculates hash
+values of executables and other system files at runtime. The hash
 value is used in multiple ways:
 
-* stored in a measurement log
+* stored in a IMA measurement event log
 * used for verifying signatures
 * stored in the system audit log
 
 The hash algorithm is defined by :ref:`config-ima-default-hash`, which
 can be overridden by the :ref:`boot-command-line-arguments`
-:ref:`ima-hash` specifier.
+:ref:`ima-hash`.
 
-
-**IMA** :ref:`measurement` maintains an aggregate integrity value over the
-measurement log if the platform has a TPM chip. The TPM can attest to
-the state of these system files. It typically uses PCR 10.  The TPM
-attestation quote is a signature over the PCR, indirectly providing
-integrity over the measurement log.
+**IMA** :ref:`measurement` maintains an aggregate integrity value over
+the measurement event log if the platform has a TPM chip. The TPM can
+attest to the state of these system files. It typically uses PCR 10.
+The TPM attestation quote is a signature over the PCR, indirectly
+providing integrity over the measurement event log.
 
 The measurement system requires both a TPM and an independent verifier.
 
 Measurement is similar to the pre-OS trusted boot concept.
 
-IMA keeps a table of the hash values. If the hash is seen again, the
-contents are not measured again. :ref:`config-ima-disable-htable`
-offers other options.
+IMA keeps a table of the measured hash values. If the hash is seen
+again, the contents are not re-measured
+again. :ref:`config-ima-disable-htable` offers other options.
 
 **IMA** :ref:`appraisal` can check the file's digital signature or
-hash and take action if the signature verification fails.
+hash and take action if the signature verification fails or the hash
+does not match a known good value.
 
 Appraisal is similar to the pre-OS secure boot concept.
 
@@ -183,7 +183,8 @@ See the :ref:`ima-appraise` boot command line argument and the
 
 When a policy rule is triggered:
 
-* When in ``fix`` mode, hashes are updated on a read.
+* When in ``fix`` mode, hashes are updated if incorrect or does not
+  exist.
 
 * When in ``enforce`` mode, the hash is checked on a read and updated
   on a write, for both new and existing files.

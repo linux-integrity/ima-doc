@@ -493,19 +493,19 @@ CONFIG_IMA_DISABLE_HTABLE
 This boolean affects measurement behavior. In detail, there are three
 factors:
 
-#. IMA status booleans, which indicate that the file has been opened
+#. IMA status bits, which indicate whether the file has been opened
    for change since the last IMA measurement
 #. The IMA hash table, which tracks files already measured
 #. This kernel configuration flag CONFIG_IMA_DISABLE_HTABLE
 
-The boolean is based on ``iversion`` for filesystems mounted with
-``iversion``. Without ``iversion``, it is assumed that the file
+The IMA status bits are based on ``iversion`` for filesystems mounted
+with ``iversion``. Without ``iversion``, it is assumed that the file
 changed.
 
-NOTE: So that IMA will process the same hash again when seen in
-different contexts, there are several boolean status bits:
+NOTE: So that IMA will re-measure the same hash again when seen in
+different contexts, IMA state includes several boolean status bits:
 
-* ima_file
+* ima_file - true if the file has been measured
 * ima_mmap
 * ima_bprm
 * ima_read
@@ -518,22 +518,21 @@ different contexts, there are several boolean status bits:
    How can the status bits be read?
 
 In kernels that do not implement CONFIG_IMA_DISABLE_HTABLE, or if
-CONFIG_IMA_DISABLE_HTABLE is false, if the status is true and the file hash is
-not in the hash table, the file is measured. If the status is false (not
-changed) or the hash is in the hash table (already measured), the file
-is not measured.
+CONFIG_IMA_DISABLE_HTABLE is false, if the IMA status bit is false or
+the file hash is not in the hash table, the file is measured. If the
+IMA IMA status bit is true or the hash is in the hash table (already
+measured), the file is not measured.
 
-The action is different if CONFIG_IMA_DISABLE_HTABLE is true. In this
-case, if the status is true, the file is measured, even if the hash is
-already in the hash table.
+If CONFIG_IMA_DISABLE_HTABLE is true, if the IMA status bit is false,
+the file is re-measured, even if the hash is already in the hash table.
 
-The intent of CONFIG_IMA_DISABLE_HTABLE true is to record the case
-where a file changed, but changed back before it triggered a measure
-policy. For example, if a file changed from hash1 to hash2 to hash1,
-three events would be measured. If CONFIG_IMA_DISABLE_HTABLE was
-false, the third event would not be measured, since hash1 was already
-in the hash table. An attester, in the latter case, would think the
-file was still in the hash2 state.
+The intent of CONFIG_IMA_DISABLE_HTABLE true is to handle the case
+where a file changed back to an existing measurement. For example, if
+a file changed from hash1 to hash2 to hash1, three events would be
+measured. If CONFIG_IMA_DISABLE_HTABLE was false, the third event
+would not be measured, since hash1 was already in the hash table. An
+attester, in the latter case, would think the file was still in the
+hash2 state.
 
 .. _config-ima-measure-asymmetric-keys:
 
@@ -997,15 +996,15 @@ The command line arguments ``ima_tcb`` and ``ima_appraise_tcb`` are
 deprecated in favor of :ref:`ima-policy-tcb` and
 :ref:`ima-policy-appraise-tcb`.
 
-Multiple ``ima_policy`` specifiers can be used.  Their policies are
+Multiple ``ima_policy`` options can be used.  Their policies are
 concatenated.  The order is hard coded as shown in the below list.
 
-The supported measure values for ``ima_policy=`` are:
+The supported measure options for ``ima_policy=`` are:
 
 1. :ref:`ima-policy-tcb` - measure rules
 2. :ref:`ima-policy-critical-data` - measure rules
 
-The supported appraise values for ``ima_policy=`` are:
+The supported appraise options for ``ima_policy=`` are:
 
 1. :ref:`ima-policy-secure-boot`
 2. :ref:`ima-policy-appraise-tcb`
