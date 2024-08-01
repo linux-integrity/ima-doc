@@ -1,3 +1,5 @@
+.. _ima-policy-top:
+
 ===================================
 IMA Policy
 ===================================
@@ -464,7 +466,7 @@ If running appraisal and
 
 ::
 
-   appraise func=POLICY_CHECK
+   appraise func=POLICY_CHECK appraise_type=imasig
 
 is part of the built-in policy, the custom policy file is itself
 appraised. For example, the :ref:`boot-time-custom-policy`, typically

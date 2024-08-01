@@ -133,8 +133,8 @@ execute) and later mmapped for execute.
 func=BPRM_CHECK
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Binary program check triggers when a file is about to be executed as a
-program. It uses the existing (parent) process credentials. See also
+Binary program check triggers when a file is about to be executed. It
+uses the existing (parent) process credentials. See also
 :ref:`func-creds-check`, which triggers using the child process
 credentials.
 
@@ -178,16 +178,15 @@ process executes into.
 func=CREDS_CHECK
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``CREDS_CHECK`` triggers when a file is about to be executed as a
-program. It uses the credentials that will be when the new child
-process is started, ignoring the parent process.  E.g., a suid
-process will gain privileges.
+``CREDS_CHECK`` triggers when a file is about to be executed. It uses
+the new child process credentials, ignoring the parent process.  E.g.,
+a suid process will gain privileges.
 
 See also :ref:`func-bprm-check`, which triggers using the parent
 process credentials.
 
 Credentials include the process user and group (object), effective
-user and group (subject), file LSM labels, suid and sgid, 
+user and group (subject), suid and sgid.
 
 Example: This policy rule triggers if a process is executed and
 runs as unconfined_t, ignoring the context of the parent process.
@@ -300,9 +299,9 @@ If this rule was not already present at the time that a policy is
 loaded, it will trigger on future custom policy loads, but not the one
 being loaded.
 
-Since a custom policy replaces the :ref:`built-in-policy-rules`, that
-policy should also have ``func=POLICY_CHECK`` to complete the chain of
-trust.
+Since a custom policy replaces the :ref:`built-in-policy-rules`, the
+custom policy should also have ``func=POLICY_CHECK`` to complete the
+chain of trust.
 
 This ``appraise`` rule asserts that the policy replacing the built-in
 policy, either at boot time using ``/etc/ima/ima-policy`` or at
@@ -311,14 +310,12 @@ validly signed. The signature over the file is verified (appraised)
 using a key on the :ref:`dot-ima` keyring. If correct, the file
 contents are copied.
 
-
 ::
 
-   appraise func=POLICY_CHECK
+   appraise func=POLICY_CHECK appraise_type=imasig
 
 See :ref:`runtime-custom-policy` for guidance on handling a signed
 policy.
-
 
 .. _func-kexec-kernel-check:
 

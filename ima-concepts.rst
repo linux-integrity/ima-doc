@@ -3,12 +3,13 @@ IMA and EVM Concepts
 ======================
 
 
-The Linux Integrity Measurement Architecture (IMA) calculates hash
-values of executables and other system files at runtime. The hash
-value is used in multiple ways:
+The Linux Integrity Measurement Architecture (IMA) actions are
+triggered based on :ref:`ima-policy-top` rules. IMA calculates hash values
+of executables and other system files at runtime. The hash value is
+used in multiple ways:
 
 * stored in a IMA measurement event log
-* used for verifying signatures
+* used for verifying signatures and hashes
 * stored in the system audit log
 
 The hash algorithm is defined by :ref:`config-ima-default-hash`, which
@@ -23,7 +24,8 @@ providing integrity over the measurement event log.
 
 The measurement system requires both a TPM and an independent verifier.
 
-Measurement is similar to the pre-OS trusted boot concept.
+Measurement is similar to the pre-OS trusted boot concept. The first
+measurement is the boot aggregate, which is a hash of TPM PCR 0-9.
 
 IMA keeps a table of the measured hash values. If the hash is seen
 again, the contents are not re-measured
@@ -214,7 +216,7 @@ a read/write policy. The hash will be updated on a write, even in
 Signature
 -----------------------------------
 
-Signed files are immutable.
+Signed files are immutable and provide provenance.
 
 Appraisal starts with digitally signing files.  Ideally, this will be
 a distro signature.  The signature is stored in the extended attribute
@@ -610,7 +612,7 @@ certificates. This unlocks the use of the :ref:`dot-machine` keyring
 as a trust anchor for IMA.
 
 If secure boot in the UEFI firmware is disabled (see
-:ref:`secure-boot-state`), keys are not loaded onto either the
+:ref:`sb-state`), keys are not loaded onto either the
 :ref:`dot-machine` or :ref:`dot-platform` keyring.
 
 if :ref:`config-integrity-platform-keyring` is clear, keys are not

@@ -249,7 +249,7 @@ based platforms.
 
 These policy rules are based on the firmware boot status
 (e.g. :ref:`arm-and-x86` UEFI secure boot, :ref:`powerpc` secure boot
-and trusted boot). See :ref:`secure-boot-state` for a method of
+and trusted boot). See :ref:`sb-state` for a method of
 determining whether secure and/or trusted boot is enabled.
 
 
