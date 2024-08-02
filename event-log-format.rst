@@ -508,8 +508,8 @@ File Data Hash
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is a hash of the file data. It can be either the IMA digest (a
-digest of the entire file) or the fs-verity digest.
-
+digest of the entire file) or the fs-verity digest. An all zeros hash
+indicates a measurement log violation.
 
    Note that the fs-verity digest can also include an appended signature.
 

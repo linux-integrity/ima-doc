@@ -320,15 +320,15 @@ Events that occur independent of policy rules include:
 
    TODO classify unsupported hash algorithms
 
-**Integrity violations** include open writers or Time of Measure /
-Time of Use (ToMToU). They are logged in the :ref:`template-hash`
+**Integrity violations** include "open writers" or "Time of Measure /
+Time of Use (ToMToU)". They are logged in the :ref:`template-hash`
 field of the :ref:`ima-event-log`.
 
-Open writers means a file was first open for write and now is open for
+"Open writers" means a file was first open for write and now is open for
 read, because the writer can write while the reader is doing a
 measurement.
 
-Time of Measure / Time of Use means a file was first open for read and
+"Time of Measure / Time of Use" means a file was first open for read and
 now is open for write, so the measured file can be modified.
 
 An example of an open writers audit event is:
