@@ -85,6 +85,13 @@ Package:
 * Fedora - mokutil
 * Ubuntu - mokutil
 
+rpm-plugin-ima
+----------------------------------
+
+Package:
+
+* Fedora - rpm-plugin-ima
+
 .. _evmctl-portable-signature:
 
 evmctl portable signature
@@ -696,7 +703,7 @@ Reboot.  Verify the result.
 
 .. note::
 
-   To verify the inramfs update, run this is a temporary directory
+   To verify the initramfs update, run this is a temporary directory
 
    ::
 
@@ -793,7 +800,21 @@ boot process).
    Remove usage help.  Instead provide examples for typical applications.
 
 
+Install IMA Signatures
+===================================
 
+Install the IMA plugin:
+
+::
+
+   dnf install rpm-plugin-ima
+
+Reinstall the packages, adding the IMA file signatures:
+
+::
+
+   rpm -qa > rpmlist.txt
+   cat rpmlist.txt | xargs dnf reinstall
 
 
 .. _pesign-database:
