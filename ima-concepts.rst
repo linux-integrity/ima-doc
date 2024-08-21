@@ -283,8 +283,22 @@ entry will have ``type=INTEGRITY_RULE`` and the entry includes:
 
 * file name
 * hash algorithm and hash
-* ppid, pid, uuid, uid, gid, euid, suid, fsuid, egid, sgid, fsgid
+* ppid, pid,
+* auid, uid, gid, euid, suid, fsuid, egid, sgid, fsgid
 * the command that triggered the rule
+
+A typical audit log entry is (with newlines added for readability):
+
+::
+
+   type=INTEGRITY_RULE msg=audit(1724272003.040:450): file="/home/kgold/.emacs"
+   hash="sha256:654897e5d6ff41bffac650f7f545975757380ae0bf1bb5459c0dc054cb342084"
+   ppid=13236 pid=13396
+   auid=1000 uid=1000 gid=1000 euid=1000 suid=1000 fsuid=1000 egid=1000 sgid=1000 fsgid=1000
+   tty=pts2 ses=2 comm="more" exe="/usr/bin/more"
+   subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023AUID="kgold" UID="kgold"
+   GID="kgold" EUID="kgold" SUID="kgold" FSUID="kgold" EGID="kgold" SGID="kgold" FSGID="kgold"
+
 
 |
 

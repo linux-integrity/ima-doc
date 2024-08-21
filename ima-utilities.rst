@@ -800,7 +800,7 @@ boot process).
    Remove usage help.  Instead provide examples for typical applications.
 
 
-Install IMA Signatures
+Install IMA File Signatures
 ===================================
 
 Install the IMA plugin:

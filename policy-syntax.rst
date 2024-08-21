@@ -219,6 +219,11 @@ func=MODULE_CHECK
 This triggers on loading a kernel module (e.g., a device driver, a .ko
 file).
 
+.. note::
+
+   Current kernels do not trigger on modules loaded before
+   IMA is running.
+
 Note:
 
 IMA only measures and appraises kernel modules loaded by the
