@@ -242,7 +242,7 @@ pseudo-file exists, secure boot is enabled,  else it is disabled.
 
 .. _ima-measurement-policies:
 
-IMA Measurement Policies
+IMA-Measurement Policies
 -----------------------------------
 
 Refer to :ref:`fsmagic` for the value meanings. See :ref:`policy-rule-order`.

@@ -794,7 +794,7 @@ See :ref:`config-fs-verity`.
 appraise_flag
 -----------------------------------
 
-``appraise_flag`` affects only :ref:`appraisal` of a file with an
+``appraise_flag`` affects only :ref:`ima-appraisal` of a file with an
 appended :ref:`signature`.
 
 As of kernel 6.6 (plus backports), this flag is superfluous, as the

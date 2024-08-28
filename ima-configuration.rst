@@ -1169,8 +1169,8 @@ supported values for ``ima_template=`` are:
 ima_canonical_fmt  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``ima_canonical_fmt`` option sets the canonical format for the binary runtime
-measurements, instead of host native format.
+The ``ima_canonical_fmt`` option sets the canonical format for the
+binary runtime measurements, instead of host native format.
 
 It forces the event log to store all integral values as little endian
 on big endian machines.

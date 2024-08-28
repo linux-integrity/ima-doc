@@ -586,8 +586,9 @@ View the updated :ref:`dot-machine` keyring:
 IMA Signing Key and Certificate
 ===================================
 
-An IMA signing key signs files and other objects.  IMA :ref:`appraisal`
-uses certificates that are installed on the :ref:`dot-ima` keyring.
+An IMA signing key signs files and other objects.
+:ref:`ima-appraisal` uses certificates that are installed on the
+:ref:`dot-ima` keyring.
 
 Create the IMA signing key and certificate using OpenSSL.
 

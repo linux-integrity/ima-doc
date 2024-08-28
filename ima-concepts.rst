@@ -16,32 +16,32 @@ The hash algorithm is defined by :ref:`config-ima-default-hash`, which
 can be overridden by the :ref:`boot-command-line-arguments`
 :ref:`ima-hash`.
 
-**IMA** :ref:`measurement` maintains an aggregate integrity value over
-the measurement event log if the platform has a TPM chip. The TPM can
-attest to the state of these system files. It typically uses PCR 10.
-The TPM attestation quote is a signature over the PCR, indirectly
-providing integrity over the measurement event log.
+* :ref:`ima-measurement` maintains an aggregate integrity value over
+  the measurement event log if the platform has a TPM chip. The TPM can
+  attest to the state of these system files. It typically uses PCR 10.
+  The TPM attestation quote is a signature over the PCR, indirectly
+  providing integrity over the measurement event log.
 
-The measurement system requires both a TPM and an independent verifier.
+  The measurement system requires both a TPM and an independent verifier.
 
-Measurement is similar to the pre-OS trusted boot concept. The first
-measurement is the boot aggregate, which is a hash of TPM PCR 0-9.
+  Measurement is similar to the pre-OS trusted boot concept. The first
+  measurement is the boot aggregate, which is a hash of TPM PCR 0-9.
 
-IMA keeps a table of the measured hash values. If the hash is seen
-again, the contents are not re-measured
-again. :ref:`config-ima-disable-htable` offers other options.
+  IMA keeps a table of the measured hash values. If the hash is seen
+  again, the contents are not re-measured
+  again. :ref:`config-ima-disable-htable` offers other options.
 
-**IMA** :ref:`appraisal` can check the file's digital signature or
-hash and take action if the signature verification fails or the hash
-does not match a known good value.
+* :ref:`ima-appraisal` can check the file's digital signature or
+  hash and take action if the signature verification fails or the hash
+  does not match a known good value.
 
-Appraisal is similar to the pre-OS secure boot concept.
+  Appraisal is similar to the pre-OS secure boot concept.
 
-The appraisal system is local, and requires neither a TPM nor a
-separate verifier.
+  The appraisal system is local, and requires neither a TPM nor a
+  separate verifier.
 
-**IMA** :ref:`ima-audit` includes the file hash in the system's audit
-log. This can be useful for analytics and forensics.
+* :ref:`ima-audit` includes the file hash in the system's audit
+  log. This can be useful for analytics and forensics.
 
 
 Threat Model
@@ -92,13 +92,13 @@ will still pass appraisal. The file name will be measured.
 |
 
 
-.. _measurement:
+.. _ima-measurement:
 
-Measurement
+IMA-Measurement
 ===================================
 
 
-IMA measurement has several steps:
+IMA-measurement has several steps:
 
 #. Match attributes against a policy measurement rule.
 
@@ -115,9 +115,9 @@ See :ref:`measure-policy-rule-design` for implications.
 
 |
 
-.. _appraisal:
+.. _ima-appraisal:
 
-Appraisal
+IMA-Appraisal
 ===================================
 
 IMA Appraisal occurs only for file data. IMA generates a hash over the
@@ -261,12 +261,12 @@ invalid.
 
 .. _ima-audit:
 
-IMA Audit
+IMA-Audit
 ===================================
 
 IMA-Audit includes file hashes in the system audit log, which can be
 used to augment existing system security
-analytics and/or forensics. IMA-audit extends the IMA policy ABI with the
+analytics and/or forensics. IMA-Audit extends the IMA policy ABI with the
 :ref:`policy-syntax-action` keyword ``audit``.
 
 There are no built-in policies containing audit rules.
@@ -419,7 +419,7 @@ adding them to ``/sys/kernel/security/integrity/evm/evm_xattrs`` if
 
    Needs a good example of an additional attribute.
 
-The same IMA :ref:`appraisal` rules trigger EVM appraisal if EVM is
+The same :ref:`ima-appraisal` rules trigger EVM appraisal if EVM is
 enabled.  See :ref:`evm-build-flags`.
 
 Enabling EVM
@@ -710,7 +710,7 @@ is absent, keys will not automatically be loaded.
 
 Keys on the ``.ima`` keyring are used for
 
-* IMA :ref:`appraisal`
+* :ref:`ima-appraisal`
 
 The key used for verification is based on the :ref:`public-key-identifier`.
 

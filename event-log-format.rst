@@ -8,7 +8,7 @@
 IMA Event Log
 ===================================
 
-The IMA Measurement Event Log is also known as the IMA measurement
+The IMA-Measurement Event Log is also known as the IMA measurement
 list.
 
 IMA Log Verification
@@ -162,11 +162,15 @@ IMA Event Log Format
 
 This details the binary IMA event log format, field by field.
 
-Multi-byte integer values (PCR index, length, etc.) are in the byte
-order of the host where the event log was created, **except where
-otherwise noted**. The sender can convert to network byte order before
-transmission, as long as the values are not hashed. For values that
-are hashed, the receiver must know the byte order.
+Multi-byte integer values (PCR index, length, etc.) are (by default)
+in the byte order of the host where the event log was created,
+**except where otherwise noted**. The sender can convert to network
+byte order before transmission, as long as the values are not
+hashed. For values that are hashed, the receiver must know the byte
+order.
+
+The :ref:`ima-canonical-fmt` boot command line argument forces the
+byte order to little endian.
 
 Sizes and lengths are always in bytes.
 
