@@ -630,7 +630,7 @@ Filter by the file owner id. id is a decimal value. The ``=``, ``<``,
 and ``>`` operators are supported.
 
 Different from uid, this can match a file independent of who is
-executing it. If could be used to detect an attack in a system library
+executing it. If could be used to detect an attack on a system library
 when a non-root user executes it.
 
 fgroup=id

@@ -18,9 +18,9 @@ IMA Attestation Background
 -----------------------------------
 
 An IMA attester and verifier design should note several differences
-from verifying a pre-OS log. They occur because IMA measurements can
-occur during the attestation, when the measurement log and quote are
-acquired.
+from verifying a pre-OS log. They occur because IMA-Measurement
+records can occur during the attestation, when the measurement log and
+quote are acquired.
 
 -  An IMA event log append is not atomic with the TPM extend.
 

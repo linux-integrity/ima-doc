@@ -8,8 +8,8 @@ triggered based on :ref:`ima-policy-top` rules. IMA calculates hash values
 of executables and other system files at runtime. The hash value is
 used in multiple ways:
 
-* stored in a IMA measurement event log
-* used for verifying signatures and hashes
+* stored in a IMA-Measurement event log
+* used for verifying file signatures and hashes
 * stored in the system audit log
 
 The hash algorithm is defined by :ref:`config-ima-default-hash`, which
@@ -22,7 +22,7 @@ can be overridden by the :ref:`boot-command-line-arguments`
   The TPM attestation quote is a signature over the PCR, indirectly
   providing integrity over the measurement event log.
 
-  The measurement system requires both a TPM and an independent verifier.
+  The measurement feature requires both a TPM and an independent verifier.
 
   Measurement is similar to the pre-OS trusted boot concept. The first
   measurement is the boot aggregate, which is a hash of TPM PCR 0-9.
@@ -37,8 +37,8 @@ can be overridden by the :ref:`boot-command-line-arguments`
 
   Appraisal is similar to the pre-OS secure boot concept.
 
-  The appraisal system is local, and requires neither a TPM nor a
-  separate verifier.
+  The :ref:`ima-appraisal` feature is local, and requires neither a
+  TPM nor a separate verifier.
 
 * :ref:`ima-audit` includes the file hash in the system's audit
   log. This can be useful for analytics and forensics.
