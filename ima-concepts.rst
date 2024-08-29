@@ -3,18 +3,11 @@ IMA and EVM Concepts
 ======================
 
 
-The Linux Integrity Measurement Architecture (IMA) actions are
-triggered based on :ref:`ima-policy-top` rules. IMA calculates hash values
-of executables and other system files at runtime. The hash value is
-used in multiple ways:
-
-* stored in a IMA-Measurement event log
-* used for verifying file signatures and hashes
-* stored in the system audit log
-
-The hash algorithm is defined by :ref:`config-ima-default-hash`, which
-can be overridden by the :ref:`boot-command-line-arguments`
-:ref:`ima-hash`.
+The Linux Integrity Measurement Architecture (IMA) is part of the
+Linux kernel.  IMA is comprised of three features:
+:ref:`ima-measurement`, :ref:`ima-appraisal`, and :ref:`ima-audit`.
+These features are triggered based on :ref:`ima-policy-top` rule
+actions.
 
 * :ref:`ima-measurement` maintains an aggregate integrity value over
   the measurement event log if the platform has a TPM chip. The TPM can
@@ -40,8 +33,19 @@ can be overridden by the :ref:`boot-command-line-arguments`
   The :ref:`ima-appraisal` feature is local, and requires neither a
   TPM nor a separate verifier.
 
-* :ref:`ima-audit` includes the file hash in the system's audit
-  log. This can be useful for analytics and forensics.
+* :ref:`ima-audit` augments the system's audit log with the file
+  hash. This can be useful for analytics and forensics.
+
+IMA calculates hash values of executables and other system files at
+runtime. The hash value is used in multiple ways:
+
+* stored in an IMA-Measurement event log
+* used for verifying file signatures and hashes
+* stored in the system audit log
+
+The hash algorithm is defined by :ref:`config-ima-default-hash`, which
+can be overridden by the :ref:`boot-command-line-arguments`
+:ref:`ima-hash`.
 
 
 Threat Model
