@@ -1,3 +1,5 @@
+.. _ima-and-evm-concepts:
+
 ======================
 IMA and EVM Concepts
 ======================
@@ -9,10 +11,10 @@ Linux kernel.  IMA is comprised of three features:
 These features are triggered based on :ref:`ima-policy-top` rule
 actions.
 
-* :ref:`ima-measurement` maintains an aggregate integrity value over
-  the measurement event log if the platform has a TPM chip. The TPM can
-  attest to the state of these system files. It typically uses PCR 10.
-  The TPM attestation quote is a signature over the PCR, indirectly
+* :ref:`ima-measurement` maintains a measurement event log and
+  maintains an aggregate integrity value over this event event log in
+  a PCR if the platform has a TPM chip. It typically uses PCR 10.  A
+  TPM attestation quote is a signature over the PCR, indirectly
   providing integrity over the measurement event log.
 
   The measurement feature requires both a TPM and an independent verifier.
@@ -24,9 +26,9 @@ actions.
   again, the contents are not re-measured
   again. :ref:`config-ima-disable-htable` offers other options.
 
-* :ref:`ima-appraisal` can check the file's digital signature or
-  hash and take action if the signature verification fails or the hash
-  does not match a known good value.
+* :ref:`ima-appraisal` can check the file's digital signature or hash
+  and deny access if the signature verification fails or the hash does
+  not match a known good value stored as an extended attribute.
 
   Appraisal is similar to the pre-OS secure boot concept.
 
@@ -108,8 +110,8 @@ IMA-measurement has several steps:
 
 #. If the rule applies, calculate a hash over the contents.
 
-#. If the hash indicates a new measurement, append the measurement to
-   the :ref:`ima-event-log` and extend the hash to a TPM PCR.
+#. Append the measurement to the :ref:`ima-event-log` and extend the
+   hash to a TPM PCR if not already measured.
 
 An attestation can then verify the integrity of the measurement log.
 A TPM attestation quote is a signature over the PCR, in effect a
@@ -124,10 +126,10 @@ See :ref:`measure-policy-rule-design` for implications.
 IMA-Appraisal
 ===================================
 
-IMA Appraisal occurs only for file data. IMA generates a hash over the
-file, and validates it against meta-data to determine whether the file
-has been tampered with. File contents (not meta-data) appraisal comes
-in two forms:
+IMA Appraisal verifies and enforces file integrity. IMA generates a
+hash over the file, and validates it against meta-data to determine
+whether the file has been tampered with. File contents (not meta-data)
+appraisal comes in two forms:
 
 * :ref:`hash`
 * :ref:`signature`
@@ -339,8 +341,8 @@ Events that occur independent of policy rules include:
    TODO classify unsupported hash algorithms
 
 **Integrity violations** include "open writers" or "Time of Measure /
-Time of Use (ToMToU)". They are logged in the :ref:`template-hash`
-field of the :ref:`ima-event-log`.
+Time of Use (ToMToU)". They are logged in the
+:ref:`template-data-hash` field of the :ref:`ima-event-log`.
 
 "Open writers" means a file was first open for write and now is open for
 read, because the writer can write while the reader is doing a

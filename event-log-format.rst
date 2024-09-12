@@ -9,7 +9,7 @@ IMA Event Log
 ===================================
 
 The IMA-Measurement Event Log is also known as the IMA measurement
-list.
+list. See :ref:`ima-and-evm-concepts`.
 
 IMA Log Verification
 ===================================
@@ -160,8 +160,6 @@ verified. The verifier validates the log against the quote signature.
 IMA Event Log Format
 ===================================
 
-This details the binary IMA event log format, field by field.
-
 Multi-byte integer values (PCR index, length, etc.) are (by default)
 in the byte order of the host where the event log was created,
 **except where otherwise noted**. The sender can convert to network
@@ -211,18 +209,18 @@ and the policy rule condition :ref:`pcr-value`.
 Due to :ref:`pcr-value`, the event log may contain events that have
 not been extended.  E.g., the event log may contain PCR 17 or PCR 24.
 
-.. _template-hash:
+.. _template-data-hash:
 
-Template Hash
+Template Data Hash
 -----------------------------------
 
 This is normally a 20-byte SHA-1 hash of the Template Data field. It can
 also be all zeros.
 
-   Exception: For the ``ima`` template name, the Template Hash is a SHA-1
-   hash of the File Data Hash field and the File Name padded with zero
-   bytes to a length of 256 bytes. The File Name Length field is not
-   hashed.
+   Exception: For the ``ima`` template name, the Template Data Hash is
+   a SHA-1 hash of the File Data Hash field and the File Name padded
+   with zero bytes to a length of 256 bytes. The File Name Length
+   field is not hashed.
 
 An all zeros hash indicates a measurement log violation.  IMA is
 invalidating an entry.  Trust in entries after that are up to the end
@@ -243,15 +241,16 @@ PCR Extend Type 1 (zero pad)
 
 -  PCR SHA-1 Bank
 
-If the Template Hash is not all zeros, it is used directly in the extend
-operation.
+If the Template Data Hash is not all zeros, it is used directly in the
+extend operation.
 
-If the Template Hash is all zeros, an all ones digest is extended.
+If the Template Data Hash is all zeros, an all ones digest is
+extended.
 
 -  PCR SHA-256 Bank
 
-The SHA-256 bank is extended with the SHA-1 value (the Template Hash or
-all ones) padded with 12 bytes of zero.
+The SHA-256 bank is extended with the SHA-1 value (the Template Data
+Hash or all ones) padded with 12 bytes of zero.
 
 PCR Extend Type 2 (hash)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -262,11 +261,12 @@ Same as Type 1.
 
 -  PCR SHA-256 (and other non SHA-1 banks)
 
-If the Template Hash is not all zeros, the bank is extended with the
-hash of the Template Data field. See the exception in `Template Hash`_.
+If the Template Data Hash is not all zeros, the bank is extended with
+the hash of the Template Data field. See the exception in
+:ref:`template-data-Hash`.
 
-If the Template Hash is all zeros, the bank is extended with all ones to
-the length of the hash algorithm,
+If the Template Data Hash is all zeros, the bank is extended with all
+ones to the length of the hash algorithm.
 
 Template Name Length
 -----------------------------------

@@ -921,7 +921,7 @@ ima-inspect
 imaextend
 ===================================
 
-``imaextend`` includes sereral functions related to the :ref:`ima-event-log`.
+``imaextend`` includes several functions related to the :ref:`ima-event-log`.
 
 Package:
 
