@@ -104,20 +104,45 @@ the measurement list or integrity log) pseudo-files.
 
 There are two formats:
 
-* The :ref:`ima-event-log-binary-format` is at
-  ``/sys/kernel/security/ima/binary_runtime_measurements``. 
+* The :ref:`ima-event-log-binary-format`
+* The :ref:`ima-event-log-ascii-format`
 
-* The :ref:`ima-event-log-ascii-format` is at
-  ``/sys/kernel/security/ima/ascii_runtime_measurements``.
+The logs were originally at:
+
+* ``/sys/kernel/security/ima/binary_runtime_measurements``
+* ``/sys/kernel/security/ima/ascii_runtime_measurements``
 
 In newer kernels, the logs are at:
-``/sys/kernel/security/integrity/ima/binary_runtime_measurements``
-and
-``/sys/kernel/security/integrity/ima/ascii_runtime_measurements``.
+
+* ``/sys/kernel/security/integrity/ima/binary_runtime_measurements``
+* ``/sys/kernel/security/integrity/ima/ascii_runtime_measurements``
+
+For backward compatibility
+
 ``/sys/kernel/security/ima``
 is linked to
 ``/sys/kernel/security/integrity/ima``
-for backward compatibility.
+
+A kernel between 6.10.6 and 6.10.11 added support for multiple hash
+algorithms, with the logs corresponding to the **allocated** TPM PCR
+banks.  The names append the hash algorithm string:
+
+* ``/sys/kernel/security/integrity/ima/binary_runtime_measurements_sha1``
+* ``/sys/kernel/security/integrity/ima/binary_runtime_measurements_sha256``
+* ``/sys/kernel/security/integrity/ima/binary_runtime_measurements_sha384``
+* ``/sys/kernel/security/integrity/ima/binary_runtime_measurements_sha512``
+* ``/sys/kernel/security/integrity/ima/ascii_runtime_measurements_sha1``
+* ``/sys/kernel/security/integrity/ima/ascii_runtime_measurements_sha256``
+* ``/sys/kernel/security/integrity/ima/ascii_runtime_measurements_sha384``
+* ``/sys/kernel/security/integrity/ima/ascii_runtime_measurements_sha512``
+
+For backward compatibility
+
+``binary_runtime_measurements`` and
+``ascii_runtime_measurements``
+are linked to 
+``binary_runtime_measurements_sha1`` and
+``ascii_runtime_measurements_sha1``
 
 Normally, systemd mounts securityfs in the kernel. It is possible that
 this pseudo-file will not exist because securityfs is not
@@ -214,8 +239,8 @@ not been extended.  E.g., the event log may contain PCR 17 or PCR 24.
 Template Data Hash
 -----------------------------------
 
-This is normally a 20-byte SHA-1 hash of the Template Data field. It can
-also be all zeros.
+This is normally a hash of the :ref:`template-data` field. It can also
+be all zeros.
 
    Exception: For the ``ima`` template name, the Template Data Hash is
    a SHA-1 hash of the File Data Hash field and the File Name padded
@@ -224,49 +249,18 @@ also be all zeros.
 
 An all zeros hash indicates a measurement log violation.  IMA is
 invalidating an entry.  Trust in entries after that are up to the end
-user. Cases include:
+user. If the Template Data Hash is all zeros, an all ones digest is
+extended.
+
+Cases include:
 
 * if the policy rule includes :ref:`digest-type` ``=verity`` and the
   fs-verity digest is not present.
 
 * if one process opens for read while another has it open for write.
 
-There is no associated length or descriptor.
-
-There are currently two PCR extend schemes. This document calls them
-Type 1 and Type 2 because there is no defacto term in use.
-
-PCR Extend Type 1 (zero pad)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
--  PCR SHA-1 Bank
-
-If the Template Data Hash is not all zeros, it is used directly in the
-extend operation.
-
-If the Template Data Hash is all zeros, an all ones digest is
-extended.
-
--  PCR SHA-256 Bank
-
-The SHA-256 bank is extended with the SHA-1 value (the Template Data
-Hash or all ones) padded with 12 bytes of zero.
-
-PCR Extend Type 2 (hash)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
--  PCR SHA-1 Bank
-
-Same as Type 1.
-
--  PCR SHA-256 (and other non SHA-1 banks)
-
-If the Template Data Hash is not all zeros, the bank is extended with
-the hash of the Template Data field. See the exception in
-:ref:`template-data-Hash`.
-
-If the Template Data Hash is all zeros, the bank is extended with all
-ones to the length of the hash algorithm.
+There is no associated length or descriptor. The reader knows the
+digest algorithm from the :ref:`ima-event-log-location`.
 
 Template Name Length
 -----------------------------------
