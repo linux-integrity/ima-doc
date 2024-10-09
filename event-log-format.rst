@@ -780,6 +780,8 @@ represented by the (two) Hash Algorithm fields, the signature
 :ref:`signature-hash-algorithm` and the file data
 :ref:`hash-algorithm`.
 
+* RSA - a raw RSA signature
+* ECC - a DER encoded SEQUENCE containing the R and S integers.
 
 .. _evmsig:
 
