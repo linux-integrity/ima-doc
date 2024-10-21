@@ -878,6 +878,8 @@ may be:
 
 * ``kernel_version`` version string
 
+* ``init_module`` hash of the buffer data loaded during init_module()
+
 .. warning::
 
    Define all n-ng field names and the meaning of the strings.
