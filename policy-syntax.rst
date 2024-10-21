@@ -226,20 +226,21 @@ file).
 
 Note:
 
-IMA only measures and appraises kernel modules loaded by the
-finit_module() syscall. IMA does not measure or appraise kernel
-modules loaded by the init_module() syscall.
+This only measures and appraises kernel modules loaded by the
+finit_module() syscall. Kernel modules loaded by the init_module()
+syscall can be measured with :ref:`func-critical-data`.
 
 if ``CONFIG_MODULE_SIG`` is enabled, then the init_module() syscall is
 used. An application can avoid the func=MODULE_CHECK measurement by
 calling init_module() specifying a memory buffer rather than a disk
 file. In this case, func=MODULE_CHECK is ineffective.
 
-This policy is better, but can still be bypassed.
+Adding the following policy permits to also measure kernel modules
+loaded by init_module() (see :ref:`buf-critical-data`):
 
 ::
 
-   measure func=FILE_CHECK mask=MAY_READ uid=0
+   measure func=CRITICAL_DATA label=modules
 
 
 If ``CONFIG_MODULE_SIG`` is disabled (the better choice),
