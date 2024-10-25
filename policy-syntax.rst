@@ -454,8 +454,9 @@ hash algorithms. The approved algorithm list is in the policy rule.
 mask
 -----------------------------------
 
-mask qualifies and is only legal with :ref:`func-file-check`. Without
-``mask``, the rule triggers on any of read, write, execute, or append.
+mask qualifies and is only legal with :ref:`func-file-check`,
+:ref:`func-bprm-check`, or :ref:`func-mmap-check`. Without ``mask``,
+the rule triggers on any of read, write, execute, or append.
 
 The values match the kernel flags:
 
@@ -979,8 +980,8 @@ SELinux variations
 
 Builtin policy rules may measure too much. Measurement and appraisal
 of log files are not useful, generating events every time one is
-opened. Known log files can be excluded using SELinux to constrain
-which files are measured.
+opened. Known log files can be excluded using SELinux labels to
+constrain which files are measured.
 
 See :ref:`selinux-labels`.
 
