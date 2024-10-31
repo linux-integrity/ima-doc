@@ -700,8 +700,10 @@ The legal values are:
 
 * ``0x06`` IMA_VERITY_DIGSIG
 
-  This is a signature over the fs-verity file
-  digest. :ref:`signature-version` is always 0x03.
+  This introduces a level of indirection. Instead of directly signing
+  the fs-verity digest, the signature is of the hash of the type of
+  data (e.g. fs-verity) and the digest. :ref:`signature-version` is
+  always 0x03.
 
 .. _signature-version:
 
