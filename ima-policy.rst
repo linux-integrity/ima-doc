@@ -451,10 +451,11 @@ for the custom template legal values.
 Custom Policy
 ===================================
 
-A custom policy may specified at boot time or at runtime, or both.
-
-The policy file has one :ref:`policy-syntax-action` per line.  Empty
-lines are forbidden.  Lines beginning with ``#`` are comments.  Use
+A custom policy may specified at boot time or at runtime, or
+both. Either replaces the :ref:`built-in-policy-rules` enabled on the
+boot command line.  The policy file has one
+:ref:`policy-syntax-action` per line.  Empty lines are forbidden.
+Lines beginning with ``#`` are comments.  Use
 
 ::
 
