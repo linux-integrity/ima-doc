@@ -347,6 +347,23 @@ Secure Boot State
 
    mokutil --sb-state
 
+.. _uefi-variables:
+
+UEFI Variables
+===================================
+
+Use ``ls -l /sys/firmware/efi/efivars/`` to check for the existance of
+a UEFI variable.
+
+This example tests for the MokListTrustedRT variable.
+
+``ls -l /sys/firmware/efi/efivars/MokListTrustedRT*``
+
+To set this variable:
+
+``mokutil --trust-mok``
+
+
 .. _kernel-signing-key-generation:
 
 Kernel Signing Key Generation

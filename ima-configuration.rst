@@ -347,9 +347,7 @@ CONFIG_IMA_APPRAISE_BUILD_POLICY
 This boolean enables compiled-in IMA policy rules. They are effective
 at runtime without needing an :ref:`ima-policy` on the boot
 command line.  It loads its IMA appraise rules before other
-compiled-in or built-in command line appraise rules.  Unlike
-:ref:`config-ima-arch-policy`, these rules can be replaced by a
-:ref:`boot-time-custom-policy` or :ref:`runtime-custom-policy`.
+compiled-in or built-in command line appraise rules.
 
 If enabled
 :ref:`config-ima-appraise-require-firmware-sigs`,
@@ -359,7 +357,9 @@ If enabled
 determine the policy rules.
 
 An alternative to the compiled-in policy rules is
-:ref:`ima-policy-secure-boot` on the boot command line.
+:ref:`ima-policy-secure-boot` on the boot command line. However,
+:ref:`ima-policy-secure-boot` rules will be replaced by a
+:ref:`custom-policy`.
 
 .. _config-ima-appraise-require-firmware-sigs:
 
@@ -862,10 +862,12 @@ CONFIG_INTEGRITY_MACHINE_KEYRING
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, registered machine owner key certificates
-are loaded by default on the :ref:`dot-machine` keyring.
+are loaded by default on the :ref:`dot-machine` keyring if secure boot
+(see :ref:`sb-state`) is enabled and the UEFI MokListTrustedRT variable
+exists (see :ref:`uefi-variables`).
 
-When it is clear, registered machine owner key certificates are loaded
-on the :ref:`dot-platform` keyring.
+Otherwise, registered machine owner key certificates are loaded on the
+:ref:`dot-platform` keyring.
 
    Note that this boolean is only supported for ``MOK`` keys on UEFI.
 
