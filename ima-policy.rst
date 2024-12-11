@@ -287,7 +287,8 @@ ima_policy=tcb
   root ((euid, uid) == 0) with the read bit set.  It measures all
   kernel modules loaded and all firmware loaded.
 
-  The policy excludes some "pseudo" filesystem from measurement.
+  The policy excludes some "pseudo" filesystem from measurement. See
+  :ref:`custom-policy` for recommendations related to ``tmpfs`` files.
 
 ::
 
@@ -474,6 +475,14 @@ appraised. For example, the :ref:`boot-time-custom-policy`, typically
 ``/etc/ima/ima-policy`` has to be signed.  :ref:`policy-signature`
 shows a signing utility.
 
+.. note::
+
+   The built-in policy :ref:`ima-policy-tcb` excludes files in
+   ``tmpfs``. This should be replaced with a custom policy where all
+   :ref:`func` rules except :ref:`func-file-check` come before the
+   ``dont_measure`` rules so that measurements trigger even for items
+   in ``tmpfs``.
+ 
 
 .. _boot-time-custom-policy:
 

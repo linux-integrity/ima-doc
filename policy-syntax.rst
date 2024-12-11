@@ -117,6 +117,10 @@ func                              measure        appraise audit hash
 the original hard boot.  The hard boot items should be measured by
 the firmware.
 
+Since some items (e.g., the kexec command line) may be in ``tmpfs``,
+those ``measure`` rules should come before the ``dont_measure`` rule
+that excludes ``tmpfs``.
+
 .. _func-mmap-check:
 
 func=MMAP_CHECK
