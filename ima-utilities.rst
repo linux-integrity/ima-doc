@@ -51,16 +51,16 @@ Package:
 evmctl
 -----------------------------------
 
-Package:
+Package: ``ima-evm-utils``
 
-* Fedora: ima-evm-utils
-* Ubuntu: ima-evm-utils
-
-   Note: The latest ``evmctl`` has an fs-verity test for the
+.. note::
+   The latest ``evmctl`` has an fs-verity test for the
    :ref:`digest-type` policy condition.
 
-   This repo is at https://github.com/linux-integrity/ima-evm-utils.  The
-   utility is installed in ``/usr/local/bin``. Build and test as follows:
+Git repository is at https://github.com/linux-integrity/ima-evm-utils.
+The utility is installed in ``/usr/local/bin``.
+
+Build and test as follows:
 
 ::
 
@@ -80,17 +80,12 @@ Package:
 mokutil
 -----------------------------------
 
-Package:
-
-* Fedora - mokutil
-* Ubuntu - mokutil
+Package: ``mokutil``
 
 rpm-plugin-ima
 ----------------------------------
 
-Package:
-
-* Fedora - rpm-plugin-ima
+Package: ``rpm-plugin-ima`` (Fedora only)
 
 .. _evmctl-portable-signature:
 
