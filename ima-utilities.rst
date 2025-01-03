@@ -754,7 +754,7 @@ To read the signature:
 
    getfattr -m - -e hex -d policy
 
-To install the policy.  The policy path must start with ``\``.
+To install the policy.  The policy path must start with ``/``.
 
 ::
 
