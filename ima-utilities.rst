@@ -59,7 +59,7 @@ Package:
    Note: The latest ``evmctl`` has an fs-verity test for the
    :ref:`digest-type` policy condition.
 
-   This repo is at https://github.com/mimizohar/ima-evm-utils.git.  The
+   This repo is at https://github.com/linux-integrity/ima-evm-utils.  The
    utility is installed in ``/usr/local/bin``. Build and test as follows:
 
 ::
@@ -798,7 +798,7 @@ boot process).
 
    https://www.mankier.com/1/evmctl#Integrity_Keyrings
 
-   https://github.com/mimizohar/ima-evm-utils
+   https://github.com/linux-integrity/ima-evm-utils
 
 ``evmctl`` was extended to pass file metadata using command line parameters:
 
