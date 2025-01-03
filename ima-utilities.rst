@@ -769,9 +769,9 @@ To sign all kernel modules with an IMA signature:
 
 .. warning::
 
-   **FIXME Signature v1 support is being deprecated in
-   ima-evm-utils. Refer to commit 751a3957729d ("Deprecate IMA
-   signature version 1").**
+   Signature v1 support is being deprecated in
+   `ima-evm-utils <https://github.com/linux-integrity/ima-evm-utils>`_.
+   Refer to commit `751a3957729d ("Deprecate IMA signature version 1") <https://github.com/linux-integrity/ima-evm-utils/commit/751a3957729d885cbcccf99ee92455f6f06f603b>`_.
 
 To sign immutable files (like kernel modules and application code),
 the ``evmctl`` command provided by the app-crypt/ima-evm-utils package
