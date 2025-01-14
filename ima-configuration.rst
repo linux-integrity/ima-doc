@@ -1046,11 +1046,13 @@ ima_appraise
 The ``ima_appraise=`` argument can change the default ``enforce``
 appraise mode.
 
-**Note**: The mode can only be changed if secure boot in the UEFI
-firmware is disabled. If UEFI secure boot is enabled, the default
-``enforce`` cannot be changed.  See :ref:`built-in-policy-rules`.  This is
-**not** the same as the :ref:`ima-policy-secure-boot` command line
-argument.
+.. note::
+
+   The mode can only be changed if secure boot in the UEFI firmware is
+   disabled. If UEFI secure boot is enabled, the default ``enforce``
+   cannot be changed.  See :ref:`built-in-policy-rules`.  This is
+   **not** the same as the :ref:`ima-policy-secure-boot` command line
+   argument.
 
 This command line argument is only available if
 :ref:`config-ima-appraise-bootparam` is set.
