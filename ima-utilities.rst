@@ -241,75 +241,6 @@ Copy the results to ``\boot``.
 
    sudo make modules_install install O=../kernelbuild/linux-6.8.y
 
-.. _sign-file:
-
-sign-file
-===================================
-
-Package:
-
-* Fedora - kernel-devel
-* Ubuntu - linux-headers-\`uname -r\`-generic 
-
-Location:
-
-* Fedora - /usr/src/kernels/\`uname -r\`/scripts/sign-file
-* Ubuntu - /usr/src/linux-kernel-headers-\`uname -r\`/scripts/sign-file
-
-Use ``sign-file`` to add an appended signature to a kernel module, a
-kernel image, or an initramfs.  These files support the :ref:`ima-modsig`
-template.  See :ref:`sign-file-appended-signature` for an example.
-
-.. _sign-file-appended-signature:
-
-sign-file appended signature
-----------------------------------
-
-Appended signatures can be measured and appraised with the
-:ref:`func-module-check`, :ref:`func-kexec-kernel-check`, and
-:ref:`func-kexec-initramfs-check` rules but **not** with the
-:ref:`func-file-check` rule.
-
-This example creates a signing key and an appended signature for a
-Linux kernel and initramfs.  The signature format format is PKCS#7.
-
-Create a signing key.
-
-::
-
-   openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=Subject/"
-
-View the key.
-
-::
-
-   openssl x509 -text -inform der -in MOK.der -noout
-
-Sign with the private key.
-
-::
-
-   /usr/src/kernels/`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der /boot/vmlinuz-6.1.6-200.fc37.x86_64
-
-::
-
-   /usr/src/kernels/`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der /boot/initramfs-6.1.6-200.fc37.x86_64.img
-
-This kexec command does a soft boot, triggering measure and appraise
-rules for testing.
-
-::
-
-   kexec -l -s /boot/vmlinuz-6.1.6-200.fc37.x86_64 --initrd /boot/initramfs-6.1.6-200.fc37.x86_64.img --reuse-cmdline
-
-
-verify-file
-===================================
-
-.. warning::
-
-   sign-file is part of the kernel, but verify-file is not.  How does
-   one verify a signature other than with an appraise rule?
 
 .. _xz:
 
@@ -352,7 +283,7 @@ Secure Boot State
 UEFI Variables
 ===================================
 
-Use ``ls -l /sys/firmware/efi/efivars/`` to check for the existance of
+Use ``ls -l /sys/firmware/efi/efivars/`` to check for the existence of
 a UEFI variable.
 
 This example tests for the MokListTrustedRT variable.
@@ -730,7 +661,142 @@ Reboot.  Verify the result.
    and verify that
    ``./usr/lib/dracut/hooks/pre-pivot/61-ima-keys-load.sh`` exists.
 
+.. _sign-add-extended-attribute-signature:
 
+Sign and Add an Extended Attribute Signature
+==============================================
+
+Use ``evmctl`` to sign e.g., an executable ``tst2`` with a private key.
+
+Package:
+
+* Fedora - ima-evm-utils
+* Ubuntu - ima=evm-utils
+
+Signing locally on the target machine is possible if the key is on
+that machine.  This might be the case with test signing keys during
+development.
+
+::
+
+   evmctl sign --imasig -a sha256 --portable --m32 --key privkey_ima.pem ./tst2
+
+Production keys and signing are likely to be remote.
+
+.. Note::
+
+   The uid, gid, and a file's mode bits must be final when the file is
+   signed since any later modifications to them, including after
+   installation on the system itself, will invalidate the EVM
+   signature and the file will not appraise.
+
+   E.g., a file owned by root after install must be owned by root at
+   signing.
+
+.. Note::
+
+   Observe that the transport format is a tar file.  tar supports the
+   IMA extended attributes. A simple scp will not work because scp will not
+   copy the IMA extended attributes.
+
+On the remote signing machine, sign and tar:
+
+::
+
+   chmod 755 test.sh
+   evmctl sign --imasig -a sha256 --portable --m32 --key privkey_ima.pem ./tst2
+   tar -c --xattrs-include security.ima --xattrs-include security.evm -f tst2.tar tst2
+
+On the target machine, untar:
+
+::
+
+   tar -xv --xattrs-include security.ima --xattrs-include security.evm -f tst2.tar
+
+View that the signature is present using ``getfattr``.
+
+::
+
+   getfattr -m - -e hex -d ./tst2
+
+Verify the signature using ``evmctl``.  The X.509 certificate is
+typically installed in ``/etc/keys``.
+
+::
+
+   evmctl ima_verify --key x509_ima.der tst2
+
+
+
+.. _sign-add-appended-signature:
+
+Sign and Add an Appended Signature
+===================================
+
+Use ``sign-file`` to add an appended signature to a kernel module, a
+kernel image, or an initramfs.  These files support the :ref:`ima-modsig`
+template.  See :ref:`sign-file-appended-signature` for an example.
+
+Package:
+
+* Fedora - kernel-devel
+* Ubuntu - linux-headers-\`uname -r\`-generic 
+
+Location:
+
+* Fedora - /usr/src/kernels/\`uname -r\`/scripts/sign-file
+* Ubuntu - /usr/src/linux-kernel-headers-\`uname -r\`/scripts/sign-file
+
+.. _sign-file-appended-signature:
+
+sign-file appended signature
+----------------------------------
+
+Appended signatures can be measured and appraised with the
+:ref:`func-module-check`, :ref:`func-kexec-kernel-check`, and
+:ref:`func-kexec-initramfs-check` rules but **not** with the
+:ref:`func-file-check` rule.
+
+This example creates a signing key and an appended signature for a
+Linux kernel and initramfs.  The signature format format is PKCS#7.
+
+Create a signing key.
+
+::
+
+   openssl req -new -x509 -newkey rsa:2048 -keyout MOK.priv -outform DER -out MOK.der -nodes -days 36500 -subj "/CN=Subject/"
+
+View the key.
+
+::
+
+   openssl x509 -text -inform der -in MOK.der -noout
+
+Sign with the private key.
+
+::
+
+   /usr/src/kernels/`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der /boot/vmlinuz-6.1.6-200.fc37.x86_64
+
+::
+
+   /usr/src/kernels/`uname -r`/scripts/sign-file sha256 ./MOK.priv ./MOK.der /boot/initramfs-6.1.6-200.fc37.x86_64.img
+
+This kexec command does a soft boot, triggering measure and appraise
+rules for testing.
+
+::
+
+   kexec -l -s /boot/vmlinuz-6.1.6-200.fc37.x86_64 --initrd /boot/initramfs-6.1.6-200.fc37.x86_64.img --reuse-cmdline
+
+
+verify-file
+===================================
+
+.. warning::
+
+   sign-file is part of the kernel, but verify-file is not.  How does
+   one verify a signature other than with an appraise rule?
 
 .. _policy-signature:
 
