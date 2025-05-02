@@ -709,8 +709,9 @@ Only certificates signed by a key on the
 :ref:`dot-builtin-trusted-keys`, :ref:`dot-secondary-trusted-keys`, or
 :ref:`dot-machine` keyrings may be loaded onto the ``.ima`` keyring.
 
-``.ima`` keys are loaded from ``/etc/keys/ima`` at boot time using a
-dracut script ``modules.d/(nn)integrity/ima-keys-load.sh`` calling
+DER format ``.ima`` X.509 certificates are loaded from
+``/etc/keys/ima`` at boot time using a dracut script
+``modules.d/(nn)integrity/ima-keys-load.sh`` calling
 :ref:`keyctl`. They cannot be compiled into the kernel. If the script
 is absent, keys will not automatically be loaded.
 
