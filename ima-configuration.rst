@@ -39,11 +39,12 @@ how the kernel image is built.
 The location of the kernel configuration file is either ``/boot`` or
 ``/lib/modules/kernel-version/``.
 
-The state of a build flag can be viewed with, e.g.,
+The state of a build flag can be viewed with, e.g., one of these
 
 ::
 
    cat /boot/config-`uname -r` | grep IMA_WRITE_POLICY
+   cat /proc/config.gz | gunzip | grep IMA_WRITE_POLICY
 
 The boolean values are
 
