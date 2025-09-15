@@ -500,7 +500,7 @@ Generate an ECC P256 CA key and certificate:
 
 ::
 
-   openssl req -x509 -out imacacertecc.pem -newkey ec -pkeyopt ec_paramgen_curve:secp256k1 -days 3650 -keyout imacakeyecc.pem -config imacacert.cfg 
+   openssl req -x509 -out imacacertecc.pem -newkey ec -pkeyopt ec_paramgen_curve:secp256k1 -days 3650 -keyout imacakeyecc.pem -config imacacert.cfg
 
 Convert the certificate from ``pem`` to ``der`` format.
 
@@ -740,7 +740,7 @@ template.  See :ref:`sign-file-appended-signature` for an example.
 Package:
 
 * Fedora - kernel-devel
-* Ubuntu - linux-headers-\`uname -r\`-generic 
+* Ubuntu - linux-headers-\`uname -r\`-generic
 
 Location:
 
