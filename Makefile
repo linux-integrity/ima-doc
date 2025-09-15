@@ -24,8 +24,16 @@ help:
 	@echo
 	@echo 'Non-Sphinx targets'
 	@echo '  .venv       create python3 virtualenv with Sphinx requirements'
+	@echo '  clean       remove output files'
+	@echo '  distclean   remove output files and virtualenv'
 
-.PHONY: help Makefile
+clean:
+	rm -rf "$(BUILDDIR)" "$(VENVDIR)"
+
+distclean: clean
+	rm -rf "$(VENVDIR)"
+
+.PHONY: clean distclean help Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
