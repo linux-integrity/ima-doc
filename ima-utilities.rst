@@ -400,14 +400,14 @@ View the updated keyring:
 
 .. note::
 
-   With the --ca argument, the certificate attributes are
+   With the ``--ca`` argument, the certificate attributes are
 
    ::
 
       	Digital Signature, Certificate Sign, CRL Sign
                 CA:TRUE
 
-   Without the --ca argument, the certificate attributes are
+   Without the ``--ca`` argument, the certificate attributes are
 
    ::
 
