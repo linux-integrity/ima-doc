@@ -319,7 +319,7 @@ to the system audit log ``/var/log/audit/audit.log``.
 
 Events that require a measure policy rule include:
 
-* integrity violations 
+* integrity violations
 * failure to extend the TPM PCR
 
 Events that require an appraise policy rule include:
@@ -523,7 +523,7 @@ for instructions.
 2. Wrap (encrypt) the ``master key`` with the TPM storage primary key.
 3. Store the wrapped ``master key`` in the filesystem.
 4. Generate an HMAC key.
-5. Encrypt the HMAC key with the ``master key`` to create the ``encrypted key`` 
+5. Encrypt the HMAC key with the ``master key`` to create the ``encrypted key``
 6. Store the ``encrypted key`` in the filesystem.
 
 If :ref:`config-user-decrypted-data` is not set, the HMAC key is

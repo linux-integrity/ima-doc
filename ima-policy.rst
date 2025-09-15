@@ -462,7 +462,7 @@ Lines beginning with ``#`` are comments.  Use
 
    dmesg
 
-to check for errors. 
+to check for errors.
 
 If running appraisal and
 
@@ -482,7 +482,7 @@ shows a signing utility.
    :ref:`func` rules except :ref:`func-file-check` come before the
    ``dont_measure`` rules so that measurements trigger even for items
    in ``tmpfs``.
- 
+
 
 .. _boot-time-custom-policy:
 

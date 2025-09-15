@@ -237,7 +237,7 @@ enabled, IMA verifies (appraises) the signatures.
 
 That is, if ``CONFIG_KEXEC_SIG`` is true, the kernel will require and
 verify the signature over the kernel image.  If false,
-``CONFIG_IMA_ARCH_POLICY`` will add an IMA appraise 
+``CONFIG_IMA_ARCH_POLICY`` will add an IMA appraise
 :ref:`func-kexec-kernel-check` rule.
 
 If ``CONFIG_MODULE_SIG`` is true, the kernel will verify a kernel
@@ -421,7 +421,7 @@ signatures. :ref:`config-ima-appraise-build-policy` enables this
 flag.
 
 It requires the IMA policy to be signed and verified
-by a key on the trusted IMA keyring.See :ref:`func`, 
+by a key on the trusted IMA keyring.See :ref:`func`,
 :ref:`appraise-type`, and :ref:`custom-policy`.
 
 ::
@@ -702,7 +702,7 @@ before keys can be loaded onto :ref:`keyrings`.
 
 .. _config-load-uefi-keys:
 
-CONFIG_LOAD_UEFI_KEYS 
+CONFIG_LOAD_UEFI_KEYS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, the :ref:`dot-platform` keyring is
@@ -741,8 +741,8 @@ The configuration flags affecting EVM are below:
 * :ref:`config-trusted-keys`
 * :ref:`config-evm-add-xattrs`
 * :ref:`config-evm-extra-smack-xattrs`
-  
-  
+
+
 .. _config-evm:
 
 CONFIG_EVM
@@ -899,7 +899,7 @@ Fedora 39		set
 
 .. _config-integrity-ca-machine-keyring-max:
 
-CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX  
+CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, registered ``MOK`` key signing CA
@@ -1146,7 +1146,7 @@ ima_template
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_template=`` argument specifies boot time :ref:`ima-event-log`
-:ref:`built-in-templates`.  There are several 
+:ref:`built-in-templates`.  There are several
 :ref:`built-in-templates`. See :ref:`built-in-templates` for their
 effect.
 
@@ -1171,7 +1171,7 @@ supported values for ``ima_template=`` are:
 
 .. _ima-canonical-fmt:
 
-ima_canonical_fmt  
+ima_canonical_fmt
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``ima_canonical_fmt`` option sets the canonical format for the
