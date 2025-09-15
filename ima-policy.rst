@@ -456,13 +456,7 @@ A custom policy may specified at boot time or at runtime, or
 both. Either replaces the :ref:`built-in-policy-rules` enabled on the
 boot command line.  The policy file has one
 :ref:`policy-syntax-action` per line.  Empty lines are forbidden.
-Lines beginning with ``#`` are comments.  Use
-
-::
-
-   dmesg
-
-to check for errors.
+Lines beginning with ``#`` are comments.  Use ``dmesg`` to check for errors.
 
 If running appraisal and
 
