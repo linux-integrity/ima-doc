@@ -252,7 +252,7 @@ Package:
 * Fedora - xz
 * Ubuntu - xz-utils
 
-Use the ``xy`` utility to unzip a kernel module ``.ko.xz`` to view an
+Use the ``xz`` utility to unzip a kernel module ``.ko.xz`` to view an
 appended signature.  Unzip in a /tmp directory.  See
 :ref:`func-module-check` for a use case.
 
