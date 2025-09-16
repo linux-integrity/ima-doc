@@ -949,7 +949,7 @@ Example:
 ::
 
 	measure func=BPRM_CHECK subj_type=unconfined_t
-	measure func=FILE_CHECK mask=MAY_READ subj_user=system_u 
+	measure func=FILE_CHECK mask=MAY_READ subj_user=system_u
 
 .. _subj-role-equals:
 

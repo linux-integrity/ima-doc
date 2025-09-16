@@ -140,7 +140,7 @@ For backward compatibility
 
 ``binary_runtime_measurements`` and
 ``ascii_runtime_measurements``
-are linked to 
+are linked to
 ``binary_runtime_measurements_sha1`` and
 ``ascii_runtime_measurements_sha1``
 
@@ -523,7 +523,7 @@ The length and hash algorithm are determined by the :ref:`hash-algorithm`
 field.
 
 .. _d-modsig:
-  
+
 d-modsig
 -----------------------------------
 

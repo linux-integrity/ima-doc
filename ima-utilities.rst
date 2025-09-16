@@ -235,7 +235,7 @@ Build the new Linux kernel.
    make localmodconfig O=../kernelbuild/linux-6.8.y
    make -j 8 O=../kernelbuild/linux-6.8.y
 
-Copy the results to ``\boot``.
+Copy the results to ``/boot``.
 
 ::
 
@@ -252,7 +252,7 @@ Package:
 * Fedora - xz
 * Ubuntu - xz-utils
 
-Use the ``xy`` utility to unzip a kernel module ``.ko.xz`` to view an
+Use the ``xz`` utility to unzip a kernel module ``.ko.xz`` to view an
 appended signature.  Unzip in a /tmp directory.  See
 :ref:`func-module-check` for a use case.
 
@@ -500,7 +500,7 @@ Generate an ECC P256 CA key and certificate:
 
 ::
 
-   openssl req -x509 -out imacacertecc.pem -newkey ec -pkeyopt ec_paramgen_curve:secp256k1 -days 3650 -keyout imacakeyecc.pem -config imacacert.cfg 
+   openssl req -x509 -out imacacertecc.pem -newkey ec -pkeyopt ec_paramgen_curve:secp256k1 -days 3650 -keyout imacakeyecc.pem -config imacacert.cfg
 
 Convert the certificate from ``pem`` to ``der`` format.
 
@@ -740,7 +740,7 @@ template.  See :ref:`sign-file-appended-signature` for an example.
 Package:
 
 * Fedora - kernel-devel
-* Ubuntu - linux-headers-\`uname -r\`-generic 
+* Ubuntu - linux-headers-\`uname -r\`-generic
 
 Location:
 
