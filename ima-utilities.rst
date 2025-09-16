@@ -235,7 +235,7 @@ Build the new Linux kernel.
    make localmodconfig O=../kernelbuild/linux-6.8.y
    make -j 8 O=../kernelbuild/linux-6.8.y
 
-Copy the results to ``\boot``.
+Copy the results to ``/boot``.
 
 ::
 
