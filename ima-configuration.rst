@@ -521,7 +521,7 @@ different contexts, IMA state includes several boolean status bits:
 In kernels that do not implement CONFIG_IMA_DISABLE_HTABLE, or if
 CONFIG_IMA_DISABLE_HTABLE is false, if the IMA status bit is false or
 the file hash is not in the hash table, the file is measured. If the
-IMA IMA status bit is true or the hash is in the hash table (already
+IMA status bit is true or the hash is in the hash table (already
 measured), the file is not measured.
 
 If CONFIG_IMA_DISABLE_HTABLE is true, if the IMA status bit is false,

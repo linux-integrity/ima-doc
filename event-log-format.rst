@@ -75,6 +75,26 @@ following recommendations.
    For a long lived platform, eventually most files will be measured and
    few or no new events need be processed.
 
+Template Recommendations
+----------------------------
+
+Template data usually includes the file name. While this cannot be
+trusted, it provides a hint, a pointer to the approved file data hash.
+
+There are two use cases that determine whether to include a signature:
+
+- If there is no approved hash list, a signature can be verified. This
+  proves that the file was signed correctly, but not whether the file
+  itself is approved by the verifier.
+
+- If there is an approved hash list, the file data hash can be
+  verified. The verifier can approve specific files and/or versions.
+  In this case, the file signature in the template data is
+  superfluous.
+
+There is a verifier performance benefit to comparing hashes over
+checking signatures, but either check is normally only once per boot.
+
 Multiple PCRs
 -----------------------------------
 
