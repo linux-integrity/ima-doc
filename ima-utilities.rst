@@ -10,7 +10,7 @@ The intent is to provide command line samples that link to tasks
 described elsewhere.  It is **not** to duplicate the usage help or man
 pages.
 
-Utility Installation
+Utility Installation and Usage
 ===================================
 
 .. _keyctl:
@@ -74,6 +74,51 @@ Package:
 .. warning::
 
    Add the configure rule for OpenSSL 3.x deprecated functions.
+
+evmctl usage notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The various signing options include:
+
+
+* ``evmctl ima_sign`` - calculates the file signature and writes it
+  to ``security.ima``.  However, if EVM HMAC is enabled, any change to
+  the file metadata - security xattrs, uid - causes the EVM HMAC to be
+  re-calculated.
+
+* ``evmctl sign`` - leaves ``security.ima`` unchanged, and the EVM
+  metadata signature is calculated and written.
+
+* ``evmctl sign --imahash`` - calculates and writes the IMA file hash
+  to ``security.ima``, and then the EVM metadata signature is
+  calculated and written.
+
+* ``evmctl sign --imasig`` - calculates and writes the IMA file
+  signature to ``security.ima``, and then the EVM metadata signature
+  is calculated and written.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  .. _mokutil:
 

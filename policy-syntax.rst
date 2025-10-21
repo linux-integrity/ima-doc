@@ -29,8 +29,10 @@ The meta-data has either a hash or a signature.
 
 -  ``measure`` - add a measurement to the IMA event log and the TPM PCR
 -  ``dont_measure`` - do not measure the event
--  ``appraise`` - evaluate a file’s integrity. A file’s integrity may be a
-   file hash or signature.  Appraisal requires a :ref:`func` condition.
+-  ``appraise`` - evaluate a file’s integrity. A file’s integrity may
+   be a file hash or signature.  Appraisal requires a :ref:`func`
+   condition. It uses ``security.ima`` if :ref:`extended-verification-module`
+   is disabled or ``security.evm`` if EVM is enabled.
 -  ``dont_appraise`` - do not appraise the event
 -  ``audit`` - include the file hash into the audit log. There is no
    dont_audit.
