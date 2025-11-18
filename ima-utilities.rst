@@ -98,28 +98,6 @@ The various signing options include:
   is calculated and written.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  .. _mokutil:
 
 mokutil
@@ -213,8 +191,17 @@ To see if one of the :ref:`keyrings` exists:
 
    cat /proc/keys | grep platform
 
+.. note::
 
-Build Kernel with IMA CA Key on keyring
+   There is currently no way to view keyring X.509 certificates
+   directly, just fields like the subject and subject key identifier.
+
+   The .ima certificates are in ``/etc/keys/ima``.
+
+   Fedora puts a copy of the .builtin_trusted_keys IMA CA key
+   certificate in ``/usr/share/ima``.
+
+uild Kernel with IMA CA Key on keyring
 ==========================================
 
 This procedure builds a kernel with the
