@@ -343,7 +343,7 @@ View the existing keyring:
 
 ::
 
-   keyctl show %:.platform
+   keyctl show %keyring:.platform
 
 Create the signing key and certificate to be enrolled. By default,
 they are put in ``/etc/pki/pesign`` databases.
@@ -383,7 +383,7 @@ View the updated keyring:
 
 ::
 
-   keyctl show %:.platform
+   keyctl show %keyring:.platform
 
 .. note::
 
@@ -450,7 +450,7 @@ View the existing keyring:
 
 ::
 
-   keyctl show %:.platform
+   keyctl show %keyring:.platform
 
 If the ``der`` format certificate is not available, use
 :ref:`mok-certificate-export` to export and view the
@@ -559,7 +559,7 @@ View the updated :ref:`dot-machine` keyring:
 
 ::
 
-   keyctl show %:.machine
+   keyctl show %keyring:.machine
 
 .. _ima-signing-key:
 
