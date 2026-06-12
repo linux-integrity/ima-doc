@@ -180,6 +180,10 @@ View a keyring
 
    keyctl show %keyring:.ima
 
+::
+
+   keyctl show %keyring:.evm
+
 The output data includes
 
 * Subject CN - as text
