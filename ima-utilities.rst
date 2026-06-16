@@ -667,12 +667,18 @@ in ``der``, not ``pem`` format.
 
    cp imacertecc.der /etc/keys/ima
 
-Modify the ``dracut`` module to load the IMA signing key
-certificate. The location is
+Modify these ``dracut`` modules to load the IMA signing key
+certificate. The locations are:
+``/lib/dracut/modules.d/96securityfs/module-setup.sh``,
+``/lib/dracut/modules.d/97masterkey/module-setup.sh``, and
 ``/lib/dracut/modules.d/98integrity/module-setup.sh``
 
 * Change the check() return to 0.
 * Comment out the evm-enable.sh line
+
+Back up /boot/initramfs for your kernel version before running
+``dracut``. If the platform fails to reboot, boot a pervious kernel,
+restore initramfs, reboot and debug.
 
 Rebuild initramfs with the modified script.  Using a bash shell:
 
