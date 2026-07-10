@@ -117,6 +117,14 @@ An attestation can then verify the integrity of the measurement log.
 A TPM attestation quote is a signature over the PCR, in effect a
 signature over the event log.
 
+Unlike pre-OS PCRs, the IMA PCR is unsuitable for an unseal TPM
+authorization. Since post-OS execution is multi-process, the order of
+extends and thus the PCR value will differ on every boot.
+
+The pre-OS (e.g., UEFI) environment is specified to yield predicatable
+and consistent PCR value. Thus, they can be used for an unseal
+authorization.
+
 See :ref:`measure-policy-rule-design` for implications.
 
 |

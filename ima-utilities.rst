@@ -656,7 +656,7 @@ Import the IMA signing key certificate onto the :ref:`dot-ima` keyring.
 Persistent Install
 --------------------
 
-Move the IMA signing key certificate to the staging area.  It must be
+Move the IMA signing key certificates to the staging area.  It must be
 in ``der``, not ``pem`` format.
 
 ::
@@ -667,6 +667,9 @@ in ``der``, not ``pem`` format.
 
    cp imacertecc.der /etc/keys/ima
 
+Move the EVM signing key certificate to the hard coded location
+``/etc/keys/x509_evm.der``.
+
 Modify these ``dracut`` modules to load the IMA signing key
 certificate. The locations are:
 ``/lib/dracut/modules.d/96securityfs/module-setup.sh``,
@@ -674,7 +677,7 @@ certificate. The locations are:
 ``/lib/dracut/modules.d/98integrity/module-setup.sh``
 
 * Change the check() return to 0.
-* Comment out the evm-enable.sh line
+* Comment out the evm-enable.sh line (if not using EVM)
 
 Back up /boot/initramfs for your kernel version before running
 ``dracut``. If the platform fails to reboot, boot a pervious kernel,
