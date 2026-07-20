@@ -46,6 +46,14 @@ The state of a build flag can be viewed with, e.g., one of these
    cat /boot/config-`uname -r` | grep IMA_WRITE_POLICY
    cat /proc/config.gz | gunzip | grep IMA_WRITE_POLICY
 
+The configuration file may be a compressed virtial file
+``/proc/config.gz``. View or search it with, e.g.,
+
+::
+
+   zcat /proc/config.gz
+   zgrep IMA_WRITE_POLICY /proc/config.gz
+
 The boolean values are
 
 * "=y" if compiled statically into the kernel

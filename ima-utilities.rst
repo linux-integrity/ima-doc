@@ -205,7 +205,7 @@ To see if one of the :ref:`keyrings` exists:
    Fedora puts a copy of the .builtin_trusted_keys IMA CA key
    certificate in ``/usr/share/ima``.
 
-uild Kernel with IMA CA Key on keyring
+Build Kernel with IMA CA Key on keyring
 ==========================================
 
 This procedure builds a kernel with the
@@ -680,7 +680,7 @@ certificate. The locations are:
 * Comment out the evm-enable.sh line (if not using EVM)
 
 Back up /boot/initramfs for your kernel version before running
-``dracut``. If the platform fails to reboot, boot a pervious kernel,
+``dracut``. If the platform fails to reboot, boot a previous kernel,
 restore initramfs, reboot and debug.
 
 Rebuild initramfs with the modified script.  Using a bash shell:
