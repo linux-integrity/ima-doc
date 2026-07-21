@@ -121,6 +121,8 @@ https://github.com/torvalds/linux/blob/master/security/integrity/ima/Kconfig
 * :ref:`config-integrity-platform-keyring`
 * :ref:`config-integrity-machine-keyring`
 * :ref:`config-integrity-ca-machine-keyring`
+* :ref:`config-integrity-ca-machine-keyring-max`
+* :ref:`config_integrity_trusted_keyring`
 
 .. _general-build-flags:
 
@@ -846,6 +848,7 @@ The configuration flags affecting trusted :ref:`keyrings` are:
 * :ref:`config-integrity-machine-keyring`
 * :ref:`config-integrity-ca-machine-keyring`
 * :ref:`config-integrity-ca-machine-keyring-max`
+* :ref:`config_integrity_trusted_keyring`
 
 .. _config-secondary-trusted-keyring:
 
@@ -908,7 +911,7 @@ Fedora 39		set
 .. _config-integrity-ca-machine-keyring-max:
 
 CONFIG_INTEGRITY_CA_MACHINE_KEYRING_MAX
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 When this boolean is set, registered ``MOK`` key signing CA
 certificates (X.509 CA bit and keyCertSign true, and digitalSignature
@@ -925,6 +928,15 @@ Ubuntu 23		not set
 Fedora 39		set
 ======================  ===================================
 
+.. _config_integrity_trusted_keyring:
+
+CONFIG_INTEGRITY_TRUSTED_KEYRING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When this boolean is set, keys added to the :ref:`dot-ima` or
+:ref:`dot-evm` keyring must be signed by a key on the
+:ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
+keyring.
 
 .. _boot-command-line-arguments:
 
