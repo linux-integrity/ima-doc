@@ -123,6 +123,7 @@ https://github.com/torvalds/linux/blob/master/security/integrity/ima/Kconfig
 * :ref:`config-integrity-ca-machine-keyring`
 * :ref:`config-integrity-ca-machine-keyring-max`
 * :ref:`config_integrity_trusted_keyring`
+* :ref:`config-system-trusted-keys`
 
 .. _general-build-flags:
 
@@ -849,6 +850,7 @@ The configuration flags affecting trusted :ref:`keyrings` are:
 * :ref:`config-integrity-ca-machine-keyring`
 * :ref:`config-integrity-ca-machine-keyring-max`
 * :ref:`config_integrity_trusted_keyring`
+* :ref:`config-system-trusted-keys`
 
 .. _config-secondary-trusted-keyring:
 
@@ -937,6 +939,15 @@ When this boolean is set, keys added to the :ref:`dot-ima` or
 :ref:`dot-evm` keyring must be signed by a key on the
 :ref:`dot-builtin-trusted-keys` or :ref:`dot-secondary-trusted-keys`
 keyring.
+
+.. _config-system-trusted-keys:
+
+CONFIG_SYSTEM_TRUSTED_KEYS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This option can be set to the filename of a PEM-encoded file
+containing additional certificates which will be included in the
+system keyring by default.
 
 .. _boot-command-line-arguments:
 
