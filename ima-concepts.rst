@@ -454,7 +454,10 @@ viewed with
    readable printing of the extended attribute.
 
 The pseudo-file ``/sys/kernel/security/integrity/evm/evm`` holds the
-EVM status. The default is zero / off. The file is a bitmap with the
+EVM status. The default is zero / off. If evm is off, a
+``security.evm`` signature will not be verified, even if present.
+
+The file is a bitmap with the
 meaning:
 
 ===	  ================================================================================

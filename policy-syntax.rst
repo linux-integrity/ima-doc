@@ -669,7 +669,8 @@ appraise_type
 
 When present, this condition specifies that a ``security.ima`` hash is
 not permitted and which signature formats are permitted.  See
-:ref:`signature`.
+:ref:`signature`. If a ``security.ima`` signature is present, it will
+be verified even if this rule modifier is absent.
 
 The allowed values are:
 
