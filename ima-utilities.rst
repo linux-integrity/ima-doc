@@ -21,7 +21,7 @@ keyctl
 Package:
 
 * Fedora - keyutils
-
+* Ubuntu - keyutils
 * Build from source
 
 .. warning::
